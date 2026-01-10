@@ -5,28 +5,33 @@ InstallMethod(FermionEZSPTSpecSeq,
     local brMap, spectrum, ss, s;
     brMap := SptSetBarResolutionMap(R);
     spectrum := [];
-    spectrum[1] := SptSetCoefficientU1(auMap);
-    spectrum[2] := SptSetCoefficientZn(2, auMap);
-    spectrum[3] := SptSetCoefficientZn(2, auMap);
-    spectrum[4] := SptSetCoefficientZn(0, auMap);
+    spectrum[1] := SptSetCoefficientU1(auMap);    # U(1) bosonic phase
+    spectrum[2] := SptSetCoefficientZn(2, auMap); # Z2 complex fermion
+    spectrum[3] := SptSetCoefficientZn(2, auMap); # Z2 Majorana
+    spectrum[4] := SptSetCoefficientZn(0, auMap); # Z p+ip
     ss := SptSetSpecSeqVanilla(R, spectrum);
 
-    s := g -> (1-(g^auMap)[1][1])/2;
+    s := g -> (1-(g^auMap)[1][1])/2; # s1 anti-unitary
 
-    SptSetInstallCoboundary(ss, 2, 1, 1,
+    # differential d2: E2^{1,1} 1+1D complex fermion  -> E2^{3,0} bosonic
+    SptSetInstallCoboundary(ss, 2, 1, 1, # r = 2, p = 1, q = 1
     function(n1, dn1)
       return {g1, g2, g3} -> 0;
     end);
 
+    # differential d2: E2^{0,2} 1+1D Majorana  -> E2^{2, 1} complex fermion
     SptSetInstallCoboundary(ss, 2, 0, 2,
     function(n0, dn0)
       return {g1, g2} -> 0;
     end);
+
+    # differential d3: E3^{0,2} 1+1D Majorana  -> E3^{3,0} bosonic
     SptSetInstallCoboundary(ss, 3, 0, 2,
     function(n0, dn0)
       return {g1, g2, g3} -> 0;
     end);
 
+    # differential d2: E2^{2,1} 2+1D complex fermion  -> E2^{4,0} bosonic
     SptSetInstallCoboundary(ss, 2, 2, 1,
     function(n2, dn2)
       return function(g1, g2, g3, g4)
@@ -42,31 +47,39 @@ InstallMethod(FermionEZSPTSpecSeq,
       end;
     end);
 
+    # differential d2: E2^{1,2} 2+1D Majorana  -> E2^{3,1} complex fermion
     SptSetInstallCoboundary(ss, 2, 1, 2,
     function(n1, dn1)
       return {g1, g2, g3} -> (s(g1) * n1(g2) * n1(g3));
     end);
+
+    # differential d3: E3^{1,2} 2+1D Majorana  -> E3^{4,0} bosonic
     SptSetInstallCoboundary(ss, 3, 1, 2,
     function(n1, dn1)
       return {g1, g2, g3, g4} -> 0;
     end);
 
+    # differential d2: E2^{0,3} 2+1D p+ip  -> E2^{2,2} Majorana
     SptSetInstallCoboundary(ss, 2, 0, 3,
     function(n0, dn0)
       return {g1, g2} -> 0;
     end);
+
+    # differential d3: E3^{0,3} 2+1D p+ip  -> E3^{3,1} complex fermion
     SptSetInstallCoboundary(ss, 3, 0, 3,
     function(n0, dn0)
       return {g1, g2, g3} -> 0;
     end);
+
+    # differential d4: E4^{0,3} 2+1D p+ip  -> E4^{4,0} bosonic
     SptSetInstallCoboundary(ss, 4, 0, 3,
     function(n0, dn0)
       return {g1, g2, g3, g4} -> 0;
     end);
 
+    # differential d2: E2^{1,3} 3+1D p+ip  -> E2^{3,2} Majorana
     SptSetInstallCoboundary(ss, 2, 1, 3,
     function(n1, dn1)
-
       if dn1 = ZeroCocycle@ then
         return {g1, g2, g3} -> (s(g1) * n1(g2) * n1(g3));
       else
@@ -79,6 +92,8 @@ InstallMethod(FermionEZSPTSpecSeq,
         end;
       fi;
     end);
+
+    # differential d2: E2^{2,2} 3+1D Majorana  -> E3^{4,1} complex fermion
     SptSetInstallCoboundary(ss, 2, 2, 2,
     function(n2, dn2)
       return

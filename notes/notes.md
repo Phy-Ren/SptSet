@@ -1,5 +1,24 @@
 A pedagogical note on how to use this SptSet package.
 
+## Prompts for Chat
+1. I am new to GAP and this package, so my goal is to learn it and then develop upon it.
+
+2. This is a Physics project, but involving deep math and coding, please combine them together to give a good note.
+
+3. The notes.md should only contain commands with minimal explanation, which serves as a short quick start and overview.
+
+4. While Latex_note.tex should contain line by line very detailed code explanatins, which serves as the final detailed publishable note.
+
+5. Figure out the roles of notes.md and Latex_note.tex, do not write large overlaping things into them.
+
+6. To save tokens, do not output the code explanations in the chat, directly write into Latex_note.tex. The chat output should only be a very brief summary of what you have done.
+
+7. Try to add comments if we go through specific parts of the code to make the code more readable.
+
+8. Check any related files by yourself if needed. Ask me if you have any important questions.
+
+9. Use rigorous, commonly used and unified notations accross all files (notes.md, Latex_note.tex, code comments). Use '\begin{equation}', '\end{equation}' instead of '\[', '\]' for non-inline equations.
+
 ## Goal
 1. Add appropriate comments to the current code, which is still under development.
 
@@ -17,7 +36,7 @@ https://www.gap-system.org/doc/
 3. Paper related to group_ex branch.
 https://arxiv.org/abs/2310.19058
 
-4. Latex note for both GAP and SptSet. Note the notes.md should only contain commands with minimal explanation; while Latex_note.tex should contain line by line very detailed code explanatins. Do not output the code explanations in the chat, directly write into Latex_note.tex.
+4. Latex note for both GAP and SptSet. 
 SptSet/notes/Latex_note.tex
 
 5. Paper related to O5 obstruction function and 3D classification
