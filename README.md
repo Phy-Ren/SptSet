@@ -83,9 +83,22 @@ pre-commit run --all-files
 gaplint lib/cochain.gi examples/fspt_2d_ez.g
 ```
 
-### Configuring gaplint
+### Linting Modes
 
-The linter may report many warnings on existing code. You can customize rules by creating a `.gaplint.yml` file at the repo root:
+By default, gaplint runs in **warn-only mode**: it displays warnings but won't block your commits. This is useful during development when the codebase has existing style issues.
+
+To enable **strict mode** (block commits on lint errors), set the environment variable before committing:
+
+```bash
+# Enable strict mode (fail on gaplint errors)
+export STRICT_GAPLINT=1
+git commit -m "Your message"
+
+# Or as a one-liner
+STRICT_GAPLINT=1 git commit -m "Your message"
+```
+
+To customize which rules gaplint checks, create a `.gaplint.yml` file at the repo root:
 
 ```yaml
 # Example: relax some rules
