@@ -39,7 +39,7 @@ function(datavar, params...)
         idx := 2 * idx + (p mod 2);
     od;
     if idx = 0 then return 0; fi;
-    #return datavar[idx];
+    # return datavar[idx];
     if IsBound(datavar[idx]) then
         return datavar[idx];
     else

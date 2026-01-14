@@ -67,7 +67,7 @@ InstallMethod(SptSetNumberOfGenerators,
   "Return the number of generators in a module presentation",
   [IsSptSetFpZModuleRep],
   function(M)
-    #return DimensionsMat(M!.generators)[1];
+    # return DimensionsMat(M!.generators)[1];
     return Length(M!.generators);
   end);
 
@@ -89,19 +89,19 @@ InstallMethod(SptSetFpZModuleCanonicalForm,
     D := snf!.normal;
     M!.generators := Inverse(V) * M!.generators;
     M!.projection := M!.projection * V;
-    #M!.relations := D;
+    # M!.relations := D;
 
     # Now, we pad D to make it square.
-    #s := DimensionsMat(R)[1];
-    #r := DimensionsMat(R)[2];
-    #if s < r then
-    #  # add more rows to the bottom.
-    #  Append(D, NullMat(r-s, r));
-    #fi;
-    #if s > r then
-    #  #remove some rows from the bottom.
-    #  D := D{[1..r]};
-    #fi;
+    # s := DimensionsMat(R)[1];
+    # r := DimensionsMat(R)[2];
+    # if s < r then
+    #   # add more rows to the bottom.
+    #   Append(D, NullMat(r-s, r));
+    # fi;
+    # if s > r then
+    #   # remove some rows from the bottom.
+    #   D := D{[1..r]};
+    # fi;
     diag := DiagonalOfMat(D);
     indices := PositionsProperty(diag, x -> x<>1);
     diag := diag{indices};
@@ -193,4 +193,3 @@ function(M, v)
   od;
   return vp;
 end);
-    

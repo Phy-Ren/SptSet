@@ -1,0 +1,30 @@
+# See https://pre-commit.com for more information
+# Install:  pipx install pre-commit
+# Enable:   pre-commit install
+# Run once: pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        # Keep Markdown hard line breaks intact
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+
+  # Optional: run GAP linter if you have `gaplint` installed.
+  # To require it (e.g. in CI), set REQUIRE_GAPLINT=1.
+  - repo: local
+    hooks:
+      - id: gaplint
+        name: gaplint (optional)
+        entry: bash scripts/precommit-gaplint.sh
+        language: system
+        files: \.(g|gi|gd)$
+        pass_filenames: true

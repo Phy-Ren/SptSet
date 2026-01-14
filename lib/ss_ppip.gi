@@ -75,9 +75,9 @@ InstallMethod(PpipSPTSpecSeq,
         local n2n2, n2c1n2;
         # we are ignoring the G-action because Z2 can only have a trivial G-action.
         n2n2 := n2(g1, g2) * n2(g3, g4);
-        #n2c1n2 := ??;
-        #f c1 g (0123) = B[f(023),g(012)]−B[f(013),g(123)]
-        #n2 c1 n2(g1, g2, g3) = n2(g1*g2, g3)n2(g1, g2) - n2(g1, g2*g3)n2(g2, g3);
+        # n2c1n2 := ??;
+        # f c1 g (0123) = B[f(023),g(012)]−B[f(013),g(123)]
+        # n2 c1 n2(g1, g2, g3) = n2(g1*g2, g3)n2(g1, g2) - n2(g1, g2*g3)n2(g2, g3);
         n2c1n2 := n2(g2*g3, g4) * n2(g2, g3) - n2(g2, g3*g4) * n2(g3, g4);
         return n2n2 + s(g1) * n2c1n2;
       end;
@@ -120,30 +120,30 @@ function(ss, dim)
   return layers;
 end);
 
-#InstallGlobalFunction(FermionSPTLayersVerbose,
-#function(ss)
-#  local E212, E312, E412, E221, E321, E230;
-#  Display("Majorana:");
-#  E212 := SptSetSpecSeqComponent(ss, 2, 1, 2);
-#  SptSetFpZModuleCanonicalForm(E212);
-#  Display(E212);
-#  E312 := SptSetSpecSeqComponent(ss, 3, 1, 2);
-#  SptSetFpZModuleCanonicalForm(E312);
-#  Display(E312);
-#  E412 := SptSetSpecSeqComponent(ss, 4, 1, 2);
-#  SptSetFpZModuleCanonicalForm(E412);
-#  Display(E412);
-#  Display("Complex fermion:");
-#  E221 := SptSetSpecSeqComponent(ss, 2, 2, 1);
-#  SptSetFpZModuleCanonicalForm(E221);
-#  Display(E221);
-#  E321 := SptSetSpecSeqComponent(ss, 3, 2, 1);
-#  SptSetFpZModuleCanonicalForm(E321);
-#  Display(E321);
-#  Display("Bosonic:");
-#  E230 := SptSetSpecSeqComponent(ss, 2, 3, 0);
-#  SptSetFpZModuleCanonicalForm(E230);
-#  Display(E230);
+# InstallGlobalFunction(FermionSPTLayersVerbose,
+# function(ss)
+#   local E212, E312, E412, E221, E321, E230;
+#   Display("Majorana:");
+#   E212 := SptSetSpecSeqComponent(ss, 2, 1, 2);
+#   SptSetFpZModuleCanonicalForm(E212);
+#   Display(E212);
+#   E312 := SptSetSpecSeqComponent(ss, 3, 1, 2);
+#   SptSetFpZModuleCanonicalForm(E312);
+#   Display(E312);
+#   E412 := SptSetSpecSeqComponent(ss, 4, 1, 2);
+#   SptSetFpZModuleCanonicalForm(E412);
+#   Display(E412);
+#   Display("Complex fermion:");
+#   E221 := SptSetSpecSeqComponent(ss, 2, 2, 1);
+#   SptSetFpZModuleCanonicalForm(E221);
+#   Display(E221);
+#   E321 := SptSetSpecSeqComponent(ss, 3, 2, 1);
+#   SptSetFpZModuleCanonicalForm(E321);
+#   Display(E321);
+#   Display("Bosonic:");
+#   E230 := SptSetSpecSeqComponent(ss, 2, 3, 0);
+#   SptSetFpZModuleCanonicalForm(E230);
+#   Display(E230);
 
-#  return [E412, E321, E230];
-#end);
+#   return [E412, E321, E230];
+# end);

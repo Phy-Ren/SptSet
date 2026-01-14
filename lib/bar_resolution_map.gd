@@ -1,7 +1,7 @@
 DeclareCategory("IsCategoryOfSptSetBarResMap", IsObject);
 
-#DeclareFilter("IsUsingMyBarResolutionMap");
-#DeclareFilter("IsUsingHapBarResolutionMap");
+# DeclareFilter("IsUsingMyBarResolutionMap");
+# DeclareFilter("IsUsingHapBarResolutionMap");
 DeclareOperation("SptSetBarResolutionMap",
   [IsHapResolution]
 );

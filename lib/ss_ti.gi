@@ -33,7 +33,7 @@ function(R, auMap, u1cMap, omega_)
     -> omega_(g1, g2) * n2(g3, g4) + 1/2 * n2(g1, g2) * n2(g3, g4);
   end);
   SptSetInstallAddTwister(ss, 1, 1, {l1, l2} -> ZeroCocycle@);
-    
+
   SptSetInstallAddTwister(ss, 2, 0,
     function(l1, l2)
       local n11, n12;

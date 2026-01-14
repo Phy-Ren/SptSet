@@ -30,7 +30,7 @@ function(filter, R)
   for deg in [0..Length(R)] do
     equivBarCache[deg+1] := NewDictionary(R!.elts, true);
   od;
-  
+
   return Objectify(TheTypeSptSetBarResMapMine,
   rec(hapResolution := R, group := G, toBarCache := toBarCache,
     fromBarCache := fromBarCache, equivBarCache := equivBarCache));
@@ -157,7 +157,7 @@ function(brMap, deg, glist)
       hfglxdg := HapResolutionHomotopy@(R, deg-1, xdg[1], xdg[2], fglxdg);
       Append(ans, hfglxdg);
     od;
-    
+
     AddDictionary(brMap!.fromBarCache[deg+1], glist, ans);
   fi;
 
@@ -210,7 +210,7 @@ function(brMap, glist)
       od;
     od;
 
-    #compute -gl
+    # compute -gl
     x := [-1, gid];
     Append(x, glist);
     Add(w, x);

@@ -21,7 +21,7 @@ it := 12;
   Display(layers);
 
   E21inf := SptSetSpecSeqComponentInf(SS, 2, 1);
-  SptSetFpZModuleCanonicalForm(E21inf);  
+  SptSetFpZModuleCanonicalForm(E21inf);
   E30inf := SptSetSpecSeqComponentInf(SS, 3, 0);
   SptSetFpZModuleCanonicalForm(E30inf);
 
@@ -49,7 +49,7 @@ it := 12;
       Display(SptSetFpZModuleCanonicalElm(E30inf, a));
     else
       a_ := cl2!.cochain!.layers[3+1];
-      a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);        
+      a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);
       Display(SptSetFpZModuleCanonicalElm(E30inf, a));
     fi;
   od;
@@ -64,9 +64,9 @@ it := 12;
     #SptSetPurifySpecSeqClass(cl2);
     #Display(LeadingLayer(cl2));
     a_ := cl2!.cochain!.layers[3+1];
-    a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);        
+    a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);
     Display(SptSetFpZModuleCanonicalElm(E30inf, a));
   od;
 
-  
+
 # od;

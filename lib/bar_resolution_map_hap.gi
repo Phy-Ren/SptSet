@@ -14,7 +14,7 @@ InstallMethod(SptSetConstructBarResMap,
 [IsSptSetBarResMapHapRep, IsHapResolution],
 function(filter, R)
   local G;
-  #Display("Creating HAP BRM");
+  # Display("Creating HAP BRM");
   G := GroupOfResolution(R);
   return Objectify(TheTypeSptSetBarResMapHap,
     rec(hapResolution := R, group := G,
@@ -43,7 +43,7 @@ InstallMethod(SptSetMapToBarWord,
       Add(brMap!.hapResolution!.elts, Identity(brMap!.group));
       idpos := Length(brMap!.hapResolution!.elts);
     fi;
-    #w := [ [1, idpos, i] ];
+    # w := [ [1, idpos, i] ];
     w := [ [1, i, idpos] ];
     return brMap!.hapEquiv!.psi(deg, w);
   end);

@@ -1,3 +1,7 @@
+# Top-level construction of fermionic SPT spectral sequences
+# ez version means no group extension (\omega_2) for symmetry group G_f
+# No p+ip decoration. p+ip layer is dealt in ss_ppip.gi
+
 InstallMethod(FermionEZSPTSpecSeq,
   "build fermion-ez-spt spectral sequence",
   [IsHapResolution, IsGeneralMapping],
@@ -5,16 +9,16 @@ InstallMethod(FermionEZSPTSpecSeq,
     local brMap, spectrum, ss, s;
     brMap := SptSetBarResolutionMap(R);
     spectrum := [];
-    spectrum[1] := SptSetCoefficientU1(auMap);    # U(1) bosonic phase
-    spectrum[2] := SptSetCoefficientZn(2, auMap); # Z2 complex fermion
-    spectrum[3] := SptSetCoefficientZn(2, auMap); # Z2 Majorana
-    spectrum[4] := SptSetCoefficientZn(0, auMap); # Z p+ip
+    spectrum[1] := SptSetCoefficientU1(auMap);     # U(1) bosonic phase
+    spectrum[2] := SptSetCoefficientZn(2, auMap);  # Z2 complex fermion
+    spectrum[3] := SptSetCoefficientZn(2, auMap);  # Z2 Majorana
+    spectrum[4] := SptSetCoefficientZn(0, auMap);  # Z p+ip
     ss := SptSetSpecSeqVanilla(R, spectrum);
 
-    s := g -> (1-(g^auMap)[1][1])/2; # s1 anti-unitary
+    s := g -> (1-(g^auMap)[1][1])/2;  # s1 anti-unitary
 
     # differential d2: E2^{1,1} 1+1D complex fermion  -> E2^{3,0} bosonic
-    SptSetInstallCoboundary(ss, 2, 1, 1, # r = 2, p = 1, q = 1
+    SptSetInstallCoboundary(ss, 2, 1, 1,  # r = 2, p = 1, q = 1
     function(n1, dn1)
       return {g1, g2, g3} -> 0;
     end);
@@ -32,6 +36,7 @@ InstallMethod(FermionEZSPTSpecSeq,
     end);
 
     # differential d2: E2^{2,1} 2+1D complex fermion  -> E2^{4,0} bosonic
+    # using Qing-rui's formula in PhysRevX.10.031055
     SptSetInstallCoboundary(ss, 2, 2, 1,
     function(n2, dn2)
       return function(g1, g2, g3, g4)
@@ -53,6 +58,7 @@ InstallMethod(FermionEZSPTSpecSeq,
       return {g1, g2, g3} -> (s(g1) * n1(g2) * n1(g3));
     end);
 
+    # p+ip layer is not considered in this file, so all differentials from p+ip layer are zero.
     # differential d3: E3^{1,2} 2+1D Majorana  -> E3^{4,0} bosonic
     SptSetInstallCoboundary(ss, 3, 1, 2,
     function(n1, dn1)
@@ -77,6 +83,7 @@ InstallMethod(FermionEZSPTSpecSeq,
       return {g1, g2, g3, g4} -> 0;
     end);
 
+    # this p+ip differential is known for a long time, an exceptional case.
     # differential d2: E2^{1,3} 3+1D p+ip  -> E2^{3,2} Majorana
     SptSetInstallCoboundary(ss, 2, 1, 3,
     function(n1, dn1)
@@ -101,36 +108,41 @@ InstallMethod(FermionEZSPTSpecSeq,
         local n2n2, n2c1n2;
         # we are ignoring the G-action because Z2 can only have a trivial G-action.
         n2n2 := n2(g1, g2) * n2(g3, g4);
-        #n2c1n2 := ??;
-        #f c1 g (0123) = B[f(023),g(012)]−B[f(013),g(123)]
-        #n2 c1 n2(g1, g2, g3) = n2(g1*g2, g3)n2(g1, g2) - n2(g1, g2*g3)n2(g2, g3);
+        # n2c1n2 := ??;
+        # f c1 g (0123) = B[f(023),g(012)]−B[f(013),g(123)]
+        # n2 c1 n2(g1, g2, g3) = n2(g1*g2, g3)n2(g1, g2) - n2(g1, g2*g3)n2(g2, g3);
         n2c1n2 := n2(g2*g3, g4) * n2(g2, g3) - n2(g2, g3*g4) * n2(g3, g4);
         # TODO: need to add dn2
         return n2n2 + s(g1) * n2c1n2;
       end;
     end);
 
+    # 1+1D complex fermion stacking (no Majorana)
+    # if Majorana chain is included, the stacking rule is no-zero.
     SptSetInstallAddTwister(ss, 1, 1, {l1, l2} -> ZeroCocycle@);
-    
+
+    # 1+1D bosonic stacking (from complex fermion)
     SptSetInstallAddTwister(ss, 2, 0,
     function(l1, l2)
       local n11, n12;
-      n11 := l1[1+1];
+      n11 := l1[1+1];  # complex fermion 1-cochain from layer 1
       n12 := l2[1+1];
       return {g1, g2} -> 1/2 * n11(g1) * n12(g2);
     end);
 
+    # 2+1D Majorana stacking
     SptSetInstallAddTwister(ss,
       1, 2,
       function(l1, l2)
           return ZeroCocycle@;
       end);
 
+    # 2+1D complex fermion stacking (from Majorana)
     SptSetInstallAddTwister
         (ss, 2, 1,
           function(l1, l2)
             local n11, n12, coeff, c1, c2;
-            n11 := l1[1+1];
+            n11 := l1[1+1];  # Majorana 1-cochain from layer 1
             n12 := l2[1+1];
             coeff := spectrum[1+1];
             if n11 = ZeroCocycle@ or n12 = ZeroCocycle@ then
@@ -139,18 +151,19 @@ InstallMethod(FermionEZSPTSpecSeq,
             c1 := Cup0@(1, 1, coeff, n11, n12);
             c2 := Cup0@(1, 1, coeff, s,
               Cup1@(1, 1, coeff, n11, n12));
-            #c2 := ZeroCocycle@;
+            # c2 := ZeroCocycle@;
             return AddInhomoCochain@(c1, c2);
          end);
 
+    # 2+1D bosonic stacking (from complex fermion and Majorana) in arXiv:2310.19058
     SptSetInstallAddTwister
-    (ss, 3, 0, 
+    (ss, 3, 0,
     function(l1, l2)
       local coeff, n11, n12, n21, n22, c3, t3, dn21, dn22, m2, N2;
 
-      n11 := l1[1+1];
+      n11 := l1[1+1];  # Majorana 1-cochain from layer 1
       n12 := l2[1+1];
-      n21 := l1[2+1];
+      n21 := l1[2+1];  # complex fermion 2-cochain from layer 1
       n22 := l2[2+1];
       coeff := spectrum[0+1];
 
@@ -183,6 +196,8 @@ InstallMethod(FermionEZSPTSpecSeq,
     SptSetInstallAddTwister(ss, 3, 1, {l1, l2} -> ZeroCocycle@);
     SptSetInstallAddTwister(ss, 4, 0, {l1, l2} -> ZeroCocycle@);
 
+    # differential d2: E2^{3,1} 3+1D complex fermion  -> E2^{5,0} bosonic
+    # using Qing-rui's formula in PhysRevX.10.031055
     SptSetInstallCoboundary(ss, 2, 3, 1, function(n3, dn3)
       return function(g1, g2, g3, g4, g5)
         local o5, n3c1n3, n3c2dn3;
@@ -208,10 +223,10 @@ InstallMethod(FermionEZSPTSpecSeq,
       end;
     end);
 
-
     return ss;
-  end);
+  end);  # physics input ends here
 
+# print functions for fermionic SPT layers
 InstallGlobalFunction(FermionEZSPTLayersVerbose,
 function(ss, dim)
   local layerNames, p, q, rmax, r, Erpq;
@@ -247,7 +262,6 @@ function(ss, dim)
   return layers;
 end);
 
-
 InstallGlobalFunction(FermionSPTLayersVerbose,
 function(ss, dim)
   local layerNames, p, q, rmax, r, Erpq;
@@ -282,8 +296,8 @@ function(ss, dim)
   return layers;
 end);
 
-#InstallGlobalFunction(FermionSPTLayersVerbose,
-#function(ss)
+# InstallGlobalFunction(FermionSPTLayersVerbose,
+# function(ss)
 #  local E212, E312, E412, E221, E321, E230;
 #  Display("Majorana:");
 #  E212 := SptSetSpecSeqComponent(ss, 2, 1, 2);
@@ -308,4 +322,4 @@ end);
 #  Display(E230);
 
 #  return [E412, E321, E230];
-#end);
+# end);

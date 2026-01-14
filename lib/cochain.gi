@@ -1,18 +1,18 @@
-#DeclareRepresentation(
-#  "IsSptSetCochainModuleRep",
-#  IsSptSetFpZModuleRep and IsCategoryOfSptSetCochainModule and IsComponentObjectRep,
-#  ["hapResolution", "degree"]
-#);
+# DeclareRepresentation(
+#   "IsSptSetCochainModuleRep",
+#   IsSptSetFpZModuleRep and IsCategoryOfSptSetCochainModule and IsComponentObjectRep,
+#   ["hapResolution", "degree"]
+# );
 
-#BindGlobal(
-#  "TheFamilyOfSptSetCochainModules",
-#  NewFamily("TheFamilyOfSptSetCochainModules")
-#);
+# BindGlobal(
+#   "TheFamilyOfSptSetCochainModules",
+#   NewFamily("TheFamilyOfSptSetCochainModules")
+# );
 
-#BindGlobal(
-#  "TheTypeSptSetCochainModule",
-#  NewType(TheFamilyOfSptSetCochainModules, IsSptSetCochainModuleRep)
-#);
+# BindGlobal(
+#   "TheTypeSptSetCochainModule",
+#   NewType(TheFamilyOfSptSetCochainModules, IsSptSetCochainModuleRep)
+# );
 
 InstallMethod(SptSetCochainModule,
   "Constructs a list of cochain modules with Zn coefficientsat all levels from a resolution",
@@ -56,12 +56,12 @@ InstallMethod(SptSetCoboundaryMap,
         i := AbsInt(wx[1]);
         gwx := elts[wx[2]];
         cobdryMat[i][j] := cobdryMat[i][j] + swx * ((gwx^f)[1][1]);
-        #Display(["cobdryMat: ", i, j, swx * ((gwx^f)[1][1])]);
+        # Display(["cobdryMat: ", i, j, swx * ((gwx^f)[1][1])]);
       od;
     od;
 
     A := Ck!.generators * cobdryMat * Ckp1!.projection;
-    #Display(["A: ", A]);
+    # Display(["A: ", A]);
     return SptSetZLMapByImages(Ck, Ckp1, A);
   end);
 

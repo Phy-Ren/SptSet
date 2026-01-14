@@ -1,8 +1,8 @@
 DeclareCategory("IsCategoryOfSptSetCochainComplex", IsObject);
 
-#DeclareOperation("SptSetHomToIntegralModule",
-#  [IsHapResolution, IsGeneralMapping]);
-#DeclareOperation("SptSetHomToIntegerModN", [IsHapResolution, IsInt]);
+# DeclareOperation("SptSetHomToIntegralModule",
+#   [IsHapResolution, IsGeneralMapping]);
+# DeclareOperation("SptSetHomToIntegerModN", [IsHapResolution, IsInt]);
 DeclareOperation("SptSetCochainComplex",
   [IsHapResolution, IsCategoryOfSptSetCoefficient]);
 DeclareOperation("SptSetCohomology", [IsCategoryOfSptSetCochainComplex, IsInt]);

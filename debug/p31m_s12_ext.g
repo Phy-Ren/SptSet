@@ -24,7 +24,7 @@ it := 15;
   Display(layers);
 
   E21inf := SptSetSpecSeqComponentInf(SS, 2, 1);
-  SptSetFpZModuleCanonicalForm(E21inf);  
+  SptSetFpZModuleCanonicalForm(E21inf);
   E30inf := SptSetSpecSeqComponentInf(SS, 3, 0);
   SptSetFpZModuleCanonicalForm(E30inf);
 

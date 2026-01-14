@@ -29,7 +29,7 @@ E30inf := SptSetSpecSeqComponentInf(ss, 3, 0);
 SptSetFpZModuleCanonicalForm(E30inf);
 
 a_ := cl4!.cochain!.layers[4];
-a := SptSetMapFromBarCocycle(ss!.brMap, 3, ss!.spectrum[0+1], a_);        
+a := SptSetMapFromBarCocycle(ss!.brMap, 3, ss!.spectrum[0+1], a_);
 Display(SptSetFpZModuleCanonicalElm(E30inf, a));
 
 Display("Stacking two copies of the second-layer generator:");
@@ -73,7 +73,7 @@ E21inf := SptSetSpecSeqComponentInf(SS, 2, 1);
 SptSetFpZModuleCanonicalForm(E21inf);
 
 a_ := cl2!.cochain!.layers[3];
-a := SptSetMapFromBarCocycle(SS!.brMap, 2, SS!.spectrum[1+1], a_);        
+a := SptSetMapFromBarCocycle(SS!.brMap, 2, SS!.spectrum[1+1], a_);
 Display(SptSetFpZModuleCanonicalElm(E21inf, a));
 
 cl4 := cl2 + cl2;
@@ -85,7 +85,7 @@ E30inf := SptSetSpecSeqComponentInf(SS, 3, 0);
 SptSetFpZModuleCanonicalForm(E30inf);
 
 a_ := cl4!.cochain!.layers[4];
-a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);        
+a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);
 Display(SptSetFpZModuleCanonicalElm(E30inf, a));
 
 Display("Stacking two copies of the second-layer generator:");
@@ -97,5 +97,5 @@ Display("Leading layer x2: ");
 Display(LeadingLayer(cl22));
 
 a_ := cl22!.cochain!.layers[4];
-a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);        
+a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);
 Display(SptSetFpZModuleCanonicalElm(E30inf, a));

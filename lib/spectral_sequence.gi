@@ -4,11 +4,11 @@ DeclareRepresentation(
   ["modulePages", "derivPages", "module2Pages", "deriv2Pages"]
 );
 
-#DeclareRepresentation(
-#  "IsFermionSPTSpecSeqRep",
-#  IsSptSetSpecSeqRep,
-#  ["resolution", "auMap", "omega2"]
-#);
+# DeclareRepresentation(
+#   "IsFermionSPTSpecSeqRep",
+#   IsSptSetSpecSeqRep,
+#   ["resolution", "auMap", "omega2"]
+# );
 
 BindGlobal(
   "TheFamilyOfSptSetSpecSeqs",
@@ -109,17 +109,17 @@ InstallMethod(SptSetSpecSeqComponent2Inf,
 [IsCategoryOfSptSetSpecSeq, IsInt, IsInt],
 function(ss, p, q)
   local rmax;
-  #rmax := Maximum(q+1, p);
+  # rmax := Maximum(q+1, p);
   rmax := q+1;
   return SptSetSpecSeqComponent2(ss, rmax+1, p, q);
 end);
 
-#InstallGlobalFunction(InstallSptSetSpecSeqDerivative,
-#  function(str, r, p, q, type, fInhom)
-#    local f;
-#    f := function(a, ss)
-#      if TypeObj(ss) <> type then
-#        return fail;
-#      fi;
-#    end;
-#  end);
+# InstallGlobalFunction(InstallSptSetSpecSeqDerivative,
+#   function(str, r, p, q, type, fInhom)
+#     local f;
+#     f := function(a, ss)
+#       if TypeObj(ss) <> type then
+#         return fail;
+#       fi;
+#     end;
+#   end);

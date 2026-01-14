@@ -17,12 +17,12 @@ Display("Layers:");
 Display(layers);
 
   E11inf := SptSetSpecSeqComponentInf(SS, 1, 1);
-  SptSetFpZModuleCanonicalForm(E11inf);  
+  SptSetFpZModuleCanonicalForm(E11inf);
   E20inf := SptSetSpecSeqComponentInf(SS, 2, 0);
   SptSetFpZModuleCanonicalForm(E20inf);
 
 n := SptSetNumberOfGenerators(layers[2]);
-  
+
   for i in [1..n] do
     Display(["Complex generator #", i]);
     v1 := layers[2]!.generators[i];
@@ -32,6 +32,6 @@ n := SptSetNumberOfGenerators(layers[2]);
     SptSetPurifySpecSeqClass(cl2);
     Display(LeadingLayer(cl2));
     a_ := cl2!.cochain!.layers[2+1];
-    a := SptSetMapFromBarCocycle(SS!.brMap, 2, SS!.spectrum[0+1], a_);        
+    a := SptSetMapFromBarCocycle(SS!.brMap, 2, SS!.spectrum[0+1], a_);
     Display(SptSetFpZModuleCanonicalElm(E20inf, a));
   od;

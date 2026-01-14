@@ -19,6 +19,8 @@ A pedagogical note on how to use this SptSet package.
 
 9. Use rigorous, commonly used and unified notations accross all files (notes.md, Latex_note.tex, code comments). Use '\begin{equation}', '\end{equation}' instead of '\[', '\]' for non-inline equations.
 
+10. In Latex_note.tex, each sentence take a single line in the text editor for better looking. \label{} use eq:___, tab:___, fig:___, sec:___, ap:___.
+
 ## Goal
 1. Add appropriate comments to the current code, which is still under development.
 
@@ -36,7 +38,7 @@ https://www.gap-system.org/doc/
 3. Paper related to group_ex branch.
 https://arxiv.org/abs/2310.19058
 
-4. Latex note for both GAP and SptSet. 
+4. Latex note for both GAP and SptSet.
 SptSet/notes/Latex_note.tex
 
 5. Paper related to O5 obstruction function and 3D classification
@@ -103,7 +105,7 @@ Start with these examples in order of complexity:
 
 1. **`examples/fspt_2d_ez.g`** - 2D fermion SPT with easy fermion parity
    - Uses `FermionEZSPTSpecSeq` for simple cases
-   
+
 2. **`examples/fspt_2d_s12.g`** - 2D fermion SPT with spin-1/2
    - Uses `FermionSPTSpecSeq` with spin structure
 
@@ -183,3 +185,13 @@ FermionSPTLayersVerbose(SS, 2);        # Compute layers up to dimension 2
 - 🔄 Group extension branch features (see arXiv:2310.19058)
 - 🔄 O5 obstruction function (see arXiv:2512.25069)
 
+
+## Comments for Code Structure
+
+1. Mostly in master branch. Some new thing in group_ext branch, especially ss_module
+
+2. fermion_ez is not needed, just comment out.
+
+3. Top layer ss_fermion, containing all physical inputs: differentials, twisters. Next layer ss_vanilla for general AHSS. Then bar_resolution_map_mine, build resolution (arXiv:2005.06572). Bottom layer zlmap for coefficient systems.
+
+4. group_ext branch, ss_module, ss_class, ss_cochain for stacking.

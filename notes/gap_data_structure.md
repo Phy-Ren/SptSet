@@ -19,8 +19,8 @@ The advantage of this `type` system is we can use `operation`. `operation` is a 
 If an object is in `IsAttributeStoringRep`, we could attach `attributes` to the object. `Attributes` are just `operations` stored in an `object`. Once we call an `attribute`, the calculation result will be stored. And the next time we call the same `attribute`, it will use the result that has already been calculated. If the output of an `attribute` is either `true` or `false`, we call it `property`. Notice that `property` is a special kind of `filter`, and `filter` is actually a special kind of `operation`.
 
 That's all. Let's finish this note with a summary. To construct a new `object`:
-We need to determine `type` and `data`. 
-- `Type` has `family` and `filter`. 
+We need to determine `type` and `data`.
+- `Type` has `family` and `filter`.
     - `Family` is also an `object`, so we go back to the start point.
     - `Filter` has `category` and `representation`.
         - `Category` is abstract collection of mathematics objects.

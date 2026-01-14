@@ -10,7 +10,7 @@ BindGlobal(
   NewType(TheFamilyOfSptSetSpecSeqs, IsSptSetSpecSeqVanillaRep)
 );
 
-#ZeroCocycle@ := {arg...} -> 0;
+# ZeroCocycle@ := {arg...} -> 0;
 
 InstallMethod(SptSetSpecSeqVanilla,
   "Construct a spectral sequence with a spectrum",
@@ -58,9 +58,9 @@ InstallMethod(SptSetSpecSeqBuildComponent,
   [IsSptSetSpecSeqVanillaRep, IsInt, IsInt, IsInt],
   function(ss, r, p, q)
     local phi, psi;
-    #if r=3 and p=1 and q=2 then
-    #  Error("haha");
-    #fi;
+    # if r=3 and p=1 and q=2 then
+    #   Error("haha");
+    # fi;
     if p < 0 or q < 0 then
       return SptSetZeroModule();
     fi;
@@ -86,9 +86,9 @@ InstallMethod(SptSetSpecSeqBuildComponent2,
   [IsSptSetSpecSeqVanillaRep, IsInt, IsInt, IsInt],
   function(ss, r, p, q)
     local phi, psi;
-    #if r=3 and p=1 and q=2 then
-    #  Error("haha");
-    #fi;
+    # if r=3 and p=1 and q=2 then
+    #   Error("haha");
+    # fi;
     if p < 0 or q < 0 then
       return SptSetZeroModule();
     fi;
@@ -118,7 +118,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
       return SptSetZeroMap(M, N);
     fi;
 
-    if r = 1 then # First page: coboundary maps
+    if r = 1 then  # First page: coboundary maps
       return SptSetCoboundaryMap(M, N,
         ss!.resolution, p, ss!.spectrum[q+1]);
     fi;
@@ -130,7 +130,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
       np_ := SptSetMapToBarCocycle(ss!.brMap, p, ss!.spectrum[q+1],
         M!.generators[i]);
       if r = 2 then
-        #opr_ := ss!.bdry[r+1][p+1][q+1](np_);
+        # opr_ := ss!.bdry[r+1][p+1][q+1](np_);
         opr_ := ss!.bdry[2+1][p+1][q+1](np_, ZeroCocycle@);
       elif r = 3 then
         dnp1_ := ss!.bdry[2+1][p+1][q+1](np_, ZeroCocycle@);
@@ -141,7 +141,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
           dnp1);
         np1_ := SptSetSolveCocycleEq(ss!.brMap,
           p+r-1, ss!.spectrum[q-(r-1)+1 +1], dnp1_, np1);
-        #opr_ := ss!.bdry[r+1][p+1][q+1](np_, dnp1_, np1_);
+        # opr_ := ss!.bdry[r+1][p+1][q+1](np_, dnp1_, np1_);
         opr_ := ss!.bdry[2+1][p+1+1][q-1+1](np1_, dnp1_);
       else
         Display(["d", r, "not implimented"]);
@@ -153,9 +153,9 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
       fA[i] := opr * N!.projection;
     od;
 
-    #if fA = [] then
-    #  fA := EmptyMatrix(0);
-    #fi;
+    # if fA = [] then
+    #   fA := EmptyMatrix(0);
+    # fi;
     return SptSetZLMapByImages(M, N, fA);
 
   end);
@@ -171,7 +171,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
       return SptSetZeroMap(M, N);
     fi;
 
-    if r = 1 then # First page: coboundary maps
+    if r = 1 then  # First page: coboundary maps
       return SptSetCoboundaryMap(M, N,
         ss!.resolution, p, ss!.spectrum[q+1]);
     fi;
@@ -183,7 +183,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
       np_ := SptSetMapToBarCocycle(ss!.brMap, p, ss!.spectrum[q+1],
         M!.generators[i]);
       if r = 2 then
-        #opr_ := ss!.bdry[r+1][p+1][q+1](np_);
+        # opr_ := ss!.bdry[r+1][p+1][q+1](np_);
         opr_ := ss!.bdry[2+1][p+1][q+1](np_, ZeroCocycle@);
       elif r = 3 then
         dnp1_ := ss!.bdry[2+1][p+1][q+1](np_, ZeroCocycle@);
@@ -194,7 +194,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
           dnp1);
         np1_ := SptSetSolveCocycleEq(ss!.brMap,
           p+r-1, ss!.spectrum[q-(r-1)+1 +1], dnp1_, np1);
-        #opr_ := ss!.bdry[r+1][p+1][q+1](np_, dnp1_, np1_);
+        # opr_ := ss!.bdry[r+1][p+1][q+1](np_, dnp1_, np1_);
         opr_ := ss!.bdry[2+1][p+1+1][q-1+1](np1_, dnp1_);
       else
         Display(["d", r, "not implimented"]);
@@ -206,13 +206,12 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
       fA[i] := opr * N!.projection;
     od;
 
-    #if fA = [] then
-    #  fA := EmptyMatrix(0);
-    #fi;
+    # if fA = [] then
+    #   fA := EmptyMatrix(0);
+    # fi;
     return SptSetZLMapByImages(M, N, fA);
 
   end);
-
 
 InstallGlobalFunction(SptSetSpecSeqCochainType,
 function(ss, deg)

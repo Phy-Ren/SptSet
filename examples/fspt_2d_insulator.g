@@ -33,7 +33,7 @@ for it in [2..17] do
       if tor <> 0 then
           Display(["Complex generator #", i]);
           Display(["tor", tor]);
-        
+
           v1 := layers[2]!.generators[i];
           cl1 := SptSetSpecSeqClassFromLevelCocycle(SS, 3, 2, v1);
           SptSetPurifySpecSeqClass(cl1);
@@ -43,7 +43,7 @@ for it in [2..17] do
           od;
           SptSetPurifySpecSeqClass(cl2);
           a_ := cl2!.cochain!.layers[4];
-          a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);        
+          a := SptSetMapFromBarCocycle(SS!.brMap, 3, SS!.spectrum[0+1], a_);
           Display(SptSetFpZModuleCanonicalElm(E30inf, a));
       fi;
   od;

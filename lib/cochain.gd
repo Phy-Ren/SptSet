@@ -1,4 +1,4 @@
-#DeclareCategory("IsCategoryOfSptSetCochainModule", IsCategoryOfSptSetFpZModule);
+# DeclareCategory("IsCategoryOfSptSetCochainModule", IsCategoryOfSptSetFpZModule);
 
 DeclareOperation("SptSetCochainModule", [IsHapResolution, IsInt, IsObject]);
 

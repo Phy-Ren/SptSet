@@ -34,7 +34,7 @@ function(c1, c2)
   for p in [0..deg] do
     q := deg - p;
     layers[p+1] := AddInhomoCochain@(c1!.layers[p+1], c2!.layers[p+1]);
-    if p > 0 then # the p=0 layer cannot be twisted
+    if p > 0 then  # the p=0 layer cannot be twisted
       layers[p+1] := AddInhomoCochain@(layers[p+1],
       SS!.addTwister[p+1][q+1](c1!.layers, c2!.layers));
     fi;
@@ -56,7 +56,7 @@ function(c1, c2)
   for p in [0..deg] do
     q := deg - p;
     layers[p+1] := AddInhomoCochain@(c1!.layers[p+1], c2!.layers[p+1]);
-    if p > 0 then # the p=0 layer cannot be twisted
+    if p > 0 then  # the p=0 layer cannot be twisted
       layers[p+1] := AddInhomoCochain@(layers[p+1],
       SS!.addTwister[p+1][q+1](c1!.layers, c2!.layers));
     fi;
@@ -112,7 +112,7 @@ InstallGlobalFunction(PartialConstructSSCochain@,
     cp_ := SptSetMapToBarCocycle(brMap, p, SS!.spectrum[q+1], cp);
     coc!.layers[p+1] := cp_;
     dc := SptSetSpecSeqCoboundarySL(SS, deg, p, cp_);
-    dc!.layers[p+1 +1] := ZeroCocycle@ ; # cp_ must be a cocycle.
+    dc!.layers[p+1 +1] := ZeroCocycle@ ;  # cp_ must be a cocycle.
 
     for p2 in [(p+1)..(p+1+r)] do
       q2 := deg - p2;
@@ -130,11 +130,8 @@ InstallGlobalFunction(PartialConstructSSCochain@,
         fi;
       od;
 
-      coc!.layers[p2 +1] := PartialPurifyCoboundary@(dc, p2+1, dcp2);                   
+      coc!.layers[p2 +1] := PartialPurifyCoboundary@(dc, p2+1, dcp2);
     od;
 
     return coc;
 end);
-
-            
-        

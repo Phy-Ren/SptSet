@@ -25,24 +25,24 @@ function(R, auMap, w)
   function(n0, dn0)
     return {g1, g2} -> n0() * w(g1, g2);
   end);
-  #SptSetInstallCoboundary(ss, 3, 0, 2,
-  #function(n0, dn0)
-  #  return ZeroCocycle@;
-  #end);
+  # SptSetInstallCoboundary(ss, 3, 0, 2,
+  # function(n0, dn0)
+  #   return ZeroCocycle@;
+  # end);
 
   SptSetInstallCoboundary(ss, 2, 2, 1,
   function(n2, dn2)
       return {g1, g2, g3, g4} -> 0;
   end);
-  
+
   SptSetInstallCoboundary(ss, 2, 1, 2,
   function(n1, dn1)
     return {g1, g2, g3} -> (s(g1) * n1(g2) * n1(g3) + w(g1, g2) * n1(g3));
   end);
-  #SptSetInstallCoboundary(ss, 3, 1, 2,
-  #function(n1, dn1)
-  #  return {g1, g2, g3, g4} -> 0;
-  #end);
+  # SptSetInstallCoboundary(ss, 3, 1, 2,
+  # function(n1, dn1)
+  #   return {g1, g2, g3, g4} -> 0;
+  # end);
 
   SptSetInstallCoboundary(ss, 2, 0, 3,
   function(n0, dn0)
@@ -96,9 +96,9 @@ function(R, auMap, w)
       # we are ignoring the G-action because Z2 can only have a trivial G-action.
       w2n2 := w(g1, g2) * n2(g3, g4);
       n2n2 := n2(g1, g2) * n2(g3, g4);
-      #n2c1n2 := ??;
-      #f c1 g (0123) = B[f(023),g(012)]−B[f(013),g(123)]
-      #n2 c1 n2(g1, g2, g3) = n2(g1*g2, g3)n2(g1, g2) - n2(g1, g2*g3)n2(g2, g3);
+      # n2c1n2 := ??;
+      # f c1 g (0123) = B[f(023),g(012)]−B[f(013),g(123)]
+      # n2 c1 n2(g1, g2, g3) = n2(g1*g2, g3)n2(g1, g2) - n2(g1, g2*g3)n2(g2, g3);
       n2c1n2 := n2(g2*g3, g4) * n2(g2, g3) - n2(g2, g3*g4) * n2(g3, g4);
       # TODO: need to add dn2
       return w2n2 + n2n2 + s(g1) * n2c1n2;

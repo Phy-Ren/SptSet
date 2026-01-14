@@ -1,2 +1,8 @@
 .DS_Store
 misc
+
+# Python virtual environment
+.venv/
+
+# Pre-commit cache
+.pre-commit-cache/

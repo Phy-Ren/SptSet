@@ -117,7 +117,7 @@ InstallMethod(SptSetKernelModule,
     local A, R2, M, N, diagR2, idsR2, R2inv, r, r2, s, i, j,
           tA, snf, tU, D, diag, idsD, r3,
           Pj, U, tUinv, W, WW, Q, E3, P3, R3;
-    #A := phi!.A;
+    # A := phi!.A;
     M := phi!.domain;
     N := phi!.codomain;
     if not SptSetFpZModuleIsCanonical(N) then
@@ -148,22 +148,22 @@ InstallMethod(SptSetKernelModule,
     snf := SmithNormalFormIntegerMatTransforms(tA);
     tU := snf!.rowtrans;
     D := snf!.normal;
-    #Display(D);
+    # Display(D);
     diag := DiagonalOfMat(TransposedMat(D));
     idsD := Positions(diag, 0);
-    if idsD = [] then # We got an empty kernel...
-      #return SptSetFpZModuleEPR([[1]], [[1]], [[1]]);
+    if idsD = [] then  # We got an empty kernel...
+      # return SptSetFpZModuleEPR([[1]], [[1]], [[1]]);
       return SptSetZeroModule();
     fi;
     Pj := IdentityMat(r+s){idsD};
-    #Pj := NullMat(r3, r + s);
-    #for i in [1..r3] do
-    #  Pj[idsD[i]] := 1;
-    #od;
+    # Pj := NullMat(r3, r + s);
+    # for i in [1..r3] do
+    #   Pj[idsD[i]] := 1;
+    # od;
 
     U := StructuralCopy(tU);
     Apply(U, row -> row{[1..r]});
-    #Display(Pj, U);
+    # Display(Pj, U);
     E3 := Pj * U * M!.generators;
 
     tUinv := Inverse(tU);
@@ -217,7 +217,7 @@ InstallMethod(SptSetHomologyModule,
       # however, the following code may fail because A would be an empty matrix which does not have meaningful dimensions.
       return SptSetZeroModule();
     fi;
-    #A := psi!.domain!.generators * psi!.B * N!.projection;
+    # A := psi!.domain!.generators * psi!.B * N!.projection;
     A := N!.generators * psi!.B * psi!.codomain!.projection;
     psi2 := SptSetZLMapByImages(N, psi!.codomain, A);
     return SptSetKernelModule(psi2);

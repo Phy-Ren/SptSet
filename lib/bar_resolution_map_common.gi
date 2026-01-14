@@ -77,9 +77,9 @@ function(brMap, deg, gAction, alpha_, beta)
   beta_ := SptSetMapToBarCocycle(brMap, deg-1, gAction, beta);
   h_alpha_ := function(glist...)
     local w, hw, whw, val;
-    #w := [1, Identity(brMap!.group)];
-    #Append(w, glist);
-    #hw := StructuralCopy(brMap!.hapEquiv!.equiv(deg-1, [w]));
+    # w := [1, Identity(brMap!.group)];
+    # Append(w, glist);
+    # hw := StructuralCopy(brMap!.hapEquiv!.equiv(deg-1, [w]));
     hw := StructuralCopy(SptSetMapEquivBarWord(brMap, glist));
     val := 0;
     for whw in hw do
@@ -135,10 +135,9 @@ function(hapResolution, deg, f, a)
     else
         Assert(0, a2[i] = 0, "a is not a coboundary");
 
-
-      #if a2[i] <> 0 then
-        #Error("a is not a coboundary");
-      #fi;
+      # if a2[i] <> 0 then
+        # Error("a is not a coboundary");
+      # fi;
       b[i] := 0;
     fi;
   od;
