@@ -1,6 +1,6 @@
 # Top-level construction of fermionic SPT spectral sequences
 # ez version means no group extension (\omega_2) for symmetry group G_f
-# No p+ip decoration. p+ip layer is dealt in ss_ppip.gi
+# p+ip decoration is used very limitedly. p+ip layer is mainly dealt in ss_ppip.gi
 
 InstallMethod(FermionEZSPTSpecSeq,
   "build fermion-ez-spt spectral sequence",
@@ -37,6 +37,7 @@ InstallMethod(FermionEZSPTSpecSeq,
 
     # differential d2: E2^{2,1} 2+1D complex fermion  -> E2^{4,0} bosonic
     # using Qing-rui's formula in PhysRevX.10.031055
+    # note some coboundaries are dropped out here, which might be imporatant
     SptSetInstallCoboundary(ss, 2, 2, 1,
     function(n2, dn2)
       return function(g1, g2, g3, g4)
@@ -198,6 +199,7 @@ InstallMethod(FermionEZSPTSpecSeq,
 
     # differential d2: E2^{3,1} 3+1D complex fermion  -> E2^{5,0} bosonic
     # using Qing-rui's formula in PhysRevX.10.031055
+    # maybe some coboundaries are dropped out here, which might be important
     SptSetInstallCoboundary(ss, 2, 3, 1, function(n3, dn3)
       return function(g1, g2, g3, g4, g5)
         local o5, n3c1n3, n3c2dn3;

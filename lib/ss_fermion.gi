@@ -1,5 +1,9 @@
+# Top-level construction of fermionic SPT spectral sequences
+# with group extension (\omega_2) for symmetry group G_f
+# p+ip decoration is partly used. p+ip layer is mainly dealt in ss_ppip.gi
+
 InstallGlobalFunction(FermionSPTSpecSeq,
-function(R, auMap, w)
+function(R, auMap, w) # w is the 2-cocycle \omega_2 for group extension
   local brMap, spectrum, ss, s;
   brMap := SptSetBarResolutionMap(R);
   spectrum := [];
@@ -10,30 +14,39 @@ function(R, auMap, w)
 
   ss := SptSetSpecSeqVanilla(R, spectrum);
 
-  s := g -> (1-(g^auMap)[1][1])/2;
+  s := g -> (1-(g^auMap)[1][1])/2; # s1 for anti-unitary
 
+  # differential d2: E2^{0,1} 0+1D complex fermion  -> E2^{2,0} bosonic
   SptSetInstallCoboundary(ss, 2, 0, 1,
   function(n0, dn0)
     return {g1, g2} -> 1/2 * n0() * w(g1, g2);
   end);
 
+  # differential d2: E2^{1,1} 1+1D complex fermion -> E2^{3,0} bosonic
   SptSetInstallCoboundary(ss, 2, 1, 1,
   function(n1, dn1)
     if dn1 = ZeroCocycle@ then
       return {g1, g2, g3} -> 1/2 * w(g1, g2) * n1(g3);
     else
-      return {g1, g2, g3} -> 1/2 * (w(g1, g2) + dn1(g1, g2)) * n1(g3);
+      return {g1, g2, g3} -> 1/2 * (w(g1, g2) + dn1(g1, g2)) * n1(g3); # note there are two extra coboundaries lost
     fi;
   end);
+
+  # differential d2: E2^{0,2} 1+1D Majorana -> E2^{2,1} complex fermion
   SptSetInstallCoboundary(ss, 2, 0, 2,
   function(n0, dn0)
     return {g1, g2} -> n0() * w(g1, g2);
   end);
+
+  # differential d3: E3^{0,2} 1+1D Majorana -> E3^{3,0} bosonic
   SptSetInstallCoboundary(ss, 3, 0, 2,
   function(n0, dn0)
     return ZeroCocycle@;
   end);
 
+  # differential d2: E2^{2,1} 2+1D complex fermion -> E2^{4,0} bosonic
+  # using Qing-rui's formula in PhysRevX.10.031055
+  # note some coboundaries are dropped out here, which might be imporatant
   SptSetInstallCoboundary(ss, 2, 2, 1,
   function(n2, dn2)
     local O41, corr;
@@ -54,6 +67,8 @@ function(R, auMap, w)
     # return AddInhomoCochain@(O41, InhomoCoboundary@(ss!.spectrum[2+1], corr));
     return O41;
   end);
+
+  # differential d2: E2^{1,2} 2+1D Majorana -> E2^{3,1} complex fermion
   SptSetInstallCoboundary(ss, 2, 1, 2,
   function(n1, dn1)
     return {g1, g2, g3} -> (s(g1) * n1(g2) * n1(g3) + w(g1, g2) * n1(g3));
@@ -63,10 +78,14 @@ function(R, auMap, w)
     return {g1, g2, g3, g4} -> 0;
   end);
 
+  # differential d2: E2^{0,3} 2+1D p+ip -> E2^{2,2} Majorana
   SptSetInstallCoboundary(ss, 2, 0, 3,
   function(n0, dn0)
     return {g1, g2} -> (n0() * w(g1, g2));
   end);
+
+  # differential d3: E3^{0,3} 2+1D p+ip -> E3^{3,1} complex fermion
+  # this differential might be important
   SptSetInstallCoboundary(ss, 3, 0, 3,
   function(n0, dn0)
     local n02, coeff, w1w;
@@ -75,11 +94,14 @@ function(R, auMap, w)
     w1w := Cup1@(2, 2, coeff, w, w);
     return {g1, g2, g3} -> (n02 * w1w(g1, g2, g3));
   end);
+
+  # differential d4: E4^{0,3} 2+1D p+ip -> E4^{4,0} bosonic
   SptSetInstallCoboundary(ss, 4, 0, 3,
   function(n0, dn0)
     return {g1, g2, g3, g4} -> 0;
   end);
 
+  # differential d2: E2^{1,3} 3+1D p+ip -> E2^{3,2} Majorana
   SptSetInstallCoboundary(ss, 2, 1, 3,
   function(n1, dn1)
 
@@ -97,16 +119,19 @@ function(R, auMap, w)
     fi;
   end);
 
+  # differential d3: E3^{1,3} 3+1D p+ip -> E3^{4,1} complex fermion
   SptSetInstallCoboundary(ss, 3, 1, 3,
   function(n1, dn1)
     return {g1, g2, g3, g4} -> 0;
   end);
 
+  # differential d4: E4^{1,3} 3+1D p+ip -> E4^{5,0} bosonic
   SptSetInstallCoboundary(ss, 4, 1, 3,
   function(n1, dn1)
     return {g1, g2, g3, g4, g5} -> 0;
   end);
 
+  # differential d2: E2^{2,2} 3+1D Majorana -> E2^{4,1} complex fermion
   SptSetInstallCoboundary(ss, 2, 2, 2,
   function(n2, dn2)
     return
@@ -124,25 +149,29 @@ function(R, auMap, w)
     end;
   end);
 
+  # 1+1D complex fermion stacking (no Majorana)
   SptSetInstallAddTwister(ss, 1, 1, {l1, l2} -> ZeroCocycle@);
 
+  # 1+1D bosonic stacking (from complex fermion)
   SptSetInstallAddTwister(ss, 2, 0,
     function(l1, l2)
       local n11, n12;
-      n11 := l1[1+1];
+      n11 := l1[1+1]; # complex fermion 1-cochain from layer 1
       n12 := l2[1+1];
       return {g1, g2} -> 1/2 * n11(g1) * n12(g2);
     end);
 
+  # 2+1D Majorana stacking
   SptSetInstallAddTwister(ss, 1, 2,
       function(l1, l2)
           return ZeroCocycle@;
       end);
 
+  # 2+1D complex fermion stacking (from Majorana)
   SptSetInstallAddTwister(ss, 2, 1,
   function(l1, l2)
     local n11, n12, coeff;
-    n11 := l1[1+1];
+    n11 := l1[1+1]; # Majorana 1-cochain from layer 1
     n12 := l2[1+1];
     coeff := spectrum[1+1];
     if n11 = ZeroCocycle@ or n12 = ZeroCocycle@ then
@@ -151,14 +180,15 @@ function(R, auMap, w)
     return {g1, g2} -> (n11(g1) * n12(g2) + s(g1) * n11(g2) * n12(g2));
   end);
 
+  # 2+1D bosonic stacking (from complex fermion and Majorana)
   SptSetInstallAddTwister
     (ss, 3, 0,
     function(l1, l2)
       local coeff, n11, n12, n21, n22, c3, t3, dn21, dn22, m2, N2;
 
-      n11 := l1[1+1];
+      n11 := l1[1+1]; # Majoran 1-cochain from layer 1
       n12 := l2[1+1];
-      n21 := l1[2+1];
+      n21 := l1[2+1]; # complex fermion 2-cochain from layer 1
       n22 := l2[2+1];
       coeff := spectrum[0+1];
 
@@ -194,6 +224,7 @@ function(R, auMap, w)
     SptSetInstallAddTwister(ss, 3, 1, {l1, l2} -> ZeroCocycle@);
     SptSetInstallAddTwister(ss, 4, 0, {l1, l2} -> ZeroCocycle@);
 
+  # differential d2: E2^{3,1} 3+1D complex fermion -> E2^{5,0} bosonic
   SptSetInstallCoboundary(ss, 2, 3, 1, function(n3, dn3)
     return function(g1, g2, g3, g4, g5)
       local o5, n3c1n3, n3c2dn3;

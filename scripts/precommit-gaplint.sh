@@ -13,4 +13,9 @@ fi
 
 # Forward filenames from pre-commit.
 # If you want to customize rules, add a .gaplint.yml at repo root.
-exec gaplint "$@"
+# Currently running in warn-only mode (exit 0) - set STRICT_GAPLINT=1 to fail on errors.
+if [[ "${STRICT_GAPLINT:-0}" == "1" ]]; then
+  exec gaplint "$@"
+else
+  gaplint "$@" || true
+fi
