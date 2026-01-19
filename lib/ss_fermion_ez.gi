@@ -27,6 +27,8 @@ InstallMethod(FermionEZSPTSpecSeq,
       return {g1, g2, g3} -> 0;
     end);
 
+    # differential d2: E2^{2,1} 2+1D complex fermion -> E2^{4,0} bosonic
+    # some coboundaries are dropped here (IMPORTANT!)
     SptSetInstallCoboundary(ss, 2, 2, 1,
     function(n2, dn2)
       # return function(g1, g2, g3, g4)
@@ -50,10 +52,16 @@ InstallMethod(FermionEZSPTSpecSeq,
       return ScaleInhomoCochain@(1/2, c4);
     end);
 
+    # differential d2: E2^{1,2} 2+1D Majorana -> E2^{3,1} complex fermion
     SptSetInstallCoboundary(ss, 2, 1, 2,
     function(n1, dn1)
       return {g1, g2, g3} -> (s(g1) * n1(g2) * n1(g3));
     end);
+
+    # differential d3: E3^{1,2} 2+1D Majorana -> E3^{5,0} bosonic
+    # this is different from the master branch
+    # depends on how to organize the physical formulas
+    # needs later discussion (IMPORTANT!)
     SptSetInstallCoboundary(ss, 3, 1, 2,
     function(n1, dn1)
       local dn2;
@@ -109,6 +117,7 @@ InstallMethod(FermionEZSPTSpecSeq,
       return ZeroCocycle@;
     end);
 
+    # differential d2: E2^{2,2} 3+1D Majorana -> E2^{4,1} complex fermion
     SptSetInstallCoboundary(ss, 2, 2, 2,
     function(n2, dn2)
       return
@@ -120,11 +129,12 @@ InstallMethod(FermionEZSPTSpecSeq,
         #f c1 g (0123) = B[f(023),g(012)]−B[f(013),g(123)]
         #n2 c1 n2(g1, g2, g3) = n2(g1*g2, g3)n2(g1, g2) - n2(g1, g2*g3)n2(g2, g3);
         n2c1n2 := n2(g2*g3, g4) * n2(g2, g3) - n2(g2, g3*g4) * n2(g3, g4);
-        # TODO: need to add dn2
+        # TODO: need to add dn2 (from p+ip)
         return n2n2 + s(g1) * n2c1n2;
       end;
     end);
 
+    # differential d3: E3^{2,2} 3+1D Majorana -> E3^{5,0} bosonic
     SptSetInstallCoboundary(ss, 3, 2, 2,
     function(n2, dn2)
       return function(g1, g2, g3, g4, g5)
@@ -141,7 +151,7 @@ InstallMethod(FermionEZSPTSpecSeq,
         n2_245 := n2(g3*g4, g5) mod 2;
         n2_235 := n2(g3, g4*g5) mod 2;
         n2_345 := n2(g4, g5) mod 2;
-        
+
         a4 := (n2_123 * n2_345 + s(g2) * n2_235 * n2_345) mod 2;
         b4 := (s(g2) * n2_245 * n2_234) mod 2;
 
@@ -162,7 +172,8 @@ InstallMethod(FermionEZSPTSpecSeq,
         return o5sym + t5;
       end;
     end);
-    
+
+    # differential d2: E2^{3,1} 3+1D complex fermion -> E2^{5,0} bosonic
     SptSetInstallCoboundary(ss, 2, 3, 1, function(n3, dn3)
       local c5, coeff;
       coeff := spectrum[1+1];
@@ -197,7 +208,7 @@ InstallMethod(FermionEZSPTSpecSeq,
     end);
 
     SptSetInstallAddTwister(ss, 1, 1, {l1, l2} -> ZeroCocycle@);
-    
+
     SptSetInstallAddTwister(ss, 2, 0,
     function(l1, l2)
       local n11, n12;
@@ -229,8 +240,9 @@ InstallMethod(FermionEZSPTSpecSeq,
             return AddInhomoCochain@(c1, c2);
          end);
 
+    # 2+1D bosonic stacking (from complex fermion and Majorana)
     SptSetInstallAddTwister
-    (ss, 3, 0, 
+    (ss, 3, 0,
     function(l1, l2)
       local coeff, n11, n12, n21, n22, c3, t3, dn21, dn22, m2, N2;
 
