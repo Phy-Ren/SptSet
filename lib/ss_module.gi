@@ -225,7 +225,9 @@ function(M1, M2)
 
 end);
 
-InstallGlobalFunction(SptSetSpecSeqResult,
+# Old implementation: sequential extension with mixed generators.
+# Kept for reference and comparison; use SptSetSpecSeqResult instead.
+InstallGlobalFunction(SptSetSpecSeqResultOld,
 function(ss, deg, pRange)
     local p, Epq, M;
     for p in pRange do
@@ -236,6 +238,103 @@ function(ss, deg, pRange)
             M := SptSetSpecSeqModuleExtension(M, Epq);
         fi;
     od;
+
+    return M;
+end);
+
+# Layer-wise extension: compute each layer independently, then assemble.
+#
+# The physical stacking rules are between adjacent layers only.
+# For each pair of adjacent layers (p, p+1), we independently compute
+# how tj * (generator of layer p) projects into layer (p+1).
+# This avoids the "mixed generator" problem where different Z-lifts
+# of Z_n cochains can cause non-physical cancellations in the stacking
+# twisters at higher layers.
+#
+# The full relation matrix is upper triangular:
+#   R[i,i] = torsion of generator i
+#   R[i,j] = extension coefficient (only for generators in adjacent layers)
+# The Smith Normal Form of R gives the final group.
+InstallGlobalFunction(SptSetSpecSeqResult,
+function(ss, deg, pRange)
+    local nLayers, Exs, nGens, totalGens, Rmat,
+          offsets, pi, pj, p, j, k, tj, cjn, vjnf, M;
+
+    nLayers := Length(pRange);
+
+    # Step 1: get ComponentEx for each layer independently
+    Exs := [];
+    nGens := [];
+    for pi in [1..nLayers] do
+        p := pRange[pi];
+        Exs[pi] := SptSetSpecSeqComponentEx(ss, p, deg - p);
+        SptSetFpZModuleCanonicalForm(Exs[pi]);
+        if SptSetFpZModuleIsZero(Exs[pi]) then
+            nGens[pi] := 0;
+        else
+            nGens[pi] := SptSetNumberOfGenerators(Exs[pi]);
+        fi;
+    od;
+
+    totalGens := Sum(nGens);
+    if totalGens = 0 then
+        return SptSetZeroModule();
+    fi;
+
+    # Compute offsets for each layer's generators in the full matrix
+    offsets := [];
+    offsets[1] := 0;
+    for pi in [2..nLayers] do
+        offsets[pi] := offsets[pi-1] + nGens[pi-1];
+    od;
+
+    Rmat := NullMat(totalGens, totalGens);
+
+    # Step 2: fill diagonal blocks (torsions from each layer)
+    for pi in [1..nLayers] do
+        for j in [1..nGens[pi]] do
+            Rmat[offsets[pi] + j][offsets[pi] + j] := Exs[pi]!.relations[j][j];
+        od;
+    od;
+
+    # Step 3: fill off-diagonal blocks from pairwise extensions.
+    # For each generator of layer pi with torsion tj, compute tj*(gen)
+    # using ONLY the single-layer ComponentEx (no mixed generators).
+    # Then check its leading vector in each LATER layer pj > pi.
+    # This captures both adjacent extensions (MC->CF) and skip-layer
+    # extensions (e.g., p+ip skipping MC=Z_1 to reach CF directly).
+    for pi in [1..(nLayers-1)] do
+        if nGens[pi] = 0 then
+            continue;
+        fi;
+
+        for j in [1..nGens[pi]] do
+            tj := Exs[pi]!.relations[j][j];
+            if tj <> 0 then
+                cjn := SptSetSpecSeqModuleVectorToClass(
+                    Exs[pi], tj * Exs[pi]!.generators[j]);
+                # Find the first later layer where this class is nontrivial
+                for pj in [(pi+1)..nLayers] do
+                    if nGens[pj] = 0 then
+                        continue;
+                    fi;
+                    vjnf := SptSetSpecSeqModuleClassToLeadingVector(Exs[pj], cjn);
+                    if vjnf <> fail then
+                        for k in [1..nGens[pj]] do
+                            Rmat[offsets[pi] + j][offsets[pj] + k] := vjnf[k];
+                        od;
+                        break;  # only fill the first nontrivial target layer
+                    fi;
+                od;
+            fi;
+        od;
+    od;
+
+    # Step 4: build FpZModule from the relation matrix
+    M := SptSetFpZModuleEPR(
+        IdentityMat(totalGens),
+        IdentityMat(totalGens),
+        Rmat);
 
     return M;
 end);
