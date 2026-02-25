@@ -4,6 +4,9 @@ fi;
 if not IsBound(SPTSET_PARALLEL_THRESHOLD) then
   SPTSET_PARALLEL_THRESHOLD := 20;
 fi;
+if not IsBound(SPTSET_PHASE2_ENABLED) then
+  SPTSET_PHASE2_ENABLED := true;
+fi;
 
 ReadPackage("SptSet", "lib/module.gi");
 ReadPackage("SptSet", "lib/zlmap.gi");

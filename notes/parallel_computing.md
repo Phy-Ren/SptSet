@@ -340,11 +340,35 @@ Each iteration produces `fA[i]` (a row vector of integers) independently. Can be
 
 **Benefit**: Each iteration is very expensive (minutes to hours), so even parallelizing 3-5 generators gives good speedup.
 
-**Complication**: Each iteration internally calls `SptSetMapFromBarCocycle` (potentially already parallelized by Phase 1). Nested parallelism (fork inside fork) should be avoided — if Phase 1 is active, Phase 2 should use Phase 1's sequential fallback inside each worker, OR Phase 2 replaces Phase 1 as the parallelization point.
+**Phase 2 + Phase 1 nesting design** (updated 2025-02-25):
 
-**Recommendation**: Implement Phase 2 as an ALTERNATIVE to Phase 1 (not nested). Use Phase 1 when m is small (≤ 3), use Phase 2 when m is larger (≥ 4). In practice, for the most expensive calls (high-degree differentials), m tends to be moderate, so Phase 2 alone might be better than Phase 1. This needs profiling to decide.
+Each Phase 2 child internally calls `SptSetMapFromBarCocycle` multiple times (via PartialPurify, CoboundarySL, etc.). If Phase 1 is also enabled, we get nested fork: Phase 2 forks m workers, each of which triggers Phase 1 forks. This is **supported** as long as total processes <= available cores.
 
-**Implementation note for Phase 2**: Same function also exists as `SptSetSpecSeqBuildDerivative2` (lines 168-226) with nearly identical structure. Both should be modified consistently.
+The key mechanism: Phase 2 reduces `SPTSET_PARALLEL_JOBS` before forking, so each child uses fewer Phase 1 workers:
+
+```gap
+saved_jobs := SPTSET_PARALLEL_JOBS;
+SPTSET_PARALLEL_JOBS := Maximum(0, Int(saved_jobs / m));
+fA := ParListByFork([1..m], function(i)
+    # child inherits reduced SPTSET_PARALLEL_JOBS via fork()
+    # Phase 1 inside uses saved_jobs/m workers per MapFromBarCocycle call
+    ...
+    return result_row;
+end, rec(NumberJobs := Minimum(m, saved_jobs)));
+SPTSET_PARALLEL_JOBS := saved_jobs;  # restore in parent
+```
+
+Example on 28-core node with `SPTSET_PARALLEL_JOBS := 24`, m=4 generators:
+- Phase 2: 4 workers (one per generator)
+- Each worker: Phase 1 with `Int(24/4) = 6` sub-workers per MapFromBarCocycle call
+- Total concurrent processes: 4 x 6 = 24, fits in 28 cores
+- Effective speedup: much better than Phase 1 alone (one call at a time) or Phase 2 alone (4 cores busy, 24 idle)
+
+When `BuildDerivative` is not active, Phase 1 uses all `SPTSET_PARALLEL_JOBS` workers as normal.
+
+**Implementation note**: Both `SptSetSpecSeqBuildDerivative` (lines 110-166) and `SptSetSpecSeqBuildDerivative2` (lines 168-226) have identical `for i in [1..m]` structure. Both must be modified consistently.
+
+**Return value serialization**: Each Phase 2 child returns `fA[i] = opr * N!.projection`, a row vector of integers. This is trivially serializable by `IO_Pickle`.
 
 ### Phase 3: Outer-loop parallelism (for batch runs)
 
@@ -573,6 +597,75 @@ done
 
 Each node uses `SPTSET_PARALLEL_JOBS := 20` for inner parallelism (28 cores, leave some for OS overhead).
 
+### 9.4 Multi-node single-case acceleration (analysis, 2025-02-25)
+
+**Question**: Can multiple compute nodes (16 nodes x 28 cores = 448 cores) accelerate a single space group computation?
+
+**Short answer**: Very difficult. `fork()` only works within a single machine. Cross-node parallelism requires sending data over the network, but the critical `alpha_` closure **cannot be serialized**.
+
+**Why closures block multi-node**:
+```
+Node A (computing)                     Node B (wants to help)
+──────────────────                     ────────────────────
+alpha_ closure ✓                       alpha_ ??? ← cannot be sent
+  └── captures n2 cocycle                  GAP closures are not
+  └── captures intermediate results        serializable by IO_Pickle
+  └── captures cached bar words            or any GAP mechanism
+```
+
+`fork()` avoids serialization by copying the entire process memory. But you cannot `fork()` onto a different physical machine.
+
+**Possible workaround: `SaveWorkspace`**
+
+GAP's `SaveWorkspace("file.ws")` dumps the entire heap (including closures) to a binary file. `gap -L file.ws` restores it. Theoretically:
+1. Node A computes to an expensive BuildDerivative entry point
+2. `SaveWorkspace("/home/user/shared/state.ws")` (NFS-shared)
+3. Nodes B, C, D: `gap -L state.ws` → full state restored including closures
+4. Each node computes different generators, writes results to NFS files
+5. Node A collects results and continues
+
+**Issues with SaveWorkspace approach**:
+- Workspace file could be hundreds of MB; loading takes time
+- Must save/restore at each expensive computation point (many times per case)
+- Uncertain whether all HAP/SptSet objects survive save/restore correctly
+- Significant engineering effort to restructure the computation flow
+- Requires custom coordination logic (which node does what, result collection)
+
+**Verdict**: Multi-node single-case is theoretically possible but requires major engineering effort with uncertain reliability. Not recommended as next step.
+
+**Recommended priority**:
+1. Phase 2+1 on single node (28 cores) — practical, implementable now, 5-15x expected
+2. Phase 3 across nodes (different cases on different nodes) — trivial, combinable with above
+3. Multi-node single-case via SaveWorkspace — future research if 28-core speedup is insufficient
+
+### 9.5 Scale-up: renting high-core-count servers (analysis, 2025-02-25)
+
+Since fork-based parallelism is limited to a single node, the bottleneck is the core count per node. Current cluster nodes have 28 cores (Xeon E5-2680 v4, 2016 era). Modern servers offer much more:
+
+| Configuration | Cores/Threads | Freq | RAM | Price | vs our 28-core node |
+|---------------|---------------|------|-----|-------|---------------------|
+| Our cluster n05 | 28c/28t | 2.40 GHz | 126 GB | free | 1x baseline |
+| EPYC 9654 (1P) | 96c/192t | 2.4/3.7 GHz | 768 GB | ~$1,200/mo | ~6-8x |
+| EPYC 9655P (1P) | 96c/192t | 2.6/4.5 GHz | 768 GB | ~$1,500/mo | ~8-10x |
+| **EPYC 9965 (2P)** | **384c/768t** | 2.25/3.7 GHz | **2.3 TB** | **~$1,600/mo** | **~20-30x** |
+
+Best option: **AMD EPYC 9965 dual-socket** bare metal (e.g., ReliableSite, ~$1,600/mo).
+- 384 cores with Phase 2+1 nesting: m=10 generators x 38 sub-workers = 380 concurrent processes
+- 2.3 TB RAM: no memory pressure from fork (CoW overhead ~50-100 GB for 384 processes)
+- IPC improvement (Zen 5 vs Broadwell): ~2-3x per core
+- Combined speedup: 20-40x per single case vs current cluster node
+
+**Memory analysis for fork**:
+- GAP process with resolution + caches: ~200-500 MB
+- 384 fork processes (copy-on-write): ~50-100 GB actual (shared pages dominate)
+- 2.3 TB available: completely safe, no risk of OOM
+- 126 GB on current cluster: marginal for large space groups with many forks
+
+**Cost-effectiveness**:
+- A computation taking 30 days on 1 cluster node → ~1-2 days on EPYC 9965
+- $1,600/mo rental for 1-2 months = $1,600-3,200 total
+- Alternative: use current cluster's 16 nodes for outer-loop parallelism (free, but only helps for batch runs, not single-case speedup)
+
 ---
 
 ## 10. Summary of Recommended Actions
@@ -581,12 +674,12 @@ Each node uses `SPTSET_PARALLEL_JOBS := 20` for inner parallelism (28 cores, lea
 |----------|--------|-------------|-------------|------------------|--------|
 | **P0** | Add global config variables | `read.g` | ~5 lines | N/A (infrastructure) | ✅ Done |
 | **P1** | Parallelize `SptSetMapFromBarCocycle` | `bar_resolution_map_common.gi` | ~30 lines | ~2x on cluster3, 4-8x expected on nodes | ✅ Done |
-| **P1.5** | Compile GAP for CentOS 6 compute nodes | build scripts | ~1 hour work | unlocks 28-core nodes | TODO (deferred) |
-| **P2** | Parallelize `BuildDerivative` generator loop | `ss_vanilla.gi` | ~30 lines | 2-4x per derivative | TODO |
+| **P1.5** | Compile GAP for CentOS 6 compute nodes | build scripts | ~1 hour work | unlocks 28-core nodes | DONE |
+| **P2** | Parallelize `BuildDerivative` generator loop | `ss_vanilla.gi` | ~30 lines | 2-4x per derivative | DONE |
 | **P3** | Outer-loop parallelism in example scripts | `examples/*.g` | ~20 lines each | ~Nx for N cores | TODO |
 | **P4** | Cluster deployment scripts (PBS) | new shell scripts | ~50 lines | multi-node scaling | TODO |
 
-**Status**: P0 + P1 done and tested on cluster3. ~2x speedup with n=28-44 (synthetic benchmark), correctness verified. Next: P1.5 (compile for compute nodes) or P2 (generator-level parallelism).
+**Status**: P0-P2 done. P1.5 done (conda env `gap-centos6` with `sysroot_linux-64=2.12`). Benchmark jobs submitted: SG #10 ez on n05 (seq), n06 (P1), n07 (P1+P2).
 
 ---
 
