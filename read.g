@@ -1,3 +1,10 @@
+if not IsBound(SPTSET_PARALLEL_JOBS) then
+  SPTSET_PARALLEL_JOBS := 0;
+fi;
+if not IsBound(SPTSET_PARALLEL_THRESHOLD) then
+  SPTSET_PARALLEL_THRESHOLD := 20;
+fi;
+
 ReadPackage("SptSet", "lib/module.gi");
 ReadPackage("SptSet", "lib/zlmap.gi");
 ReadPackage("SptSet", "lib/coefficient.gi");

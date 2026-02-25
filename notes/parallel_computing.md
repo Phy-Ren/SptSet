@@ -493,7 +493,30 @@ The parallelism (n) is large enough to benefit from 4-8 workers at degrees 3+.
 | `ParListByFork` basic test | ✅ Working | `ParListByFork([1..20], i -> i^2, rec(NumberJobs := 4))` returns correct results |
 | `ParListByFork` with closures | ✅ Working | Closures capturing external state work correctly in forked children |
 | SptSet package loaded | ✅ Working | `LoadPackage("SptSet")` returns `true` (with metadata warnings, harmless) |
+| Phase 1 correctness | ✅ Working | Cs s12 point group: both sequential and parallel return `<ZL-Module with torsions [ 16 ]>` |
+| Phase 1 speedup | ✅ Measured | See §9.1.1 below |
 | GAP on compute nodes | ❌ **FAILED** | See §9.2 below |
+
+### 9.1.1 Phase 1 benchmark results (cluster3, 12 cores @ 1.70GHz)
+
+**Test setup**: SG #10 (P2/m, C2h) resolution, `SptSetMapFromBarCocycle` with synthetic heavy alpha_ closure (matrix computation simulating real O5 workload). Resolution dimensions: deg 4: n=28, deg 5: n=36, deg 6: n=44.
+
+| Workers | deg=4 (n=28) | deg=5 (n=36) | deg=6 (n=44) |
+|---------|-------------|-------------|-------------|
+| 0 (seq) | 2717 ms | 8856 ms | 27147 ms |
+| 4 | 1478 ms (1.84x) | 5545 ms (1.60x) | 17963 ms (1.51x) |
+| 8 | 1381 ms (1.97x) | 4939 ms (1.79x) | 15105 ms (1.80x) |
+
+**Correctness**: checksums match perfectly across all configurations (seq: -1800/2600/-5600, par: same).
+
+**Analysis**:
+- Speedup on cluster3 (12 cores, 1.70GHz) is **~1.8-2.0x** with 8 workers. Modest because:
+  - n is only 28-44 (real space groups have n=100-500+)
+  - cluster3 CPU is slow (1.70GHz) with only 12 cores
+  - Fork overhead is non-negligible relative to per-item cost at this n
+- On compute nodes (28 cores, 2.40GHz) with real space groups (n=100-500+), expect **4-8x** speedup per call
+- Point group computations (n=1 everywhere) do NOT benefit from Phase 1
+- Script: `debug/benchmark_parallel.g` (Cs s12 correctness), `/tmp/micro_bench2.g` (SG #10 performance)
 
 ### 9.2 Compute node incompatibility (BLOCKING for cluster deployment)
 
@@ -556,14 +579,14 @@ Each node uses `SPTSET_PARALLEL_JOBS := 20` for inner parallelism (28 cores, lea
 
 | Priority | Action | Target File | Change Size | Expected Speedup | Status |
 |----------|--------|-------------|-------------|------------------|--------|
-| **P0** | Add global config variables | `read.g` | ~5 lines | N/A (infrastructure) | TODO |
-| **P1** | Parallelize `SptSetMapFromBarCocycle` | `bar_resolution_map_common.gi` | ~30 lines | 4-6x per call (12 cores) | TODO |
+| **P0** | Add global config variables | `read.g` | ~5 lines | N/A (infrastructure) | ✅ Done |
+| **P1** | Parallelize `SptSetMapFromBarCocycle` | `bar_resolution_map_common.gi` | ~30 lines | ~2x on cluster3, 4-8x expected on nodes | ✅ Done |
 | **P1.5** | Compile GAP for CentOS 6 compute nodes | build scripts | ~1 hour work | unlocks 28-core nodes | TODO (deferred) |
 | **P2** | Parallelize `BuildDerivative` generator loop | `ss_vanilla.gi` | ~30 lines | 2-4x per derivative | TODO |
 | **P3** | Outer-loop parallelism in example scripts | `examples/*.g` | ~20 lines each | ~Nx for N cores | TODO |
 | **P4** | Cluster deployment scripts (PBS) | new shell scripts | ~50 lines | multi-node scaling | TODO |
 
-**Current plan: P0 + P1 on cluster3 (12 cores). Verify correctness, then benchmark. P1.5 when ready for production.**
+**Status**: P0 + P1 done and tested on cluster3. ~2x speedup with n=28-44 (synthetic benchmark), correctness verified. Next: P1.5 (compile for compute nodes) or P2 (generator-level parallelism).
 
 ---
 

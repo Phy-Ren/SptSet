@@ -48,17 +48,37 @@ InstallMethod(SptSetMapFromBarCocycle,
 "map from an inhomogeneous cocycle",
 [IsCategoryOfSptSetBarResMap, IsInt, IsGeneralMapping, IsFunction],
 function(brMap, deg, gAction, alpha_)
-  local n, val, i, fei, feiw;
+  local n, val, i, fei, feiw, nJobs;
   n := Dimension(brMap!.hapResolution)(deg);
-  val := [];
-  for i in [1..n] do
-    val[i] := 0;
-    fei := SptSetMapToBarWord(brMap, deg, i);
-    for feiw in fei do
-      val[i] := val[i] + feiw[1] * (feiw[2]^gAction)[1][1]
-        * CallFuncList(alpha_, feiw{[3..(deg+2)]});
+
+  nJobs := SPTSET_PARALLEL_JOBS;
+  if nJobs > 0 and n >= SPTSET_PARALLEL_THRESHOLD
+     and IsBoundGlobal("ParListByFork") then
+    for i in [1..n] do
+      SptSetMapToBarWord(brMap, deg, i);
     od;
-  od;
+
+    val := ParListByFork([1..n], function(idx)
+      local v, bar, w;
+      v := 0;
+      bar := SptSetMapToBarWord(brMap, deg, idx);
+      for w in bar do
+        v := v + w[1] * (w[2]^gAction)[1][1]
+          * CallFuncList(alpha_, w{[3..(deg+2)]});
+      od;
+      return v;
+    end, rec(NumberJobs := Minimum(nJobs, n)));
+  else
+    val := [];
+    for i in [1..n] do
+      val[i] := 0;
+      fei := SptSetMapToBarWord(brMap, deg, i);
+      for feiw in fei do
+        val[i] := val[i] + feiw[1] * (feiw[2]^gAction)[1][1]
+          * CallFuncList(alpha_, feiw{[3..(deg+2)]});
+      od;
+    od;
+  fi;
   return val;
 end);
 InstallMethod(SptSetMapFromBarCocycle,
