@@ -542,7 +542,68 @@ The parallelism (n) is large enough to benefit from 4-8 workers at degrees 3+.
 - Point group computations (n=1 everywhere) do NOT benefit from Phase 1
 - Script: `debug/benchmark_parallel.g` (Cs s12 correctness), `/tmp/micro_bench2.g` (SG #10 performance)
 
-### 9.2 Compute node incompatibility (BLOCKING for cluster deployment)
+### 9.1.2 Compute node benchmark: SG #10 ez (28 cores @ 2.40GHz)
+
+**Jobs**: 113953-113955, submitted 2025-02-25 16:53, on n05/n06/n07.
+
+| Config | Node | LayersVerbose (ms) | Speedup | Result |
+|--------|------|--------------------|---------|--------|
+| Sequential (JOBS=0) | n05 | 9,744,012 (162 min) | 1.00x | `[Z_0, [], Z_2^5, Z_2^6]` |
+| P1 only (JOBS=24, P2=false) | n06 | 9,011,686 (150 min) | 1.08x | same |
+| P1+P2 (JOBS=24, P2=true) | n07 | 3,673,434 (61 min) | **2.65x** | same |
+
+**Key finding**: Phase 1 alone gives almost NO speedup (1.08x) for SG #10. Phase 2 provides the entire 2.65x acceleration. Reasons:
+
+1. **Phase 1 fork overhead dominates**: SG #10 has n=20-52. Each `MapFromBarCocycle` call takes ~50ms sequentially. But `ParListByFork` with 24 workers costs ~100-200ms in fork/pipe overhead. Net result: parallel is slightly SLOWER per call. Phase 1 is only effective when per-iteration cost >> fork overhead (needs heavier alpha\_ or larger n).
+
+2. **Phase 2 works well**: BuildDerivative generator loop has m=2-12 generators, each taking minutes. Fork overhead is negligible. But m < 28 means most cores are idle. Average utilization ~3-5 cores out of 28.
+
+3. **28 cores are ~10-15% utilized**. To fully utilize, need larger space groups with both large n (for Phase 1) and large m (for Phase 2).
+
+**Implication**: For SG #10, the speedup ceiling with current approach is ~5-8x (if all BuildDerivative calls had m >= 28). For larger space groups with n=100+ and m=20+, speedup could reach 10-20x.
+
+### 9.1.3 Deployment troubleshooting log
+
+**Problem 1: conda activation fails on CentOS 6 compute nodes**
+```
+EnvironmentNameNotFound: Could not find conda environment: gap-centos6
+```
+Cause: conda binary or its Python runtime may not work on CentOS 6 (glibc 2.12). The `conda activate` command fails.
+Solution: Don't use `conda activate`. Instead set `LD_LIBRARY_PATH` directly:
+```csh
+setenv LD_LIBRARY_PATH ~/miniforge3/envs/gap-centos6/lib
+```
+
+**Problem 2: PBS forces csh, ignores `#PBS -S /bin/bash`**
+Cause: cluster's PBS/Torque configuration overrides shell selection. Even with `#PBS -S /bin/bash`, the job script runs under csh.
+Solution: Use csh syntax in PBS scripts. Use `setenv` instead of `export`. Avoid bash-specific features.
+
+**Problem 3: io.so not rebuilt by BuildPackages.sh**
+`BuildPackages.sh` skipped IO package (already built). The old io.so (compiled with sysroot 2.39) required GLIBC_2.33.
+Solution: Manually rebuild IO package:
+```bash
+conda activate gap-centos6
+cd ~/software/gap-4.13.1/pkg/io
+make clean; ./configure --with-gaproot=$HOME/software/gap-4.13.1; make
+```
+
+**Problem 4: Pipe input quoting issues in csh**
+GAP commands piped via `echo '...' | gap` break in csh due to different quoting rules.
+Solution: Write GAP commands to a file and run `gap -q -r -b file.g` instead of pipe.
+
+**Working PBS script template**:
+```csh
+#!/bin/csh
+#PBS -S /bin/csh
+#PBS -q normal
+#PBS -l nodes=1:ppn=28
+#PBS -N jobname
+
+setenv LD_LIBRARY_PATH ~/miniforge3/envs/gap-centos6/lib
+~/software/gap-4.13.1/gap -q -r -b ~/path/to/script.g
+```
+
+### 9.2 Compute node incompatibility (RESOLVED)
 
 The GAP binary compiled on cluster3 (Ubuntu 24.04, glibc 2.39) **cannot run** on compute nodes (CentOS 6.6, glibc 2.12):
 
@@ -666,6 +727,43 @@ Best option: **AMD EPYC 9965 dual-socket** bare metal (e.g., ReliableSite, ~$1,6
 - $1,600/mo rental for 1-2 months = $1,600-3,200 total
 - Alternative: use current cluster's 16 nodes for outer-loop parallelism (free, but only helps for batch runs, not single-case speedup)
 
+### 9.6 Target groups: SG #210, #219, #228 (analysis, 2025-02-26)
+
+**Goal**: Compute classification AND group structure for SG #210 (F4_132), #219 (F-43c), #228 (Fd-3c). These are the three hardest 3D space groups — sequential computation on a fast server ran 4+ months without finishing even the Majorana layer.
+
+**Point groups**:
+- SG #210: O (432), order 24
+- SG #219: T_d (-43m), order 24
+- SG #228: O_h (m-3m), order 48
+
+**Resolution dimension estimates** (based on scaling from SG #10):
+
+| deg | SG #10 (|G|=4) | SG #210/219 (|G|=24) | SG #228 (|G|=48) |
+|-----|---------------|---------------------|------------------|
+| 3 | 20 | ~120 | ~240 |
+| 5 | 36 | ~220 | ~440 |
+| 7 | 52 | ~310 | ~620 |
+
+Note: resolution construction itself takes 18+ minutes on cluster3 for these groups.
+
+**Parallelism effectiveness prediction**:
+- Phase 1: with n=200-600, items/worker=8-25, fork overhead negligible → **10-15x per call**
+- Phase 2: larger modules → more generators (m=20-100+) → good parallelism
+- Combined: 95%+ of computation parallelizable → **10x on 28 cores achievable**
+
+**Feasibility for 1-month deadline**:
+
+| Setup | Expected speedup | 4-month seq → | Enough? |
+|-------|-----------------|---------------|---------|
+| 1 cluster node (28 cores) | ~10x | ~12 days | Yes (marginal) |
+| Big-mem node n01-n04 (28c, 504GB) | ~10x | ~12 days | Yes (safer for memory) |
+| Rented EPYC 9965 (384 cores) | ~40-60x | ~2-3 days | Yes (comfortable) |
+
+**Risks**:
+1. Memory: n=600 resolution + fork(24 processes) → need 504GB nodes (n01-n04)
+2. Load imbalance: some generators in BuildDerivative much heavier than others
+3. Unknown: might hit algorithmic walls (exponential blowup at high pages)
+
 ---
 
 ## 10. Summary of Recommended Actions
@@ -675,11 +773,54 @@ Best option: **AMD EPYC 9965 dual-socket** bare metal (e.g., ReliableSite, ~$1,6
 | **P0** | Add global config variables | `read.g` | ~5 lines | N/A (infrastructure) | ✅ Done |
 | **P1** | Parallelize `SptSetMapFromBarCocycle` | `bar_resolution_map_common.gi` | ~30 lines | ~2x on cluster3, 4-8x expected on nodes | ✅ Done |
 | **P1.5** | Compile GAP for CentOS 6 compute nodes | build scripts | ~1 hour work | unlocks 28-core nodes | DONE |
-| **P2** | Parallelize `BuildDerivative` generator loop | `ss_vanilla.gi` | ~30 lines | 2-4x per derivative | DONE |
+| **P2** | Parallelize `BuildDerivative` generator loop | `ss_vanilla.gi` | ~30 lines | 2.66x classification | DONE |
+| **P2b** | Parallelize `SptSetSpecSeqResult` Step 3 j-loop | `ss_module.gi` | ~30 lines | 1.37x group structure | DONE |
+| **Doubling** | Repeated doubling in `VectorToClass` | `ss_module.gi` | ~15 lines | negligible (tj=2-4) | DONE |
+| **Stats** | Parallel stats tracking (`SptSetPrintStats`) | `read.g` + all | ~40 lines | diagnostic only | DONE |
 | **P3** | Outer-loop parallelism in example scripts | `examples/*.g` | ~20 lines each | ~Nx for N cores | TODO |
 | **P4** | Cluster deployment scripts (PBS) | new shell scripts | ~50 lines | multi-node scaling | TODO |
 
-**Status**: P0-P2 done. P1.5 done (conda env `gap-centos6` with `sysroot_linux-64=2.12`). Benchmark jobs submitted: SG #10 ez on n05 (seq), n06 (P1), n07 (P1+P2).
+### Full benchmark results: SG #10 (C2h) ez, 28 cores @ 2.40GHz
+
+**Three-way comparison (classification + group structure)**:
+
+| Config | LayersVerbose | SpecSeqResult | Total | Speedup | Result |
+|--------|---------------|---------------|-------|---------|--------|
+| Sequential (JOBS=0) | 9,746s (2.7h) | 9,550s (2.7h) | **19,296s (5.4h)** | 1.00x | Z_2 x Z_4^5 x Z |
+| P1+P2 (JOBS=24) | 3,667s (1.0h) | 6,966s (1.9h) | **10,634s (3.0h)** | 1.82x | same |
+| P1+P2+doubling (JOBS=24) | 3,666s (1.0h) | 6,964s (1.9h) | **10,629s (3.0h)** | 1.82x | same |
+
+**Phase-level speedup**:
+- Classification (LayersVerbose): 9,746s → 3,666s = **2.66x**
+- Group structure (SpecSeqResult): 9,550s → 6,964s = **1.37x**
+- Overall: 19,296s → 10,629s = **1.82x**
+
+**Stats from parallel run (P1+P2+doubling)**:
+```
+P1 (MapFromBarCocycle): 19 parallel calls, 9,861s total — 93% of computation
+P2 (BuildDerivative):    8 calls, 525s, max_m=20         —  5%
+P2b (extension):         1 call, 238s, max_ngens=5        —  2%
+```
+
+**Why only 1.82x on 28 cores?**
+
+1. **93% of time in Phase 1 (MapFromBarCocycle)**: SG #10 has n=20-52. Each `MapFromBarCocycle` call is individually fast (~50-500ms). `ParListByFork` fork/pipe overhead (~100-200ms per call) is comparable to the computation → parallel barely helps.
+
+2. **Phase 2 only covers 5% of time**: BuildDerivative is heavily parallelized (max_m=20) but accounts for only 5% of total.
+
+3. **Phase 2b covers 2%**: Only 1 extension computation had nGens >= 2.
+
+4. **Doubling had zero effect**: SG #10 torsions are 2 and 4 — savings of 1-2 class additions per call is negligible.
+
+**Prediction for larger space groups**: With n=200+ and heavier alpha\_ closures, Phase 1's per-item cost would dominate fork overhead → expect 4-8x. For groups with torsion tj=16+, doubling would contribute additional savings.
+
+**Files modified in this project**:
+- `read.g`: config variables + stats init + `SptSetPrintStats`
+- `lib/bar_resolution_map_common.gi`: Phase 1 parallel + stats
+- `lib/ss_vanilla.gi`: Phase 2 parallel + stats (both BuildDerivative and BuildDerivative2)
+- `lib/ss_module.gi`: Phase 2b parallel + repeated doubling in VectorToClass + stats
+- `debug/benchmark_parallel.g`, `debug/bench_sg10_ez.g`, `debug/bench_sg10_ez_full.g`: benchmarks
+- `jobs/`: PBS scripts, setup files, test_io.g
 
 ---
 

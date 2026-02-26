@@ -48,12 +48,13 @@ InstallMethod(SptSetMapFromBarCocycle,
 "map from an inhomogeneous cocycle",
 [IsCategoryOfSptSetBarResMap, IsInt, IsGeneralMapping, IsFunction],
 function(brMap, deg, gAction, alpha_)
-  local n, val, i, fei, feiw, nJobs;
+  local n, val, i, fei, feiw, nJobs, t_start;
   n := Dimension(brMap!.hapResolution)(deg);
 
   nJobs := SPTSET_PARALLEL_JOBS;
   if nJobs > 0 and n >= SPTSET_PARALLEL_THRESHOLD
      and IsBoundGlobal("ParListByFork") then
+    t_start := NanosecondsSinceEpoch();
     for i in [1..n] do
       SptSetMapToBarWord(brMap, deg, i);
     od;
@@ -68,7 +69,11 @@ function(brMap, deg, gAction, alpha_)
       od;
       return v;
     end, rec(NumberJobs := Minimum(nJobs, n)));
+    SPTSET_STATS.p1_par_calls := SPTSET_STATS.p1_par_calls + 1;
+    SPTSET_STATS.p1_par_time := SPTSET_STATS.p1_par_time
+      + Int((NanosecondsSinceEpoch()-t_start)/1000000);
   else
+    t_start := NanosecondsSinceEpoch();
     val := [];
     for i in [1..n] do
       val[i] := 0;
@@ -78,6 +83,9 @@ function(brMap, deg, gAction, alpha_)
           * CallFuncList(alpha_, feiw{[3..(deg+2)]});
       od;
     od;
+    SPTSET_STATS.p1_seq_calls := SPTSET_STATS.p1_seq_calls + 1;
+    SPTSET_STATS.p1_seq_time := SPTSET_STATS.p1_seq_time
+      + Int((NanosecondsSinceEpoch()-t_start)/1000000);
   fi;
   return val;
 end);

@@ -111,7 +111,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
   "build d^pq_r",
   [IsSptSetSpecSeqVanillaRep, IsInt, IsInt, IsInt],
   function(ss, r, p, q)
-    local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs;
+    local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs, t_p2;
     M := SptSetSpecSeqComponent(ss, r, p, q);
     N := SptSetSpecSeqComponent(ss, r, p+r, q-r+1);
     if SptSetFpZModuleIsZero(M) or SptSetFpZModuleIsZero(N) then
@@ -129,6 +129,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
        and m >= 2 and IsBoundGlobal("ParListByFork") then
       saved_jobs := SPTSET_PARALLEL_JOBS;
       SPTSET_PARALLEL_JOBS := Maximum(0, Int(saved_jobs / m));
+      t_p2 := NanosecondsSinceEpoch();
 
       fA := ParListByFork([1..m], function(idx)
         local lnp, ldnp, lcl, lopr_, lopr;
@@ -145,6 +146,10 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
       end, rec(NumberJobs := Minimum(m, saved_jobs)));
 
       SPTSET_PARALLEL_JOBS := saved_jobs;
+      SPTSET_STATS.p2_calls := SPTSET_STATS.p2_calls + 1;
+      SPTSET_STATS.p2_time := SPTSET_STATS.p2_time
+        + Int((NanosecondsSinceEpoch()-t_p2)/1000000);
+      if m > SPTSET_STATS.p2_max_m then SPTSET_STATS.p2_max_m := m; fi;
     else
       fA := [];
       for i in [1..m] do
@@ -171,7 +176,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
   "build d^pq_r",
   [IsSptSetSpecSeqVanillaRep, IsInt, IsInt, IsInt],
   function(ss, r, p, q)
-    local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs;
+    local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs, t_p2;
     M := SptSetSpecSeqComponent(ss, r, p, q);
     N := SptSetSpecSeqComponent2(ss, r, p+r, q-r+1);
     if SptSetFpZModuleIsZero(M) or SptSetFpZModuleIsZero(N) then
@@ -189,6 +194,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
        and m >= 2 and IsBoundGlobal("ParListByFork") then
       saved_jobs := SPTSET_PARALLEL_JOBS;
       SPTSET_PARALLEL_JOBS := Maximum(0, Int(saved_jobs / m));
+      t_p2 := NanosecondsSinceEpoch();
 
       fA := ParListByFork([1..m], function(idx)
         local lnp, ldnp, lcl, lopr_, lopr;
@@ -205,6 +211,10 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
       end, rec(NumberJobs := Minimum(m, saved_jobs)));
 
       SPTSET_PARALLEL_JOBS := saved_jobs;
+      SPTSET_STATS.p2_calls := SPTSET_STATS.p2_calls + 1;
+      SPTSET_STATS.p2_time := SPTSET_STATS.p2_time
+        + Int((NanosecondsSinceEpoch()-t_p2)/1000000);
+      if m > SPTSET_STATS.p2_max_m then SPTSET_STATS.p2_max_m := m; fi;
     else
       fA := [];
       for i in [1..m] do

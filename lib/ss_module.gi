@@ -44,24 +44,32 @@ InstallGlobalFunction
 InstallGlobalFunction
     (SptSetSpecSeqModuleVectorToClass,
     function(M, a)
-        local n, ss, deg, i, j, cl, nci;
+        local n, ss, deg, i, ai, cl, ci, pow;
         n := SptSetEmbedDimension(M);
         ss := M!.specSeq;
         deg := M!.deg;
         Assert(0, n = Length(a));
-        
+
         cl := SptSetSpecSeqClassFromCochainNC(SptSetSpecSeqCochainZero(ss, deg));
         for i in [1..n] do
-            if a[i] >= 0 then
-                for j in [1..(a[i])] do
-                    cl := cl + M!.basis_classes[i];
-                od;
-            else;
-                nci := -M!.basis_classes[i];
-                for j in [1..(-a[i])] do
-                    cl := cl + nci;
-                od;
+            ai := a[i];
+            if ai = 0 then continue; fi;
+            if ai < 0 then
+                ci := -M!.basis_classes[i];
+                ai := -ai;
+            else
+                ci := M!.basis_classes[i];
             fi;
+            pow := ci;
+            while ai > 0 do
+                if ai mod 2 = 1 then
+                    cl := cl + pow;
+                fi;
+                ai := Int(ai / 2);
+                if ai > 0 then
+                    pow := pow + pow;
+                fi;
+            od;
         od;
         return cl;
     end);
@@ -258,7 +266,8 @@ end);
 InstallGlobalFunction(SptSetSpecSeqResult,
 function(ss, deg, pRange)
     local nLayers, Exs, nGens, totalGens, Rmat,
-          offsets, pi, pj, p, j, k, tj, cjn, vjnf, M;
+          offsets, pi, pj, p, j, k, tj, cjn, vjnf, M,
+          saved_jobs, results, t_p2b;
 
     nLayers := Length(pRange);
 
@@ -281,7 +290,6 @@ function(ss, deg, pRange)
         return SptSetZeroModule();
     fi;
 
-    # Compute offsets for each layer's generators in the full matrix
     offsets := [];
     offsets[1] := 0;
     for pi in [2..nLayers] do
@@ -290,44 +298,80 @@ function(ss, deg, pRange)
 
     Rmat := NullMat(totalGens, totalGens);
 
-    # Step 2: fill diagonal blocks (torsions from each layer)
+    # Step 2: fill diagonal blocks
     for pi in [1..nLayers] do
         for j in [1..nGens[pi]] do
             Rmat[offsets[pi] + j][offsets[pi] + j] := Exs[pi]!.relations[j][j];
         od;
     od;
 
-    # Step 3: fill off-diagonal blocks from pairwise extensions.
-    # For each generator of layer pi with torsion tj, compute tj*(gen)
-    # using ONLY the single-layer ComponentEx (no mixed generators).
-    # Then check its leading vector in each LATER layer pj > pi.
-    # This captures both adjacent extensions (MC->CF) and skip-layer
-    # extensions (e.g., p+ip skipping MC=Z_1 to reach CF directly).
+    # Step 3: fill off-diagonal blocks (Phase 2b: parallelize j-loop)
     for pi in [1..(nLayers-1)] do
         if nGens[pi] = 0 then
             continue;
         fi;
 
-        for j in [1..nGens[pi]] do
-            tj := Exs[pi]!.relations[j][j];
-            if tj <> 0 then
-                cjn := SptSetSpecSeqModuleVectorToClass(
-                    Exs[pi], tj * Exs[pi]!.generators[j]);
-                # Find the first later layer where this class is nontrivial
-                for pj in [(pi+1)..nLayers] do
-                    if nGens[pj] = 0 then
-                        continue;
-                    fi;
-                    vjnf := SptSetSpecSeqModuleClassToLeadingVector(Exs[pj], cjn);
-                    if vjnf <> fail then
-                        for k in [1..nGens[pj]] do
-                            Rmat[offsets[pi] + j][offsets[pj] + k] := vjnf[k];
-                        od;
-                        break;  # only fill the first nontrivial target layer
+        if SPTSET_PARALLEL_JOBS > 0 and SPTSET_PHASE2_ENABLED
+           and nGens[pi] >= 2 and IsBoundGlobal("ParListByFork") then
+            saved_jobs := SPTSET_PARALLEL_JOBS;
+            SPTSET_PARALLEL_JOBS := Maximum(0, Int(saved_jobs / nGens[pi]));
+            t_p2b := NanosecondsSinceEpoch();
+
+            results := ParListByFork([1..nGens[pi]], function(jj)
+                local ltj, lcjn, lpj, lvjnf;
+                ltj := Exs[pi]!.relations[jj][jj];
+                if ltj = 0 then return [0, []]; fi;
+                lcjn := SptSetSpecSeqModuleVectorToClass(
+                    Exs[pi], ltj * Exs[pi]!.generators[jj]);
+                for lpj in [(pi+1)..nLayers] do
+                    if nGens[lpj] = 0 then continue; fi;
+                    lvjnf := SptSetSpecSeqModuleClassToLeadingVector(
+                        Exs[lpj], lcjn);
+                    if lvjnf <> fail then
+                        return [lpj, lvjnf];
                     fi;
                 od;
-            fi;
-        od;
+                return [0, []];
+            end, rec(NumberJobs := Minimum(nGens[pi], saved_jobs)));
+
+            SPTSET_PARALLEL_JOBS := saved_jobs;
+            SPTSET_STATS.p2b_calls := SPTSET_STATS.p2b_calls + 1;
+            SPTSET_STATS.p2b_time := SPTSET_STATS.p2b_time
+              + Int((NanosecondsSinceEpoch()-t_p2b)/1000000);
+            if nGens[pi] > SPTSET_STATS.p2b_max_ngens then
+              SPTSET_STATS.p2b_max_ngens := nGens[pi]; fi;
+
+            for j in [1..nGens[pi]] do
+                if results[j][1] > 0 then
+                    pj := results[j][1];
+                    vjnf := results[j][2];
+                    for k in [1..nGens[pj]] do
+                        Rmat[offsets[pi] + j][offsets[pj] + k] := vjnf[k];
+                    od;
+                fi;
+            od;
+        else
+            for j in [1..nGens[pi]] do
+                tj := Exs[pi]!.relations[j][j];
+                if tj <> 0 then
+                    cjn := SptSetSpecSeqModuleVectorToClass(
+                        Exs[pi], tj * Exs[pi]!.generators[j]);
+                    for pj in [(pi+1)..nLayers] do
+                        if nGens[pj] = 0 then
+                            continue;
+                        fi;
+                        vjnf := SptSetSpecSeqModuleClassToLeadingVector(
+                            Exs[pj], cjn);
+                        if vjnf <> fail then
+                            for k in [1..nGens[pj]] do
+                                Rmat[offsets[pi] + j][offsets[pj] + k] := vjnf[k];
+                            od;
+                            break;
+                        fi;
+                    od;
+                fi;
+            od;
+        fi;
     od;
 
     # Step 4: build FpZModule from the relation matrix

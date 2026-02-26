@@ -8,6 +8,33 @@ if not IsBound(SPTSET_PHASE2_ENABLED) then
   SPTSET_PHASE2_ENABLED := true;
 fi;
 
+SPTSET_STATS := rec(
+  p1_par_calls := 0, p1_par_time := 0,
+  p1_seq_calls := 0, p1_seq_time := 0,
+  p2_calls := 0, p2_time := 0, p2_max_m := 0,
+  p2b_calls := 0, p2b_time := 0, p2b_max_ngens := 0
+);
+
+BindGlobal("SptSetPrintStats", function()
+  Print("=== SptSet Parallel Stats ===\n");
+  Print("Config: JOBS=", SPTSET_PARALLEL_JOBS,
+    " THRESHOLD=", SPTSET_PARALLEL_THRESHOLD,
+    " PHASE2=", SPTSET_PHASE2_ENABLED, "\n");
+  Print("P1 (MapFromBarCocycle): ",
+    SPTSET_STATS.p1_par_calls, " parallel calls (",
+    SPTSET_STATS.p1_par_time, "ms), ",
+    SPTSET_STATS.p1_seq_calls, " sequential calls (",
+    SPTSET_STATS.p1_seq_time, "ms)\n");
+  Print("P2 (BuildDerivative): ",
+    SPTSET_STATS.p2_calls, " calls (",
+    SPTSET_STATS.p2_time, "ms), max_m=",
+    SPTSET_STATS.p2_max_m, "\n");
+  Print("P2b (SpecSeqResult ext): ",
+    SPTSET_STATS.p2b_calls, " calls (",
+    SPTSET_STATS.p2b_time, "ms), max_ngens=",
+    SPTSET_STATS.p2b_max_ngens, "\n");
+end);
+
 ReadPackage("SptSet", "lib/module.gi");
 ReadPackage("SptSet", "lib/zlmap.gi");
 ReadPackage("SptSet", "lib/coefficient.gi");
