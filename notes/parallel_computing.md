@@ -889,3 +889,73 @@ Kill(farm);
 ```
 
 **Important**: `ParListByFork` handles all forking, communication, and result collection internally. The worker function runs in a forked child process that has the FULL parent state. Results must be serializable by `IO_Pickle` (integers, rationals, lists, strings, records — NOT arbitrary GAP objects).
+
+---
+
+## Appendix C: Checkpoint/Restart Mechanism (2026-02-26)
+
+Long-running computations (weeks to months) need checkpoint/restart to survive PBS wall-time limits, hardware failures, and power outages. Full details in `notes/checkpoint.md`.
+
+### Approach: SaveWorkspace
+
+GAP's `SaveWorkspace("file.ws")` dumps the entire heap (all objects, closures, caches) to a binary file. `gap -L file.ws` restores it. SptSet's spectral sequence pages are cached in `ss!.modulePages` — after restore, re-running the computation automatically skips all cached pages.
+
+### Verification Results (cluster3, GAP 4.13.1, GASMAN GC)
+
+| Test | Result |
+|------|--------|
+| SaveWorkspace inside for loop | PASS |
+| Closure survival (basic lambda) | PASS |
+| SptSet SS object + cache survival | PASS |
+| SptSet closure survival (bdry, spectrum, brMap) | PASS |
+| Continued computation after restore | PASS |
+| Full checkpoint-resume cycle (7 pages) | PASS |
+| Restore speed | ~5s (vs ~30s fresh start) |
+| Workspace file size (point group) | 128 MB |
+
+### Driver Script Pattern
+
+See `jobs/checkpoint_driver.g`:
+
+```
+if not IsBound(CKPT_STEP) then
+    # Fresh start: LoadPackage, build resolution, build SS
+    CKPT_STEP := 0
+else
+    # Resume: all objects restored from workspace
+fi
+
+for each page i:
+    if i > CKPT_STEP then
+        compute page i
+        CKPT_STEP := i
+        SaveWorkspace(checkpoint_file)
+    fi
+```
+
+Dual safety: CKPT_STEP skips checkpointed steps; SptSet internal cache independently skips re-computation.
+
+### PBS Auto-Resume
+
+See `jobs/submit_checkpoint.sh`:
+
+```csh
+if ( -f checkpoint.ws ) then
+    gap -L checkpoint.ws -b driver.g    # resume
+else
+    gap -b driver.g                     # fresh start
+endif
+```
+
+If the job is killed, simply resubmit — it resumes from the last checkpoint automatically. Use `extended` queue (180 days) for maximum protection.
+
+### Checkpoint Granularity
+
+Checkpoint saves happen **between pages** of the spectral sequence. If a single page computation (e.g., E^{2,2}_2 for SG #228) takes days and is interrupted, that page's progress is lost — but all previously completed pages survive. This is a fundamental limitation of the per-page granularity.
+
+### Files
+
+- `jobs/checkpoint_driver.g`: Generic checkpoint driver script
+- `jobs/submit_checkpoint.sh`: PBS auto-resume script
+- `jobs/setup_sg210_ckpt.g`: Example setup for SG #210
+- `notes/checkpoint.md`: Full technical documentation

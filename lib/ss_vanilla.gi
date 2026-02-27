@@ -125,6 +125,15 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
     m := Length(M!.generators);
     n := Length(N!.generators);
 
+    if not IsBound(ss!.derivPartial) then ss!.derivPartial := []; fi;
+    if not IsBound(ss!.derivPartial[r+1]) then ss!.derivPartial[r+1] := []; fi;
+    if not IsBound(ss!.derivPartial[r+1][p+1]) then ss!.derivPartial[r+1][p+1] := []; fi;
+    if IsBound(ss!.derivPartial[r+1][p+1][q+1]) then
+      fA := ss!.derivPartial[r+1][p+1][q+1];
+    else
+      fA := [];
+    fi;
+
     if SPTSET_PARALLEL_JOBS > 0 and SPTSET_PHASE2_ENABLED
        and m >= 2 and IsBoundGlobal("ParListByFork") then
       saved_jobs := SPTSET_PARALLEL_JOBS;
@@ -150,22 +159,40 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
       SPTSET_STATS.p2_time := SPTSET_STATS.p2_time
         + Int((NanosecondsSinceEpoch()-t_p2)/1000000);
       if m > SPTSET_STATS.p2_max_m then SPTSET_STATS.p2_max_m := m; fi;
+      if SPTSET_CHECKPOINT_HOOK <> false then
+        Print("    d^{", p, ",", q, "}_", r,
+          " all ", m, " gens done (parallel), saving...\n");
+        SPTSET_CHECKPOINT_HOOK();
+      fi;
     else
-      fA := [];
       for i in [1..m] do
-        np_ := SptSetMapToBarCocycle(ss!.brMap, p,
-          ss!.spectrum[q+1], M!.generators[i]);
-        dnp := SptSetSpecSeqCoboundarySL(ss, p+q, p, np_);
-        dnp!.layers[p+1 +1] := ZeroCocycle@;
-        cl_dnp := SptSetSpecSeqClassFromCochainNC(dnp);
-        PartialPurifySSClass@(cl_dnp, r, p+r-1);
-        Assert(-1, LeadingLayer(cl_dnp) = p+r-1,
-          "ASSERTION FAIL: obstruction does not vanish on the previous page.");
-        opr_ := NegativeInhomoCochain@(cl_dnp!.cochain!.layers[p+r +1]);
-        opr := SptSetMapFromBarCocycle(ss!.brMap,
-          p+r, ss!.spectrum[q-r+1 +1], opr_);
-        fA[i] := opr * N!.projection;
+        if not IsBound(fA[i]) then
+          if SPTSET_CHECKPOINT_HOOK <> false then
+            Print("    d^{", p, ",", q, "}_", r,
+              " gen ", i, "/", m, "...\n");
+          fi;
+          np_ := SptSetMapToBarCocycle(ss!.brMap, p,
+            ss!.spectrum[q+1], M!.generators[i]);
+          dnp := SptSetSpecSeqCoboundarySL(ss, p+q, p, np_);
+          dnp!.layers[p+1 +1] := ZeroCocycle@;
+          cl_dnp := SptSetSpecSeqClassFromCochainNC(dnp);
+          PartialPurifySSClass@(cl_dnp, r, p+r-1);
+          Assert(-1, LeadingLayer(cl_dnp) = p+r-1,
+            "ASSERTION FAIL: obstruction does not vanish on the previous page.");
+          opr_ := NegativeInhomoCochain@(cl_dnp!.cochain!.layers[p+r +1]);
+          opr := SptSetMapFromBarCocycle(ss!.brMap,
+            p+r, ss!.spectrum[q-r+1 +1], opr_);
+          fA[i] := opr * N!.projection;
+          if SPTSET_CHECKPOINT_HOOK <> false then
+            ss!.derivPartial[r+1][p+1][q+1] := fA;
+            SPTSET_CHECKPOINT_HOOK();
+          fi;
+        fi;
       od;
+    fi;
+
+    if IsBound(ss!.derivPartial[r+1][p+1][q+1]) then
+      Unbind(ss!.derivPartial[r+1][p+1][q+1]);
     fi;
 
     return SptSetZLMapByImages(M, N, fA);
@@ -190,6 +217,15 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
     m := Length(M!.generators);
     n := Length(N!.generators);
 
+    if not IsBound(ss!.deriv2Partial) then ss!.deriv2Partial := []; fi;
+    if not IsBound(ss!.deriv2Partial[r+1]) then ss!.deriv2Partial[r+1] := []; fi;
+    if not IsBound(ss!.deriv2Partial[r+1][p+1]) then ss!.deriv2Partial[r+1][p+1] := []; fi;
+    if IsBound(ss!.deriv2Partial[r+1][p+1][q+1]) then
+      fA := ss!.deriv2Partial[r+1][p+1][q+1];
+    else
+      fA := [];
+    fi;
+
     if SPTSET_PARALLEL_JOBS > 0 and SPTSET_PHASE2_ENABLED
        and m >= 2 and IsBoundGlobal("ParListByFork") then
       saved_jobs := SPTSET_PARALLEL_JOBS;
@@ -215,22 +251,40 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
       SPTSET_STATS.p2_time := SPTSET_STATS.p2_time
         + Int((NanosecondsSinceEpoch()-t_p2)/1000000);
       if m > SPTSET_STATS.p2_max_m then SPTSET_STATS.p2_max_m := m; fi;
+      if SPTSET_CHECKPOINT_HOOK <> false then
+        Print("    d2^{", p, ",", q, "}_", r,
+          " all ", m, " gens done (parallel), saving...\n");
+        SPTSET_CHECKPOINT_HOOK();
+      fi;
     else
-      fA := [];
       for i in [1..m] do
-        np_ := SptSetMapToBarCocycle(ss!.brMap, p,
-          ss!.spectrum[q+1], M!.generators[i]);
-        dnp := SptSetSpecSeqCoboundarySL(ss, p+q, p, np_);
-        dnp!.layers[p+1 +1] := ZeroCocycle@;
-        cl_dnp := SptSetSpecSeqClassFromCochainNC(dnp);
-        PartialPurifySSClass@(cl_dnp, r, p+r-1);
-        Assert(-1, LeadingLayer(cl_dnp) = p+r-1,
-          "ASSERTION FAIL: obstruction does not vanish on the previous page.");
-        opr_ := NegativeInhomoCochain@(cl_dnp!.cochain!.layers[p+r +1]);
-        opr := SptSetMapFromBarCocycle(ss!.brMap,
-          p+r, ss!.spectrum[q-r+1 +1], opr_);
-        fA[i] := opr * N!.projection;
+        if not IsBound(fA[i]) then
+          if SPTSET_CHECKPOINT_HOOK <> false then
+            Print("    d2^{", p, ",", q, "}_", r,
+              " gen ", i, "/", m, "...\n");
+          fi;
+          np_ := SptSetMapToBarCocycle(ss!.brMap, p,
+            ss!.spectrum[q+1], M!.generators[i]);
+          dnp := SptSetSpecSeqCoboundarySL(ss, p+q, p, np_);
+          dnp!.layers[p+1 +1] := ZeroCocycle@;
+          cl_dnp := SptSetSpecSeqClassFromCochainNC(dnp);
+          PartialPurifySSClass@(cl_dnp, r, p+r-1);
+          Assert(-1, LeadingLayer(cl_dnp) = p+r-1,
+            "ASSERTION FAIL: obstruction does not vanish on the previous page.");
+          opr_ := NegativeInhomoCochain@(cl_dnp!.cochain!.layers[p+r +1]);
+          opr := SptSetMapFromBarCocycle(ss!.brMap,
+            p+r, ss!.spectrum[q-r+1 +1], opr_);
+          fA[i] := opr * N!.projection;
+          if SPTSET_CHECKPOINT_HOOK <> false then
+            ss!.deriv2Partial[r+1][p+1][q+1] := fA;
+            SPTSET_CHECKPOINT_HOOK();
+          fi;
+        fi;
       od;
+    fi;
+
+    if IsBound(ss!.deriv2Partial[r+1][p+1][q+1]) then
+      Unbind(ss!.deriv2Partial[r+1][p+1][q+1]);
     fi;
 
     return SptSetZLMapByImages(M, N, fA);

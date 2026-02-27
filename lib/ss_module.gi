@@ -17,23 +17,48 @@ BindGlobal(
 InstallGlobalFunction
     (SptSetSpecSeqComponentEx,
     function(ss, p, q)
-        local Epq, compEx, n, np, clnp;
+        local Epq, compEx, n, np, clnp, i, startIdx;
         Epq := SptSetSpecSeqComponentInf(ss, p, q);
         SptSetFpZModuleCanonicalForm(Epq);
-        compEx := rec();
-        compEx.specSeq := ss;
-        compEx.deg := p + q;
-        compEx.pRange := [p];
-        compEx.basis_classes := [];
-        compEx.components := [];
-        compEx.components[p] := Epq;
         n := SptSetNumberOfGenerators(Epq);
-        compEx.vector_embedings := [];
-        compEx.vector_embedings[p] := IdentityMat(n);
-        for np in Epq!.generators do
-            clnp := SptSetSpecSeqClassFromLevelCocycle(ss, compEx.deg, p, np);
+
+        if not IsBound(ss!.compExPartial) then ss!.compExPartial := []; fi;
+        if not IsBound(ss!.compExPartial[p+1]) then ss!.compExPartial[p+1] := []; fi;
+        if IsBound(ss!.compExPartial[p+1][q+1]) then
+            compEx := ss!.compExPartial[p+1][q+1];
+            startIdx := Length(compEx.basis_classes) + 1;
+        else
+            compEx := rec();
+            compEx.specSeq := ss;
+            compEx.deg := p + q;
+            compEx.pRange := [p];
+            compEx.basis_classes := [];
+            compEx.components := [];
+            compEx.components[p] := Epq;
+            compEx.vector_embedings := [];
+            compEx.vector_embedings[p] := IdentityMat(n);
+            startIdx := 1;
+        fi;
+
+        for i in [startIdx..n] do
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                Print("    ComponentEx(", p, ",", q,
+                  ") class ", i, "/", n, "...\n");
+            fi;
+            clnp := SptSetSpecSeqClassFromLevelCocycle(
+                ss, compEx.deg, p, Epq!.generators[i]);
             Add(compEx.basis_classes, clnp);
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                ss!.compExPartial[p+1][q+1] := compEx;
+                SPTSET_CHECKPOINT_HOOK();
+            fi;
         od;
+
+        if IsBound(ss!.compExPartial[p+1]) and
+           IsBound(ss!.compExPartial[p+1][q+1]) then
+            Unbind(ss!.compExPartial[p+1][q+1]);
+        fi;
+
         compEx.generators := IdentityMat(n);
         compEx.projection := IdentityMat(n);
         compEx.relations := Epq!.relations;
@@ -267,26 +292,57 @@ InstallGlobalFunction(SptSetSpecSeqResult,
 function(ss, deg, pRange)
     local nLayers, Exs, nGens, totalGens, Rmat,
           offsets, pi, pj, p, j, k, tj, cjn, vjnf, M,
-          saved_jobs, results, t_p2b;
+          saved_jobs, results, t_p2b, partial, doneRow;
 
     nLayers := Length(pRange);
 
+    if not IsBound(ss!.resultPartial) then ss!.resultPartial := []; fi;
+    if IsBound(ss!.resultPartial[deg+1]) then
+        partial := ss!.resultPartial[deg+1];
+        Exs := partial.Exs;
+        nGens := partial.nGens;
+    else
+        partial := false;
+        Exs := [];
+        nGens := [];
+    fi;
+
     # Step 1: get ComponentEx for each layer independently
-    Exs := [];
-    nGens := [];
     for pi in [1..nLayers] do
-        p := pRange[pi];
-        Exs[pi] := SptSetSpecSeqComponentEx(ss, p, deg - p);
-        SptSetFpZModuleCanonicalForm(Exs[pi]);
-        if SptSetFpZModuleIsZero(Exs[pi]) then
-            nGens[pi] := 0;
+        if not IsBound(Exs[pi]) then
+            p := pRange[pi];
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                Print("  Result(deg=", deg, ") layer ", pi,
+                  "/", nLayers, " (p=", p, ")...\n");
+            fi;
+            Exs[pi] := SptSetSpecSeqComponentEx(ss, p, deg - p);
+            SptSetFpZModuleCanonicalForm(Exs[pi]);
+            if SptSetFpZModuleIsZero(Exs[pi]) then
+                nGens[pi] := 0;
+            else
+                nGens[pi] := SptSetNumberOfGenerators(Exs[pi]);
+            fi;
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                ss!.resultPartial[deg+1] := rec(
+                    Exs := Exs, nGens := nGens, Rmat := false, doneRow := []);
+                SPTSET_CHECKPOINT_HOOK();
+            fi;
         else
-            nGens[pi] := SptSetNumberOfGenerators(Exs[pi]);
+            if not IsBound(nGens[pi]) then
+                if SptSetFpZModuleIsZero(Exs[pi]) then
+                    nGens[pi] := 0;
+                else
+                    nGens[pi] := SptSetNumberOfGenerators(Exs[pi]);
+                fi;
+            fi;
         fi;
     od;
 
     totalGens := Sum(nGens);
     if totalGens = 0 then
+        if IsBound(ss!.resultPartial[deg+1]) then
+            Unbind(ss!.resultPartial[deg+1]);
+        fi;
         return SptSetZeroModule();
     fi;
 
@@ -296,16 +352,23 @@ function(ss, deg, pRange)
         offsets[pi] := offsets[pi-1] + nGens[pi-1];
     od;
 
-    Rmat := NullMat(totalGens, totalGens);
+    if partial <> false and partial.Rmat <> false then
+        Rmat := partial.Rmat;
+        doneRow := partial.doneRow;
+    else
+        Rmat := NullMat(totalGens, totalGens);
+        doneRow := [];
 
-    # Step 2: fill diagonal blocks
-    for pi in [1..nLayers] do
-        for j in [1..nGens[pi]] do
-            Rmat[offsets[pi] + j][offsets[pi] + j] := Exs[pi]!.relations[j][j];
+        # Step 2: fill diagonal blocks
+        for pi in [1..nLayers] do
+            for j in [1..nGens[pi]] do
+                Rmat[offsets[pi] + j][offsets[pi] + j] :=
+                    Exs[pi]!.relations[j][j];
+            od;
         od;
-    od;
+    fi;
 
-    # Step 3: fill off-diagonal blocks (Phase 2b: parallelize j-loop)
+    # Step 3: fill off-diagonal blocks
     for pi in [1..(nLayers-1)] do
         if nGens[pi] = 0 then
             continue;
@@ -350,10 +413,25 @@ function(ss, deg, pRange)
                     od;
                 fi;
             od;
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                Print("    ext layer ", pi,
+                  " all ", nGens[pi], " gens done (parallel), saving...\n");
+                ss!.resultPartial[deg+1] := rec(
+                    Exs := Exs, nGens := nGens,
+                    Rmat := Rmat, doneRow := doneRow);
+                SPTSET_CHECKPOINT_HOOK();
+            fi;
         else
             for j in [1..nGens[pi]] do
+                if IsBound(doneRow[offsets[pi] + j]) then
+                    continue;
+                fi;
                 tj := Exs[pi]!.relations[j][j];
                 if tj <> 0 then
+                    if SPTSET_CHECKPOINT_HOOK <> false then
+                        Print("    ext layer ", pi, " gen ", j,
+                          "/", nGens[pi], "...\n");
+                    fi;
                     cjn := SptSetSpecSeqModuleVectorToClass(
                         Exs[pi], tj * Exs[pi]!.generators[j]);
                     for pj in [(pi+1)..nLayers] do
@@ -370,9 +448,20 @@ function(ss, deg, pRange)
                         fi;
                     od;
                 fi;
+                doneRow[offsets[pi] + j] := true;
+                if SPTSET_CHECKPOINT_HOOK <> false then
+                    ss!.resultPartial[deg+1] := rec(
+                        Exs := Exs, nGens := nGens,
+                        Rmat := Rmat, doneRow := doneRow);
+                    SPTSET_CHECKPOINT_HOOK();
+                fi;
             od;
         fi;
     od;
+
+    if IsBound(ss!.resultPartial[deg+1]) then
+        Unbind(ss!.resultPartial[deg+1]);
+    fi;
 
     # Step 4: build FpZModule from the relation matrix
     M := SptSetFpZModuleEPR(
