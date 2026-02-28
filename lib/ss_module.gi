@@ -17,7 +17,7 @@ BindGlobal(
 InstallGlobalFunction
     (SptSetSpecSeqComponentEx,
     function(ss, p, q)
-        local Epq, compEx, n, np, clnp, i, startIdx;
+        local Epq, compEx, n, np, clnp, i, startIdx, t_cls, dt_cls;
         Epq := SptSetSpecSeqComponentInf(ss, p, q);
         SptSetFpZModuleCanonicalForm(Epq);
         n := SptSetNumberOfGenerators(Epq);
@@ -27,6 +27,10 @@ InstallGlobalFunction
         if IsBound(ss!.compExPartial[p+1][q+1]) then
             compEx := ss!.compExPartial[p+1][q+1];
             startIdx := Length(compEx.basis_classes) + 1;
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                Print("    ComponentEx(", p, ",", q,
+                  "): resuming from class ", startIdx, "/", n, "\n");
+            fi;
         else
             compEx := rec();
             compEx.specSeq := ss;
@@ -38,9 +42,14 @@ InstallGlobalFunction
             compEx.vector_embedings := [];
             compEx.vector_embedings[p] := IdentityMat(n);
             startIdx := 1;
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                Print("    ComponentEx(", p, ",", q,
+                  "): ", n, " generators\n");
+            fi;
         fi;
 
         for i in [startIdx..n] do
+            t_cls := NanosecondsSinceEpoch();
             if SPTSET_CHECKPOINT_HOOK <> false then
                 Print("    ComponentEx(", p, ",", q,
                   ") class ", i, "/", n, "...\n");
@@ -48,7 +57,9 @@ InstallGlobalFunction
             clnp := SptSetSpecSeqClassFromLevelCocycle(
                 ss, compEx.deg, p, Epq!.generators[i]);
             Add(compEx.basis_classes, clnp);
+            dt_cls := Int((NanosecondsSinceEpoch()-t_cls)/1000000);
             if SPTSET_CHECKPOINT_HOOK <> false then
+                Print("      class ", i, " done [", dt_cls, " ms]\n");
                 ss!.compExPartial[p+1][q+1] := compEx;
                 SPTSET_CHECKPOINT_HOOK();
             fi;
@@ -292,7 +303,8 @@ InstallGlobalFunction(SptSetSpecSeqResult,
 function(ss, deg, pRange)
     local nLayers, Exs, nGens, totalGens, Rmat,
           offsets, pi, pj, p, j, k, tj, cjn, vjnf, M,
-          saved_jobs, results, t_p2b, partial, doneRow;
+          saved_jobs, results, t_p2b, partial, doneRow,
+          t_layer, dt_layer, t_ext, dt_ext, totalExtTasks, doneExtTasks;
 
     nLayers := Length(pRange);
 
@@ -301,19 +313,28 @@ function(ss, deg, pRange)
         partial := ss!.resultPartial[deg+1];
         Exs := partial.Exs;
         nGens := partial.nGens;
+        if SPTSET_CHECKPOINT_HOOK <> false then
+            Print("  Result(deg=", deg, "): resuming from checkpoint\n");
+        fi;
     else
         partial := false;
         Exs := [];
         nGens := [];
     fi;
 
+    if SPTSET_CHECKPOINT_HOOK <> false then
+        Print("  Result(deg=", deg, "): ", nLayers,
+          " layers, pRange=", pRange, "\n");
+    fi;
+
     # Step 1: get ComponentEx for each layer independently
     for pi in [1..nLayers] do
         if not IsBound(Exs[pi]) then
             p := pRange[pi];
+            t_layer := NanosecondsSinceEpoch();
             if SPTSET_CHECKPOINT_HOOK <> false then
-                Print("  Result(deg=", deg, ") layer ", pi,
-                  "/", nLayers, " (p=", p, ")...\n");
+                Print("  Step1: layer ", pi,
+                  "/", nLayers, " (p=", p, ", q=", deg-p, ")...\n");
             fi;
             Exs[pi] := SptSetSpecSeqComponentEx(ss, p, deg - p);
             SptSetFpZModuleCanonicalForm(Exs[pi]);
@@ -322,7 +343,17 @@ function(ss, deg, pRange)
             else
                 nGens[pi] := SptSetNumberOfGenerators(Exs[pi]);
             fi;
+            dt_layer := Int((NanosecondsSinceEpoch()-t_layer)/1000000);
             if SPTSET_CHECKPOINT_HOOK <> false then
+                Print("  Step1: layer ", pi, " done: ",
+                  nGens[pi], " generators, ");
+                if nGens[pi] = 0 then
+                    Print("trivial");
+                else
+                    Print("torsion=", List([1..nGens[pi]],
+                      j -> Exs[pi]!.relations[j][j]));
+                fi;
+                Print(" [", dt_layer, " ms]\n");
                 ss!.resultPartial[deg+1] := rec(
                     Exs := Exs, nGens := nGens, Rmat := false, doneRow := []);
                 SPTSET_CHECKPOINT_HOOK();
@@ -335,10 +366,19 @@ function(ss, deg, pRange)
                     nGens[pi] := SptSetNumberOfGenerators(Exs[pi]);
                 fi;
             fi;
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                Print("  Step1: layer ", pi, "/", nLayers,
+                  " (p=", pRange[pi], "): cached, ",
+                  nGens[pi], " generators\n");
+            fi;
         fi;
     od;
 
     totalGens := Sum(nGens);
+    if SPTSET_CHECKPOINT_HOOK <> false then
+        Print("  Step1 done: totalGens=", totalGens,
+          ", nGens=", nGens, "\n");
+    fi;
     if totalGens = 0 then
         if IsBound(ss!.resultPartial[deg+1]) then
             Unbind(ss!.resultPartial[deg+1]);
@@ -368,7 +408,23 @@ function(ss, deg, pRange)
         od;
     fi;
 
-    # Step 3: fill off-diagonal blocks
+    # Step 3: fill off-diagonal blocks (extension computation)
+    totalExtTasks := Sum([1..(nLayers-1)], pi -> nGens[pi]);
+    doneExtTasks := Length(Filtered(doneRow, x -> IsBound(x) and x = true));
+    if SPTSET_CHECKPOINT_HOOK <> false then
+        Print("  Step3: extension computation, ",
+          totalExtTasks, " tasks across ", nLayers-1, " layers");
+        if doneExtTasks > 0 then
+            Print(" (", doneExtTasks, " already done)");
+        fi;
+        if SPTSET_PARALLEL_JOBS > 0 and SPTSET_PHASE2_ENABLED then
+            Print(" [parallel, ", SPTSET_PARALLEL_JOBS, " workers]");
+        else
+            Print(" [sequential]");
+        fi;
+        Print("\n");
+    fi;
+
     for pi in [1..(nLayers-1)] do
         if nGens[pi] = 0 then
             continue;
@@ -413,9 +469,11 @@ function(ss, deg, pRange)
                     od;
                 fi;
             od;
+            dt_ext := Int((NanosecondsSinceEpoch()-t_p2b)/1000000);
             if SPTSET_CHECKPOINT_HOOK <> false then
-                Print("    ext layer ", pi,
-                  " all ", nGens[pi], " gens done (parallel), saving...\n");
+                Print("    ext layer ", pi, " (p=", pRange[pi],
+                  "): ", nGens[pi], " gens done [parallel, ",
+                  saved_jobs, " workers, ", dt_ext, " ms]\n");
                 ss!.resultPartial[deg+1] := rec(
                     Exs := Exs, nGens := nGens,
                     Rmat := Rmat, doneRow := doneRow);
@@ -428,9 +486,11 @@ function(ss, deg, pRange)
                 fi;
                 tj := Exs[pi]!.relations[j][j];
                 if tj <> 0 then
+                    t_ext := NanosecondsSinceEpoch();
                     if SPTSET_CHECKPOINT_HOOK <> false then
-                        Print("    ext layer ", pi, " gen ", j,
-                          "/", nGens[pi], "...\n");
+                        Print("    ext layer ", pi, " (p=", pRange[pi],
+                          ") gen ", j, "/", nGens[pi],
+                          " (torsion=", tj, ")...\n");
                     fi;
                     cjn := SptSetSpecSeqModuleVectorToClass(
                         Exs[pi], tj * Exs[pi]!.generators[j]);
@@ -447,6 +507,10 @@ function(ss, deg, pRange)
                             break;
                         fi;
                     od;
+                    dt_ext := Int((NanosecondsSinceEpoch()-t_ext)/1000000);
+                    if SPTSET_CHECKPOINT_HOOK <> false then
+                        Print("      gen ", j, " done [", dt_ext, " ms]\n");
+                    fi;
                 fi;
                 doneRow[offsets[pi] + j] := true;
                 if SPTSET_CHECKPOINT_HOOK <> false then

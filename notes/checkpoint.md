@@ -1,222 +1,232 @@
-# SptSet Checkpoint/Restart Mechanism
+# SptSet Checkpoint/Restart 机制
 
-## 1. Background & Motivation
+**状态: 全部完成并验证 (2026-02-28)**
 
-The FSPT classification for large 3D space groups (SG #210, #219, #228) takes **months** of computation on a single core. Even with parallel acceleration (Phase 1+2, ~10x on 28 cores), a single computation may take **1-2 weeks**. During this time:
+## 0. 快速参考
 
-- PBS jobs have wall-time limits (normal queue: 60h, extended queue: 180 days)
-- Hardware failures, network issues, or power outages can kill the job
-- We may want to pause and resume (e.g., to change parallel settings mid-computation)
+```bash
+# 首次运行
+CKPT_SG_NUM := 210;; SPTSET_PARALLEL_JOBS := 4;;
+Read("jobs/checkpoint_driver.g");;
 
-Without checkpointing, any interruption means starting over from scratch — **weeks of computation lost**.
+# 从 checkpoint 恢复
+gap -q -r -L ~/checkpoints/sg210.ws -b jobs/checkpoint_driver.g
 
-**Status: FULLY VERIFIED (2026-02-26)** — see §8 for test results.
+# PBS 提交（自动检测 resume）
+qsub jobs/submit_checkpoint.sh
+```
 
-## 2. Why Checkpointing is Feasible for SptSet
+**改动的文件**:
 
-SptSet's spectral sequence computation has a **natural caching structure** that makes checkpointing almost free:
+| 文件 | 改动 |
+|------|------|
+| `read.g` | 新增全局变量 `SPTSET_CHECKPOINT_HOOK`（默认 `false`） |
+| `lib/ss_vanilla.gi` | `BuildDerivative` / `BuildDerivative2`: 逐生成元缓存 + checkpoint |
+| `lib/ss_module.gi` | `ComponentEx`: 逐 class 缓存; `Result`: 逐层 + 逐 extension 缓存 |
+| `jobs/checkpoint_driver.g` | 生产级 driver 脚本（原子写入、详细输出） |
+
+**核心数据结构（新增的 partial 缓存，全部在 ss 对象中）**:
+
+| 缓存 | 位置 | 存储内容 | 完成后自动清理 |
+|------|------|---------|---------------|
+| `ss!.derivPartial` | ss_vanilla.gi | BuildDerivative 的 partial fA list | 是 |
+| `ss!.deriv2Partial` | ss_vanilla.gi | BuildDerivative2 的 partial fA list | 是 |
+| `ss!.compExPartial` | ss_module.gi | ComponentEx 的 partial basis_classes | 是 |
+| `ss!.resultPartial` | ss_module.gi | Result 的 Exs/nGens/Rmat/doneRow | 是 |
+
+---
+
+## 1. 背景与动机
+
+大型 3D 空间群（SG #210, #219, #228）的 FSPT 分类计算耗时数月。即使有并行加速（Phase 1+2, 约 10x on 28 cores），单次计算也需 1-2 周。这期间：
+
+- PBS 任务有时间限制（normal queue: 60h, extended queue: 180 天）
+- 硬件故障、网络中断、电源故障都可能终止任务
+- 可能需要暂停和恢复（例如修改并行参数）
+
+没有 checkpoint 意味着任何中断都从零开始，数周计算白费。
+
+## 2. 技术方案
+
+### 2.1 SaveWorkspace 方案（已采用）
+
+GAP 的 `SaveWorkspace("file.ws")` 将整个 GAP 堆（所有对象和全局变量）保存为二进制文件。`gap -L file.ws` 恢复它。
+
+工作原理:
+
+1. 在每个计算步骤完成后，调用 SaveWorkspace 将 ss 对象（含所有缓存）写入磁盘
+2. 中断后：`gap -L checkpoint.ws` 恢复完整状态
+3. 重新运行 driver 脚本，已缓存的计算自动跳过
+
+为什么可行: SptSet 的谱序列计算有天然的缓存结构。每个 page 计算一次后缓存在 `ss!.modulePages`，微分缓存在 `ss!.derivPages`。SaveWorkspace 保存的就是含这些缓存的完整 ss 对象。
+
+被排除的备选方案:
+
+- **IO_Pickle 手工序列化**: 只序列化缓存数据，重启时重建 resolution + SS + closures。实际不需要，SaveWorkspace 已完美工作，且 closures 经验证可以完整保存/恢复。
+- **定时保存**: 每隔固定时间保存一次。不可行，SaveWorkspace 只能在"某个计算结果被缓存到 ss 对象之后"才有意义。如果函数执行到一半（local 变量中的中间结果尚未写入 ss），SaveWorkspace 保存的是不完整状态，恢复后那步还是要从头算。因此必须在每个逻辑计算单元完成后保存，而不是按时间间隔。
+
+### 2.2 细粒度 Checkpoint 设计
+
+核心问题: 最初的 checkpoint 粒度是"每页一个"。但一个 BuildDerivative 可能有数十个生成元，每个算数小时。如果中途被杀，整页的计算全部丢失（可能数天到数周）。
+
+核心约束: Save 的颗粒度上限 = 能被缓存的最小计算单元。要更频繁地 save，必须让更多中间结果缓存到 ss 对象中。
+
+解决方案: 在 ss 对象中新增 partial 缓存结构（见第 0 节表格）。每个最小可缓存单元完成后，将中间结果写入 ss，然后通过全局 hook 触发 SaveWorkspace。
+
+全局 hook 机制:
 
 ```gap
-# lib/spectral_sequence.gi, SptSetSpecSeqComponent:
-if not IsBound(ss!.modulePages[r+1][p+1][q+1]) then
-    ss!.modulePages[r+1][p+1][q+1] := SptSetSpecSeqBuildComponent(ss, r, p, q);
-fi;
-return ss!.modulePages[r+1][p+1][q+1];
-```
+# read.g: 库代码通过这个 hook 触发 checkpoint
+SPTSET_CHECKPOINT_HOOK := false;  # 默认关闭
 
-Each page E^{pq}_r is computed once and cached in `ss!.modulePages`. If we save the `ss` object to disk and restore it later, re-running the computation **automatically skips all cached pages** — only uncached pages are computed.
-
-Similarly, derivatives are cached in `ss!.derivPages`, and Component2/Derivative2 in `ss!.module2Pages`/`ss!.deriv2Pages`.
-
-## 3. The Computation Flow (for reference)
-
-For 3D FSPT with `FermionSPTLayersVerbose(ss, 3)`:
-
-```
-p=1, q=3 (p+ip layer):
-  r=2: E^{1,3}_2 → calls BuildDerivative at (1,3) and neighbors
-  r=3: E^{1,3}_3 → calls BuildDerivative at (1,3) page 2
-  r=4: E^{1,3}_4
-
-p=2, q=2 (Majorana layer):     ← MOST EXPENSIVE for large groups
-  r=2: E^{2,2}_2 → BuildDerivative(ss, 1, 2, 2) → large generator count
-  r=3: E^{2,2}_3
-
-p=3, q=1 (Complex fermion layer):
-  r=2: E^{3,1}_2
-  r=3: E^{3,1}_3
-  r=4: E^{3,1}_4
-
-p=4, q=0 (Bosonic layer):
-  r=2: E^{4,0}_2
-  r=3: E^{4,0}_3
-  r=4: E^{4,0}_4
-  r=5: E^{4,0}_5
-```
-
-Each page is computed sequentially (each depends on previous pages). But once computed, it's cached. The total number of pages is small (~12-15), but each page can take hours to days for large groups.
-
-## 4. Checkpoint Approaches
-
-### 4.1 Approach A: SaveWorkspace (simplest)
-
-GAP's `SaveWorkspace("file.ws")` saves the entire GAP heap (all objects, all global variables) to a binary file. `gap -L file.ws` restores it.
-
-**How it works**:
-1. After each expensive page is computed, call `SaveWorkspace("checkpoint.ws")`
-2. The `ss` object (with all cached pages) is saved
-3. If interrupted: `gap -L checkpoint.ws` restores full state
-4. Re-run the computation script — cached pages are skipped automatically
-
-**Verification status** (2026-02-26): **ALL VERIFIED ✅**
-- `SaveWorkspace` / restore of basic GAP objects: ✅ Verified on cluster3
-- `SaveWorkspace` from inside for loops: ✅ Works (old "only at gap> prompt" restriction relaxed)
-- `SaveWorkspace` of SptSet spectral sequence with caches: ✅ Verified — cached pages survive restore
-- Compatibility with closures in `ss!.bdry`: ✅ Verified — all closures (coboundary formulas, spectrum, brMap) survive save/restore
-- Compatibility with IO/fork: ✅ Works (no active pipes at checkpoint time)
-- Resumed computation correctness: ✅ Verified — new pages computed correctly after restore
-- Restore speed: ✅ ~5s (vs ~30s fresh start with LoadPackage)
-- GAP 4.13.1 GC: GASMAN (SaveWorkspace supported)
-- Workspace file size: 128MB for small point group; estimate 500MB-2GB for large space groups
-
-**Pros**:
-- Zero library code changes — only a driver script
-- Saves EVERYTHING (resolution, caches, closures, all intermediate state)
-- Restoration is instant (load binary file)
-
-**Cons**:
-- Workspace file may be large (128MB for small group; estimate 500MB-2GB for large space groups)
-- Cannot save mid-function-call (only between top-level statements)
-
-**Driver script**: See `jobs/checkpoint_driver.g` for the production-ready implementation.
-```gap
-# checkpoint_driver.g
-# Usage:
-#   First run:  gap -q -r -b checkpoint_driver.g
-#   Resume:     gap -q -r -L checkpoint.ws -b checkpoint_driver.g
-
-if not IsBound(ss) then
-    # First run: build everything from scratch
-    LoadPackage("HAP");; LoadPackage("IO");; LoadPackage("SptSet");;
-    # ... build resolution, create SS ...
-    Print("Fresh start.\n");;
-else
-    Print("Resumed from checkpoint. Cached pages will be skipped.\n");;
-fi;
-
-# Compute pages with checkpoint after each
-for p in [1..(dim+1)] do
-    q := dim + 1 - p;
-    if q < 0 or q > 3 then continue; fi;
-    rmax := Maximum(q+2, p+1);;
-    for r in [2..rmax] do
-        t := NanosecondsSinceEpoch();;
-        Erpq := SptSetSpecSeqComponent(ss, r, p, q);;
-        dt := Int((NanosecondsSinceEpoch() - t) / 1000000);;
-        SptSetFpZModuleCanonicalForm(Erpq);;
-        Print("E^{", p, ",", q, "}_", r, " = "); Display(Erpq);;
-        Print("  Time: ", dt, " ms\n");;
-        if dt > 10000 then
-            SaveWorkspace("checkpoint.ws");;
-            Print("  Checkpoint saved.\n");;
-        fi;
-    od;
-od;
-```
-
-### 4.2 Approach B: Manual cache serialization (robust)
-
-Instead of saving the entire workspace, serialize only the cache data using `IO_Pickle`.
-
-**How it works**:
-1. After each page, pickle `ss!.modulePages` (contains integer matrices) to a file
-2. On restart: rebuild resolution + SS from scratch (rebuilds closures), then inject cached pages
-
-**Pros**:
-- No closure serialization issues — only integer matrices are pickled
-- Smaller checkpoint files (just the cache, not the whole heap)
-- Works even if SaveWorkspace is broken for closures
-- Forward-compatible (no dependency on GAP workspace format)
-
-**Cons**:
-- Must rebuild resolution + SS on restart (~5-30 minutes for large groups)
-- Need to also save `ss!.derivPages`, `ss!.module2Pages`, `ss!.deriv2Pages`
-- FpZModule objects inside the cache may not be directly picklable by IO_Pickle
-  (custom pickling might be needed — extract integer matrices, pickle those)
-- More code changes needed
-
-**Pattern**:
-```gap
-# Save cache
-SaveSptSetCache := function(ss, filename)
-    local stream, pages;
-    stream := OutputTextFile(filename, false);
-    # Extract raw integer data from cached pages
-    # ... (implementation depends on FpZModule structure)
-    IO_Pickle(stream, pages);
-    CloseStream(stream);
-end;
-
-# Restore cache
-RestoreSptSetCache := function(ss, filename)
-    local stream, pages;
-    stream := InputTextFile(filename);
-    pages := IO_Unpickle(stream);
-    CloseStream(stream);
-    # Inject back into ss
-    ss!.modulePages := pages;
+# checkpoint_driver.g: 启用 hook，使用原子写入
+SPTSET_CHECKPOINT_HOOK := function()
+    SaveWorkspace(Concatenation(CKPT_FILE, ".tmp"));
+    Exec(Concatenation("mv -f ", CKPT_FILE, ".tmp ", CKPT_FILE));
 end;
 ```
 
-### 4.3 Approach C: Hybrid (recommended)
+### 2.3 最小可缓存计算单元
 
-Use SaveWorkspace as primary checkpoint, with manual cache export as fallback.
+每个生成元内部的计算链是原子操作，无法再细分：
 
-1. Try SaveWorkspace first (zero effort)
-2. If restore fails (closure issues), fall back to manual cache injection
-3. Keep the manual export code ready but only use it if needed
+```
+MapToBarCocycle -> CoboundarySL -> PartialPurify -> MapFromBarCocycle -> project
+```
 
-## 5. Key Risks and Mitigations
+其中 MapFromBarCocycle 最耗时（解大型线性方程组），内部已有 Phase 1 并行。要再细就得修改核心矩阵求解器（bar_resolution_map_common.gi），风险太高，收益有限。
 
-| Risk | Severity | Mitigation |
-|------|----------|------------|
-| Closures don't survive SaveWorkspace | Medium | Fall back to Approach B (rebuild SS + inject cache) |
-| Workspace file too large | Low | Large groups have large resolutions, but disk is 16TB NFS |
-| SaveWorkspace deprecated | Low | Still works in GAP 4.13.1; migrate to IO_Pickle if removed |
-| Checkpoint during fork | Low | Only checkpoint after ParListByFork returns (no active children) |
-| ~~Page computation takes days (can't checkpoint mid-page)~~ | ~~High~~ **RESOLVED** | ~~Accept: checkpoint granularity = per page.~~ **§9 实现了逐生成元 checkpoint，最坏丢失一个生成元（数小时），而非整页（数天）。** |
+结论: 逐生成元 checkpoint 是实际可行的最细粒度。
 
-~~The last risk is important: we cannot checkpoint mid-page.~~ **已解决 (2026-02-27)**: §9 的细粒度 checkpoint 在 BuildDerivative/BuildDerivative2/ComponentEx/SpecSeqResult 中逐生成元保存，checkpoint 粒度从"每页"细化到"每个生成元"。详见 §9。
+### 2.4 所有 Checkpoint 保存点一览
 
-## 6. Implementation Plan
+Phase A（分类，约 14 个 page）:
 
-1. **Test SaveWorkspace with SptSet** (priority: immediate)
-   - Compute a few pages of SG #10, save workspace, restore, verify cache works
-   - Check workspace file size
+| 步骤 | Save Point | 粒度 |
+|------|-----------|------|
+| 每个 SptSetSpecSeqComponent | driver 中的 coarse checkpoint | 每页一次 |
+| BuildDerivative 中每个生成元 | ss!.derivPartial + hook | 每生成元一次 |
+| BuildDerivative2 中每个生成元 | ss!.deriv2Partial + hook | 每生成元一次 |
 
-2. **Write checkpoint driver script** (priority: before submitting SG #210/219/228 jobs)
-   - Replace `FermionSPTLayersVerbose` with explicit loop + SaveWorkspace
-   - Add timing output per page
-   - Add checkpoint interval (only save if page took > N seconds)
+Phase B（群结构）:
 
-3. **Prepare manual cache export as fallback** (priority: if SaveWorkspace fails)
-   - Write SaveSptSetCache / RestoreSptSetCache functions
-   - Test with a known group
+| 步骤 | Save Point | 粒度 |
+|------|-----------|------|
+| Result Step 1: 每层 ComponentEx | ss!.resultPartial + hook | 每层一次 |
+| ComponentEx 中每个 basis class | ss!.compExPartial + hook | 每 class 一次 |
+| Result Step 3: 每个 extension 行 | ss!.resultPartial + hook | 每生成元一次 |
 
-## 7. PBS Integration
+SG #10 实测: 总计 97 个 fine-grained checkpoint + 14 个 coarse page checkpoint。
 
-For cluster deployment, the checkpoint mechanism integrates with PBS as follows:
+## 3. Checkpoint 与并行的交互
+
+关键结论: Checkpoint 对并行零影响。
+
+| 并行阶段 | Checkpoint 行为 | 影响 |
+|---------|----------------|------|
+| Phase 1（MapFromBarCocycle 内部） | 完全不介入 | 无 |
+| Phase 2（BuildDerivative 生成元间） | ParListByFork 全部完成后 checkpoint 一次 | 无 |
+| Phase 2b（Extension 生成元间） | ParListByFork 全部完成后 checkpoint 一次 | 无 |
+
+并行模式下每个 ParListByFork batch 完成后存一次；顺序模式下每个生成元完成后存一次。两者不冲突，由 SPTSET_PHASE2_ENABLED 控制。
+
+### 3.1 跨层并行（不可行）
+
+群结构计算分 4 层，理论上各层独立。但 ParListByFork 要求返回值可被 IO_Pickle 序列化（仅支持 integers, lists, strings, records）。ComponentEx 返回的 SptSetSpecSeqModule 含 GAP closures（basis_classes），无法序列化，因此无法用 fork 跨层并行。
+
+Phase A 的各页计算同理：返回值含 closure 的 FpZModule 对象，且子进程对 ss 缓存的修改不会传回父进程（fork COW 隔离），会导致缓存失效和重复计算。
+
+Step 3（extension）的返回值是整数向量（可序列化），但 Phase 2b 已在层内并行化，跨层额外收益仅约 2%，不值得增加复杂度。
+
+要突破此限制需要 GAP 线程或共享内存支持，当前 GAP 4.x 不提供。
+
+## 4. 存储管理
+
+### 4.1 自动覆盖
+
+每次 SaveWorkspace 都覆盖同一个文件。磁盘上始终只有一个 checkpoint 文件。不需要手动清理，不存在 checkpoint 堆积。
+
+### 4.2 原子写入
+
+先写到 .tmp 文件，再 mv -f 原子替换，防止写入过程中崩溃导致 checkpoint 损坏。最坏情况：丢失当前这次 save，但旧 checkpoint 仍完好。
+
+### 4.3 存储需求
+
+| 空间群 | Workspace 大小 | 瞬时最大占用（含 .tmp） |
+|--------|---------------|----------------------|
+| SG #10 | 约 134 MB | 约 268 MB |
+| SG #210/219 | 约 500 MB - 1 GB | 约 1-2 GB |
+| SG #228 | 约 1-2 GB | 约 2-4 GB |
+
+以 16TB NFS 存储来看完全没有压力。Workspace 大小约等于 GAP 进程的堆内存使用量，计算过程中本来就占这么多内存。
+
+## 5. 输出格式
+
+当 SPTSET_CHECKPOINT_HOOK 激活时，所有计算步骤输出详细进度信息。
+
+包含的信息:
+
+| 信息 | 输出位置 | 用途 |
+|------|---------|------|
+| 生成元数量 m | 每个 derivative/ComponentEx/extension | 预测计算量 |
+| 目标维度 target_dim | 每个 derivative | 预测单个生成元计算时间 |
+| torsion 阶 | 每层 ComponentEx 和 extension | 了解群结构复杂度 |
+| 每步耗时 (ms) | 每个生成元/class/层/parallel batch | 监控进度、预测剩余时间 |
+| 总 elapsed 时间 | 每个 Phase A page, Phase B 完成时 | 总体进度 |
+| 并行 workers 数 | 每个 parallel batch 完成时 | 确认实际并行度 |
+| resume 信息 | ComponentEx/Result 恢复时 | 确认 checkpoint 正确恢复 |
+
+示例输出:
+
+```
+[3/14] Computing E^{2,2}_2 (Majorana:)...
+  E^{2,2}_2 = Z_2 x Z_2 x Z_2 x Z_4
+  Generators: 12, torsion: [2, 2, 2, 4, ...]
+  Time: 45230 ms  (elapsed: 127s)
+
+Phase B: Computing group structure...
+  Result(deg=4): 4 layers, pRange=[1,2,3,4]
+  Step1: layer 1/4 (p=1, q=3)...
+    ComponentEx(1,3): 2 generators
+    ComponentEx(1,3) class 1/2...
+      class 1 done [3421 ms]
+  Step1: layer 1 done: 2 generators, torsion=[2,4] [5890 ms]
+  Step3: extension computation, 14 tasks across 3 layers [parallel, 4 workers]
+    ext layer 1 (p=1): 2 gens done [parallel, 4 workers, 8234 ms]
+
+    d^{2,2}_2: m=12 gens, target_dim=20
+    d^{2,2}_2 gen 1/12 (target_dim=20)...
+      gen 1 done [12345 ms]
+```
+
+## 6. 部署
+
+### 6.1 Driver 脚本
+
+`jobs/checkpoint_driver.g` 是生产级 driver 脚本。
+
+配置变量（在 Read 之前设置）：
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| CKPT_SG_NUM | 空间群编号（1-230） | 必需 |
+| CKPT_FILE | checkpoint 文件路径 | ~/checkpoints/sgN.ws |
+| CKPT_MODE | 模式 "ez" 或 "s12" | "ez" |
+| CKPT_DO_EXT | 是否计算群结构 | true |
+| SPTSET_PARALLEL_JOBS | 并行 workers 数 | 0 |
+| SPTSET_PARALLEL_THRESHOLD | Phase 1 最小维度 | 20 |
+| SPTSET_PHASE2_ENABLED | Phase 2 并行开关 | true |
+
+### 6.2 PBS 集成
 
 ```csh
 #!/bin/csh
-#PBS -S /bin/csh
-#PBS -q extended          # 180-day limit
+#PBS -q extended
 #PBS -l nodes=1:ppn=28
 #PBS -N sg210_checkpoint
 
 setenv LD_LIBRARY_PATH ~/miniforge3/envs/gap-centos6/lib
 
-# Check if checkpoint exists
 if ( -f ~/checkpoints/sg210.ws ) then
     echo "Resuming from checkpoint..."
     ~/software/gap-4.13.1/gap -q -r -L ~/checkpoints/sg210.ws -b ~/jobs/checkpoint_driver.g
@@ -226,178 +236,101 @@ else
 endif
 ```
 
-If the job times out (60h in normal queue), resubmit and it resumes from the last checkpoint. With the extended queue (180 days, xyren has access), a single job can run for months with periodic checkpoints.
+任务超时后重新提交即可自动恢复。Extended queue (180 天) 下可长期运行。
 
-See `jobs/checkpoint_driver.g` and `jobs/submit_checkpoint.sh` for production-ready scripts.
+## 7. 验证结果
 
-## 8. Verification Results (2026-02-26)
+### 7.1 基础验证 (2026-02-26, cluster3)
 
-All tests performed on cluster3 (GAP 4.13.1, GASMAN GC).
+| 测试 | 结果 | 说明 |
+|------|------|------|
+| GAP GC 类型 | GASMAN | 支持 SaveWorkspace |
+| SaveWorkspace 在 for 循环内 | 通过 | 旧文档说只能在 gap> 提示符下，实际 GAP 4.x 已放宽 |
+| Closure 保存/恢复 | 通过 | lambda 捕获的 local 变量、嵌套 closure 全部正确恢复 |
+| SptSet SS 对象保存 | 通过 | ss!.modulePages 缓存完整保留 |
+| SptSet closure 保存 | 通过 | ss!.bdry, ss!.spectrum, ss!.brMap closures 恢复后正常工作 |
+| 恢复后继续计算 | 通过 | 新 page 使用恢复的 closures 正确计算 |
+| 恢复速度 | 约 5s | vs 约 30s fresh start |
+| Workspace 大小 | 128 MB | C2v 点群 |
 
-| Test | Result | Details |
-|------|--------|---------|
-| GAP GC type | GASMAN | `GAPInfo.KernelInfo.GC` returns `"GASMAN"` |
-| SaveWorkspace inside for loop | **PASS** | Saves successfully, no error |
-| Closure survival (basic) | **PASS** | Lambda capturing local variables survives save/restore |
-| SptSet SS object save | **PASS** | `ss!.modulePages` cache preserved after restore |
-| SptSet closure survival | **PASS** | `ss!.bdry`, `ss!.spectrum`, `ss!.brMap` closures work after restore |
-| Continued computation after restore | **PASS** | New pages computed correctly using restored closures |
-| Checkpoint-resume cycle | **PASS** | Steps 1-4 saved, restored at step 4, steps 5-7 computed correctly |
-| Restore speed | ~5s | vs ~30s fresh start with `LoadPackage` |
-| Workspace file size (C2v point group) | 128 MB | Estimate for SG #210/228: 500MB-2GB |
+### 7.2 Fine-Grained Save/Restore 验证 (2026-02-27/28, SG #10)
 
-**Conclusion**: SaveWorkspace (Approach A) is fully viable. No need for Approach B (manual cache serialization) or Approach C (hybrid). All previously identified risks have been resolved.
+Save 测试: 完整计算 SG #10（SPTSET_PARALLEL_JOBS=0）。
 
-### Key discoveries:
-1. The old GAP doc restriction "SaveWorkspace can only be used at the main gap> prompt" was relaxed in GAP 4.x. It now works inside loops and in scripts.
-2. GAP closures (including complex nested closures like those in SptSet's coboundary formulas) are GAP heap objects and survive SaveWorkspace/restore via raw memory dump.
-3. Restore is much faster than fresh start because packages are already loaded in the workspace.
-4. Dual safety: CKPT_STEP variable tracks checkpointed progress, AND SptSet's internal caching (`ss!.modulePages`) independently skips re-computation.
+- 97 个 fine-grained checkpoint 全部成功
+- Workspace 大小: 134 MB
+- 最终群结构: [2, 4, 4, 4, 4, 4, 0]
 
-## 9. Fine-Grained Checkpoint (2026-02-27)
+Restore 测试: 从 checkpoint #42 恢复（d2^{2,2}_3 gen 9/12 中间点）。
 
-### 9.1 问题
+- 14 个已缓存 modulePages 全部恢复
+- deriv2Partial 部分缓存恢复（跳过已算完的生成元 1-8，从 gen 9 继续）
+- 继续计算得到群结构 [2, 4, 4, 4, 4, 4, 0]，与完整计算完全一致
 
-§5 第 5 条风险指出：**无法在单页计算中途 checkpoint**。如果一个 BuildDerivative 有 m 个生成元，每个算几小时，中途被杀就全丢。对大群（SG #210/219/228），这可能意味着丢失数天到数周的计算。
+### 7.3 关键发现
 
-**核心约束**: SaveWorkspace 只能在"某个计算结果被缓存到 ss 对象之后"才有意义。如果中间结果没有被缓存，SaveWorkspace 保存的就是一个不完整的状态，重启后还是要从头算那一步。
+1. SaveWorkspace 的循环限制已废弃: GAP 4.13.1 中 SaveWorkspace 可在脚本、函数、循环中任意调用。
+2. GAP closures 是堆对象: 包括 SptSet 的复杂嵌套 closures（coboundary 公式等），通过 raw memory dump 完整保存/恢复。
+3. 双重安全: CKPT_STEP 变量跟踪 driver 进度，ss!.modulePages 缓存独立保证不重复计算。两者互为备份。
 
-**结论**: 要想 save 得更频繁，必须让更多的中间结果缓存到 ss 对象里。Save 的颗粒度上限 = 能被缓存的最小计算单元。
+## 8. 性能影响
 
-### 9.2 计算流程的完整缓存分析
+### 8.1 Checkpoint 开销
 
-**已有缓存（自动生效，改动前就存在）：**
+| 场景 | checkpoint 次数 | 每次耗时 | 总开销 | 占总计算时间 |
+|------|----------------|---------|--------|------------|
+| SG #10（实测） | 97 次 | 约 1s | 约 2 min | 不到 1% |
+| SG #210（估算） | 约 200 次 | 约 5s | 约 17 min | 不到 0.1%（总计约 2 周） |
+| SG #228（估算） | 约 500 次 | 约 10s | 约 83 min | 不到 0.05%（总计约 2 月） |
 
-| 缓存位置 | 存储内容 | 生命周期 |
-|----------|---------|---------|
-| `ss!.modulePages[r+1][p+1][q+1]` | E^{p,q}_r 模块 | 计算一次后永久缓存 |
-| `ss!.module2Pages[r+1][p+1][q+1]` | tilde{E}^{p,q}_r 模块 | 同上 |
-| `ss!.derivPages[r+1][p+1][q+1]` | d^{p,q}_r 微分映射 | 同上 |
-| `ss!.deriv2Pages[r+1][p+1][q+1]` | tilde{d}^{p,q}_r 微分映射 | 同上 |
+结论: Checkpoint 对计算速度的影响可忽略不计。
 
-这 4 个缓存表保证了已算完的 Component 和 Derivative 不会被重复计算。改动前的 driver 在每个 SptSetSpecSeqComponent 调用后 SaveWorkspace，保护了这些缓存。
+### 8.2 对大群的意义
 
-**改动前未缓存的（丢失风险最高的部分）：**
+|   | 改动前 | 改动后 |
+|---|--------|--------|
+| 最大损失 | 整个 BuildDerivative（数天到数周） | 一个生成元的计算（数小时） |
+| Phase A checkpoint 总数 | 14（每页一个） | 14 + sum(每个微分的生成元数) |
+| Phase B checkpoint 总数 | 1（整体一个） | nLayers + sum(每层生成元数) + sum(extension 数) |
 
-1. **`BuildDerivative` 中 m 个生成元的 for 循环** — 每个 fA[i] 可能算数小时，但全存在 local 变量里，SaveWorkspace 保存不到。
-2. **`BuildDerivative2` 同样的循环** — 完全相同的问题。
-3. **`SptSetSpecSeqComponentEx` 中逐生成元的 class 构建** — 每个生成元要做 PurifySpecSeqClass（涉及多次 MapFromBarCocycle），结果只在 local list 中。
-4. **`SptSetSpecSeqResult` Step 1 的 ComponentEx 结果** — 4 个层的 ComponentEx 结果不缓存。
-5. **`SptSetSpecSeqResult` Step 3 的逐生成元扩展系数** — Rmat 的 off-diagonal 块逐行计算，不缓存。
+## 9. Q&A 与设计决策
 
-### 9.3 改动方案与实现
+### Q: 为什么不用定时保存？
 
-**设计原则**: 在 ss 对象中新增 partial 缓存结构，在每个最小可缓存单元完成后将中间结果写入 ss 对象，然后调用全局 checkpoint hook。重启后，这些缓存的中间结果被自动检测到并跳过。
+SaveWorkspace 保存的是 GAP 堆的快照。如果函数执行到一半，中间结果存在 local 变量中（不在堆上的持久对象中），SaveWorkspace 保存不到它们。恢复后函数的 local 状态丢失，那步计算还得从头来。
 
-**全局 hook 机制** (`read.g`):
-```gap
-if not IsBound(SPTSET_CHECKPOINT_HOOK) then
-    SPTSET_CHECKPOINT_HOOK := false;  # 默认关闭，不影响原有行为
-fi;
-```
+因此 checkpoint 必须在"某个中间结果被写入 ss 对象"之后才有意义，而不是任意时间点。这就是为什么采用逻辑 checkpoint（每个可缓存单元完成后保存），而非定时 checkpoint。
 
-Driver 脚本设置 hook:
-```gap
-SPTSET_CHECKPOINT_HOOK := function()
-    SaveWorkspace(CKPT_FILE);
-end;
-```
+### Q: 当前的 save 颗粒度是否已经足够细？
 
-**改动的 4 个位置：**
+是的。整个计算流程中每一个能插入 save point 的地方都已经插入了。计算量最大的 5 个循环（BuildDerivative, BuildDerivative2, ComponentEx, Result Step 1, Result Step 3）全部实现了逐生成元/逐 class/逐层的 fine-grained checkpoint。
 
-#### (1) `BuildDerivative` (`lib/ss_vanilla.gi`)
-新增 `ss!.derivPartial[r+1][p+1][q+1]` 缓存 partial fA list。
-```gap
-# 重启后检测已缓存的 partial 结果
-if IsBound(ss!.derivPartial[r+1][p+1][q+1]) then
-    fA := ss!.derivPartial[r+1][p+1][q+1];  # 已算完的生成元
-fi;
-for i in [1..m] do
-    if not IsBound(fA[i]) then  # 跳过已缓存的
-        # ... 计算 fA[i] ...
-        ss!.derivPartial[r+1][p+1][q+1] := fA;
-        SPTSET_CHECKPOINT_HOOK();  # 每个生成元存一次
-    fi;
-od;
-Unbind(ss!.derivPartial[...]);  # 全部完成后清理
-```
+剩下无法再细分的是单个生成元内的计算链（MapToBarCocycle -> CoboundarySL -> PartialPurify -> MapFromBarCocycle -> project），这是一个原子操作。要在其中插入 checkpoint 需要修改核心矩阵求解器，风险极高且收益有限（Phase 1 并行已让单个生成元计算足够快）。
 
-**关键设计**: 当 `SPTSET_CHECKPOINT_HOOK <> false` 时，自动强制走顺序路径（禁用 Phase 2 并行），这样每个生成元算完都能立即 checkpoint。每个生成元独享全部 Phase 1 worker，性能不会显著下降。
+### Q: Checkpoint 会不会影响并行计算速度？
 
-#### (2) `BuildDerivative2` (`lib/ss_vanilla.gi`)
-完全同构的改动，使用 `ss!.deriv2Partial` 缓存。
+不会。Checkpoint hook 不改变任何并行策略。Phase 1（MapFromBarCocycle 内部并行）完全不介入；Phase 2/2b（生成元间并行）在 ParListByFork 全部完成后存一次，不影响并行执行。
 
-#### (3) `SptSetSpecSeqComponentEx` (`lib/ss_module.gi`)
-新增 `ss!.compExPartial[p+1][q+1]` 缓存 partial basis_classes。
-每构建一个 class（涉及 SptSetSpecSeqClassFromLevelCocycle → PurifySpecSeqClass），checkpoint 一次。
+如果想要更细的逐生成元 checkpoint（在 Phase 2/2b 区域），可以手动设置 SPTSET_PHASE2_ENABLED := false 来走顺序路径。这是安全性与速度的主动权衡，由用户决定。
 
-#### (4) `SptSetSpecSeqResult` (`lib/ss_module.gi`)
-新增 `ss!.resultPartial[deg+1]` 缓存：
-- `Exs[pi]` — 每层 ComponentEx 完成后缓存 + checkpoint
-- `Rmat` + `doneRow` — 每个 off-diagonal 生成元完成后缓存 + checkpoint
+### Q: 不同层能不能同时并行算？
 
-当 checkpoint hook 激活时，Step 3 也强制走顺序路径。
+不能。根本原因是 GAP 的 fork 并行只能返回 IO_Pickle 可序列化的值（integers, lists, strings, records）。但 ComponentEx 和 SptSetSpecSeqComponent 返回的对象含 GAP closures，无法序列化。此外子进程对 ss 缓存的修改不会传回父进程（fork COW 隔离），会导致缓存失效和重复计算。
 
-### 9.4 改进效果：Save Point 数量对比
+要突破此限制需要 GAP 线程或共享内存支持，当前 GAP 4.x 不提供。
 
-以 dim=3 FSPT 计算为例（14 个页面 + 群结构）：
+### Q: Checkpoint 文件需要手动清理吗？会不会炸存储？
 
-| 阶段 | 改动前 Save Point | 改动后 Save Point |
-|------|-------------------|-------------------|
-| Phase A: 分类（14 页） | 14（每页一个） | 14 + Σ(每个微分的生成元数) |
-| Phase B: 群结构 | 1（整体一个） | nLayers + Σ(每层生成元数) + Σ(off-diagonal 生成元数) |
+不需要。每次 SaveWorkspace 都覆盖同一文件，磁盘上始终只有一个 checkpoint（加瞬时的 .tmp 文件）。最大的群（SG #228）估计 workspace 约 2GB，瞬时最大约 4GB。16TB NFS 完全没有压力。
 
-**SG #10 实测** (2026-02-27, cluster3):
+## 10. 后续建议
 
-Classification 阶段触发的细粒度 checkpoint 统计：
-- `d2^{1,3}_2`: 2 generators → 2 checkpoints
-- `d2^{2,2}_2`: 12 generators → 12 checkpoints
-- `d2^{1,3}_3`: 1 generator → 1 checkpoint
-- `d2^{3,1}_2`: 20 generators → 20 checkpoints
-- `d2^{2,2}_3`: 12 generators → 12+ checkpoints
-- ... (更多微分)
+以下是可能的后续改进方向，非必需，视实际使用情况决定：
 
-仅分类阶段就从 **14 个 save point** 增加到 **60+ 个**（加上群结构部分更多）。
+1. **Workspace 大小监控**: 在大群实际运行时监控 workspace 文件大小，验证估算是否准确。如果超出预期可考虑 GC 优化。
 
-**对大群 SG #210/219/228 的意义**:
-这些群的微分生成元数远多于 SG #10（可能达到 50-100+），且每个生成元可能算数小时。改动前中断 = 丢失整个 BuildDerivative（可能数天到数周）。改动后中断 = 最多丢失一个生成元的计算量（数小时）。
+2. **Checkpoint 频率控制**: 当前每个生成元完成后都 save。对于非常小的生成元（几秒完成），可以加一个最小间隔（如 save 间隔大于 60s），减少 I/O。但考虑到当前开销已低于 1%，优先级很低。
 
-### 9.5 不可再细的最小计算单元
+3. **多版本 Checkpoint**: 当前只保留最新一个。如果需要回退到更早的状态（例如发现某步计算有 bug），可以改为保留最近 N 个版本。实现简单：在 mv 之前先 cp 旧文件到 .bak。
 
-每个生成元内部的计算链是 **原子操作**，无法在中间断开缓存：
-
-```
-MapToBarCocycle → CoboundarySL → PartialPurify → MapFromBarCocycle → project
-```
-
-其中 `MapFromBarCocycle` 是最耗时的步骤（解大型线性方程组）。它内部已有 Phase 1 并行（fork 多个 worker 并行求解矩阵列），但是单次线性代数运算没有自然的缓存中间点。
-
-要想再细，需要修改核心矩阵求解器（`bar_resolution_map_common.gi` 中的 `MapFromBarCocycle`），在矩阵按列求解的过程中逐列缓存。这改动极深（动核心线性代数层），风险太高，收益有限（Phase 1 并行已经让单列计算很快），不建议做。
-
-**结论**: 当前实现的 **逐生成元 checkpoint** 是实际可行的最细粒度。
-
-### 9.6 对计算效率的影响
-
-**SaveWorkspace 本身的开销**:
-- SG #10 workspace 文件约 128 MB
-- SaveWorkspace 执行时间：约 0.5-2 秒（写入 NFS）
-- 大群 workspace 预计 500MB-2GB，写入时间 2-10 秒
-
-**频率与总开销估算**:
-
-| 场景 | 估计 checkpoint 次数 | 每次耗时 | 总开销 | 占总计算时间比例 |
-|------|---------------------|---------|--------|---------------|
-| SG #10（小群） | ~60 次 | ~1s | ~1 min | < 1%（总计 ~30min） |
-| SG #210（大群） | ~200 次 | ~5s | ~17 min | < 0.1%（总计 ~2 周） |
-| SG #228（最大群） | ~500 次 | ~10s | ~83 min | < 0.05%（总计 ~2 月） |
-
-**Phase 2 并行的取舍**:
-
-当 checkpoint hook 激活时，BuildDerivative 中的 Phase 2 并行（生成元级并行）被禁用，改为顺序执行。但每个生成元获得全部 Phase 1 worker，所以：
-
-- Phase 2 并行：m 个生成元同时跑，每个分配 `JOBS/m` 个 Phase 1 worker
-- Checkpoint 顺序：1 个生成元跑，分配全部 `JOBS` 个 Phase 1 worker
-
-对于大 m、计算量均匀的情况，Phase 2 理论更快（线性加速）。但实际上 fork 开销和内存竞争使 Phase 2 加速比远小于 m。顺序模式下每个生成元得到更多 Phase 1 worker，且没有 fork 开销，实际性能差距通常在 2x 以内。
-
-**总结: SaveWorkspace 的开销可以忽略不计（< 0.1%），Phase 2 取舍是唯一实质影响，但换来的是从"可能丢数周"到"最多丢数小时"的安全性提升，完全值得。**
+4. **计算节点验证**: 目前所有测试在 cluster3 login 节点上完成。提交到计算节点（CentOS 6, PBS）前建议做一次快速验证（SG #10，约 5 分钟），确认 NFS 路径、环境变量、GAP 启动参数等无问题。

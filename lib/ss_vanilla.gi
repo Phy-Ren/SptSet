@@ -111,7 +111,8 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
   "build d^pq_r",
   [IsSptSetSpecSeqVanillaRep, IsInt, IsInt, IsInt],
   function(ss, r, p, q)
-    local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs, t_p2;
+    local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs, t_p2,
+          t_gen, dt_gen;
     M := SptSetSpecSeqComponent(ss, r, p, q);
     N := SptSetSpecSeqComponent(ss, r, p+r, q-r+1);
     if SptSetFpZModuleIsZero(M) or SptSetFpZModuleIsZero(N) then
@@ -160,16 +161,19 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
         + Int((NanosecondsSinceEpoch()-t_p2)/1000000);
       if m > SPTSET_STATS.p2_max_m then SPTSET_STATS.p2_max_m := m; fi;
       if SPTSET_CHECKPOINT_HOOK <> false then
+        dt_gen := Int((NanosecondsSinceEpoch()-t_p2)/1000000);
         Print("    d^{", p, ",", q, "}_", r,
-          " all ", m, " gens done (parallel), saving...\n");
+          ": ", m, " gens (target_dim=", n, ") done [parallel, ",
+          saved_jobs, " workers, ", dt_gen, " ms]\n");
         SPTSET_CHECKPOINT_HOOK();
       fi;
     else
       for i in [1..m] do
         if not IsBound(fA[i]) then
+          t_gen := NanosecondsSinceEpoch();
           if SPTSET_CHECKPOINT_HOOK <> false then
             Print("    d^{", p, ",", q, "}_", r,
-              " gen ", i, "/", m, "...\n");
+              " gen ", i, "/", m, " (target_dim=", n, ")...\n");
           fi;
           np_ := SptSetMapToBarCocycle(ss!.brMap, p,
             ss!.spectrum[q+1], M!.generators[i]);
@@ -183,7 +187,9 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
           opr := SptSetMapFromBarCocycle(ss!.brMap,
             p+r, ss!.spectrum[q-r+1 +1], opr_);
           fA[i] := opr * N!.projection;
+          dt_gen := Int((NanosecondsSinceEpoch()-t_gen)/1000000);
           if SPTSET_CHECKPOINT_HOOK <> false then
+            Print("      gen ", i, " done [", dt_gen, " ms]\n");
             ss!.derivPartial[r+1][p+1][q+1] := fA;
             SPTSET_CHECKPOINT_HOOK();
           fi;
@@ -203,7 +209,8 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
   "build d^pq_r",
   [IsSptSetSpecSeqVanillaRep, IsInt, IsInt, IsInt],
   function(ss, r, p, q)
-    local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs, t_p2;
+    local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs, t_p2,
+          t_gen, dt_gen;
     M := SptSetSpecSeqComponent(ss, r, p, q);
     N := SptSetSpecSeqComponent2(ss, r, p+r, q-r+1);
     if SptSetFpZModuleIsZero(M) or SptSetFpZModuleIsZero(N) then
@@ -252,16 +259,19 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
         + Int((NanosecondsSinceEpoch()-t_p2)/1000000);
       if m > SPTSET_STATS.p2_max_m then SPTSET_STATS.p2_max_m := m; fi;
       if SPTSET_CHECKPOINT_HOOK <> false then
+        dt_gen := Int((NanosecondsSinceEpoch()-t_p2)/1000000);
         Print("    d2^{", p, ",", q, "}_", r,
-          " all ", m, " gens done (parallel), saving...\n");
+          ": ", m, " gens (target_dim=", n, ") done [parallel, ",
+          saved_jobs, " workers, ", dt_gen, " ms]\n");
         SPTSET_CHECKPOINT_HOOK();
       fi;
     else
       for i in [1..m] do
         if not IsBound(fA[i]) then
+          t_gen := NanosecondsSinceEpoch();
           if SPTSET_CHECKPOINT_HOOK <> false then
             Print("    d2^{", p, ",", q, "}_", r,
-              " gen ", i, "/", m, "...\n");
+              " gen ", i, "/", m, " (target_dim=", n, ")...\n");
           fi;
           np_ := SptSetMapToBarCocycle(ss!.brMap, p,
             ss!.spectrum[q+1], M!.generators[i]);
@@ -275,7 +285,9 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
           opr := SptSetMapFromBarCocycle(ss!.brMap,
             p+r, ss!.spectrum[q-r+1 +1], opr_);
           fA[i] := opr * N!.projection;
+          dt_gen := Int((NanosecondsSinceEpoch()-t_gen)/1000000);
           if SPTSET_CHECKPOINT_HOOK <> false then
+            Print("      gen ", i, " done [", dt_gen, " ms]\n");
             ss!.deriv2Partial[r+1][p+1][q+1] := fA;
             SPTSET_CHECKPOINT_HOOK();
           fi;
