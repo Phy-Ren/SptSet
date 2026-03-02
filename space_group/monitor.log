@@ -1,0 +1,2705 @@
+[2026-03-01 12:36:15] === Monitor cycle ===
+[2026-03-01 12:36:15]   Completed: 20 | Errors: 0
+[2026-03-01 12:36:15]   PBS Running: 0B+0N+0E | Idle: 0B+0N+0E
+[2026-03-01 12:36:18]   Hardest SG#210 not in PBS, submitting to extended
+[2026-03-01 12:36:18]   [DRY-RUN] Would submit SG#210 -> extended
+[2026-03-01 12:36:18]   Hardest SG#219 not in PBS, submitting to extended
+[2026-03-01 12:36:18]   [DRY-RUN] Would submit SG#219 -> extended
+[2026-03-01 12:36:18]   Hardest SG#228 not in PBS, submitting to extended
+[2026-03-01 12:36:18]   [DRY-RUN] Would submit SG#228 -> extended
+[2026-03-01 12:36:18]   [DRY-RUN] Would submit SG#17 -> bigmem
+[2026-03-01 12:36:18]   [DRY-RUN] Would submit SG#18 -> bigmem
+[2026-03-01 12:36:18]   [DRY-RUN] Would submit SG#19 -> normal
+[2026-03-01 12:36:18]   [DRY-RUN] Would submit SG#20 -> normal
+[2026-03-01 12:36:18]   EXPIRED SG#31 (has checkpoint, not running)
+[2026-03-01 12:36:19]   [DRY-RUN] Would submit SG#31 -> bigmem
+[2026-03-01 12:36:19]   EXPIRED SG#32 (has checkpoint, not running)
+[2026-03-01 12:36:19]   [DRY-RUN] Would submit SG#32 -> bigmem
+[2026-03-01 12:36:19]   EXPIRED SG#33 (has checkpoint, not running)
+[2026-03-01 12:36:19]   [DRY-RUN] Would submit SG#33 -> bigmem
+[2026-03-01 12:36:19]   EXPIRED SG#34 (has checkpoint, not running)
+[2026-03-01 12:36:19]   [DRY-RUN] Would submit SG#34 -> bigmem
+[2026-03-01 12:36:19]   [DRY-RUN] Would clean checkpoint sg16.ws
+[2026-03-01 12:36:19] === Done ===
+[2026-03-01 12:37:44] === Monitor cycle ===
+[2026-03-01 12:37:45]   Completed: 20 | Errors: 0
+[2026-03-01 12:37:45]   PBS Running: 4B+0N+2E | Idle: 5B+0N+6E
+[2026-03-01 12:37:45]   [DRY-RUN] Would cancel SG#17 (114093) - non-hardest INFINITY idle
+[2026-03-01 12:37:45]   [DRY-RUN] Would cancel SG#18 (114094) - non-hardest INFINITY idle
+[2026-03-01 12:37:45]   [DRY-RUN] Would cancel SG#19 (114095) - non-hardest INFINITY idle
+[2026-03-01 12:37:45]   [DRY-RUN] Would cancel SG#20 (114096) - non-hardest INFINITY idle
+[2026-03-01 12:37:45]   [DRY-RUN] Would cancel SG#21 (114097) - non-hardest INFINITY idle
+[2026-03-01 12:37:48]   [DRY-RUN] Would submit SG#22 -> normal
+[2026-03-01 12:37:48]   [DRY-RUN] Would submit SG#23 -> normal
+[2026-03-01 12:37:48]   [DRY-RUN] Would clean checkpoint sg16.ws
+[2026-03-01 12:37:48] === Done ===
+[2026-03-01 12:38:26] === Monitor cycle ===
+[2026-03-01 12:38:26]   Completed: 20 | Errors: 0
+[2026-03-01 12:38:26]   PBS Running: 4B+0N+2E | Idle: 5B+0N+6E
+[2026-03-01 12:38:27]   CANCEL SG#17 (114093) - non-hardest INFINITY idle job
+[2026-03-01 12:38:30]   SUBMIT SG#22 -> normal (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114098.head.local)
+[2026-03-01 12:38:31]   SUBMIT SG#23 -> normal (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114099.head.local)
+[2026-03-01 12:38:31]   Cleaned checkpoint sg16.ws
+[2026-03-01 12:38:31] === Done ===
+[2026-03-01 12:40:13] === Monitor cycle ===
+[2026-03-01 12:40:14]   Completed: 20 | Errors: 0
+[2026-03-01 12:40:14]   PBS Running: 4B+0N+2E | Idle: 5B+2N+6E
+[2026-03-01 12:40:15]   CANCEL SG#17 (114093) - non-hardest INFINITY idle job
+[2026-03-01 12:40:16]   CANCEL SG#18 (114094) - non-hardest INFINITY idle job
+[2026-03-01 12:40:16]   CANCEL SG#19 (114095) - non-hardest INFINITY idle job
+[2026-03-01 12:40:16]   CANCEL SG#20 (114096) - non-hardest INFINITY idle job
+[2026-03-01 12:40:17]   CANCEL SG#21 (114097) - non-hardest INFINITY idle job
+[2026-03-01 12:40:20] === Done ===
+=== Monitor cycle ===
+[2026-03-01 12:45:01] === Monitor cycle ===
+  Completed: 20 | Errors: 0
+[2026-03-01 12:45:02]   Completed: 20 | Errors: 0
+  PBS: R=4B+2E | idle=5B+1E (0 non-hardest)
+[2026-03-01 12:45:02]   PBS: R=4B+2E | idle=5B+1E (0 non-hardest)
+  SUBMIT SG#17 -> extended (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114100.head.local)
+[2026-03-01 12:45:03]   SUBMIT SG#17 -> extended (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114100.head.local)
+=== Done ===
+[2026-03-01 12:45:03] === Done ===
+[2026-03-01 12:46:59] === Monitor cycle ===
+[2026-03-01 12:46:59]   Completed: 20 | Errors: 0
+[2026-03-01 12:46:59]   PBS: R=4B+2E | idle=5B+2E (1 non-hardest)
+[2026-03-01 12:46:59] === Done ===
+=== Monitor cycle ===
+[2026-03-01 12:50:01] === Monitor cycle ===
+  Completed: 20 | Errors: 0
+[2026-03-01 12:50:01]   Completed: 20 | Errors: 0
+  PBS: R=4B+2E | idle=5B+2E (1 non-hardest)
+[2026-03-01 12:50:01]   PBS: R=4B+2E | idle=5B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 12:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 12:55:01] === Monitor cycle ===
+  Completed: 20 | Errors: 0
+[2026-03-01 12:55:02]   Completed: 20 | Errors: 0
+  PBS: R=4B+2E | idle=5B+2E (1 non-hardest)
+[2026-03-01 12:55:02]   PBS: R=4B+2E | idle=5B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 12:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:00:01] === Monitor cycle ===
+  Completed: 20 | Errors: 0
+[2026-03-01 13:00:02]   Completed: 20 | Errors: 0
+  PBS: R=4B+2E | idle=5B+2E (1 non-hardest)
+[2026-03-01 13:00:02]   PBS: R=4B+2E | idle=5B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:00:02] === Done ===
+[2026-03-01 13:03:53] === Monitor cycle ===
+[2026-03-01 13:03:53]   Completed: 21 | Errors: 0
+[2026-03-01 13:03:53]   PBS: R=4B+2E | idle=4B+2E (1 non-hardest)
+[2026-03-01 13:03:53]   Cleaned checkpoint sg31.ws
+[2026-03-01 13:03:53] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:05:01] === Monitor cycle ===
+  Completed: 21 | Errors: 0
+[2026-03-01 13:05:01]   Completed: 21 | Errors: 0
+  PBS: R=4B+2E | idle=4B+2E (1 non-hardest)
+[2026-03-01 13:05:01]   PBS: R=4B+2E | idle=4B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:10:01] === Monitor cycle ===
+  Completed: 21 | Errors: 0
+[2026-03-01 13:10:01]   Completed: 21 | Errors: 0
+  PBS: R=4B+2E | idle=4B+2E (1 non-hardest)
+[2026-03-01 13:10:01]   PBS: R=4B+2E | idle=4B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:15:01] === Monitor cycle ===
+  Completed: 21 | Errors: 0
+[2026-03-01 13:15:01]   Completed: 21 | Errors: 0
+  PBS: R=4B+2E | idle=4B+2E (1 non-hardest)
+[2026-03-01 13:15:01]   PBS: R=4B+2E | idle=4B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:15:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:20:01] === Monitor cycle ===
+  Completed: 21 | Errors: 0
+[2026-03-01 13:20:02]   Completed: 21 | Errors: 0
+  PBS: R=4B+2E | idle=4B+2E (1 non-hardest)
+[2026-03-01 13:20:02]   PBS: R=4B+2E | idle=4B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:25:01] === Monitor cycle ===
+  Completed: 23 | Errors: 0
+[2026-03-01 13:25:02]   Completed: 23 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 13:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+  Cleaned checkpoint sg32.ws
+[2026-03-01 13:25:02]   Cleaned checkpoint sg32.ws
+  Cleaned checkpoint sg35.ws
+[2026-03-01 13:25:02]   Cleaned checkpoint sg35.ws
+=== Done ===
+[2026-03-01 13:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:30:01] === Monitor cycle ===
+  Completed: 23 | Errors: 0
+[2026-03-01 13:30:01]   Completed: 23 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 13:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:30:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:35:01] === Monitor cycle ===
+  Completed: 23 | Errors: 0
+[2026-03-01 13:35:02]   Completed: 23 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 13:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:40:01] === Monitor cycle ===
+  Completed: 23 | Errors: 0
+[2026-03-01 13:40:02]   Completed: 23 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 13:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:45:01] === Monitor cycle ===
+  Completed: 23 | Errors: 0
+[2026-03-01 13:45:01]   Completed: 23 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 13:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:50:01] === Monitor cycle ===
+  Completed: 24 | Errors: 0
+[2026-03-01 13:50:01]   Completed: 24 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 13:50:01]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#18 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114101.head.local)
+[2026-03-01 13:50:02]   SUBMIT SG#18 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114101.head.local)
+  Cleaned checkpoint sg36.ws
+[2026-03-01 13:50:02]   Cleaned checkpoint sg36.ws
+=== Done ===
+[2026-03-01 13:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 13:55:01] === Monitor cycle ===
+  Completed: 24 | Errors: 0
+[2026-03-01 13:55:01]   Completed: 24 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 13:55:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 13:55:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:00:01] === Monitor cycle ===
+  Completed: 25 | Errors: 0
+[2026-03-01 14:00:02]   Completed: 25 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 14:00:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#19 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114102.head.local)
+[2026-03-01 14:00:03]   SUBMIT SG#19 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114102.head.local)
+  Cleaned checkpoint sg38.ws
+[2026-03-01 14:00:03]   Cleaned checkpoint sg38.ws
+=== Done ===
+[2026-03-01 14:00:03] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:05:01] === Monitor cycle ===
+  Completed: 25 | Errors: 0
+[2026-03-01 14:05:01]   Completed: 25 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:05:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:10:01] === Monitor cycle ===
+  Completed: 25 | Errors: 0
+[2026-03-01 14:10:02]   Completed: 25 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:15:01] === Monitor cycle ===
+  Completed: 25 | Errors: 0
+[2026-03-01 14:15:02]   Completed: 25 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:20:01] === Monitor cycle ===
+  Completed: 25 | Errors: 0
+[2026-03-01 14:20:01]   Completed: 25 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:20:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:25:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 14:25:02]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 14:25:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#20 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114103.head.local)
+[2026-03-01 14:25:03]   SUBMIT SG#20 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114103.head.local)
+  Cleaned checkpoint sg37.ws
+[2026-03-01 14:25:03]   Cleaned checkpoint sg37.ws
+=== Done ===
+[2026-03-01 14:25:03] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:30:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 14:30:01]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:30:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:35:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 14:35:02]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:40:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 14:40:02]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:45:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 14:45:01]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:50:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 14:50:01]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 14:55:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 14:55:02]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 14:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 14:55:03] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:00:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 15:00:01]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:05:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 15:05:02]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:10:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 15:10:02]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:15:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 15:15:01]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:15:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:15:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:20:01] === Monitor cycle ===
+  Completed: 26 | Errors: 0
+[2026-03-01 15:20:02]   Completed: 26 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:25:01] === Monitor cycle ===
+  Completed: 27 | Errors: 0
+[2026-03-01 15:25:02]   Completed: 27 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 15:25:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#21 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114104.head.local)
+[2026-03-01 15:25:02]   SUBMIT SG#21 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114104.head.local)
+  Cleaned checkpoint sg33.ws
+[2026-03-01 15:25:02]   Cleaned checkpoint sg33.ws
+=== Done ===
+[2026-03-01 15:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:30:01] === Monitor cycle ===
+  Completed: 27 | Errors: 0
+[2026-03-01 15:30:02]   Completed: 27 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:35:01] === Monitor cycle ===
+  Completed: 27 | Errors: 0
+[2026-03-01 15:35:02]   Completed: 27 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:40:01] === Monitor cycle ===
+  Completed: 27 | Errors: 0
+[2026-03-01 15:40:01]   Completed: 27 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:40:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:45:01] === Monitor cycle ===
+  Completed: 27 | Errors: 0
+[2026-03-01 15:45:02]   Completed: 27 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:50:01] === Monitor cycle ===
+  Completed: 27 | Errors: 0
+[2026-03-01 15:50:02]   Completed: 27 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 15:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 15:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 15:55:01] === Monitor cycle ===
+  Completed: 28 | Errors: 0
+[2026-03-01 15:55:01]   Completed: 28 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 15:55:01]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114105.head.local)
+[2026-03-01 15:55:02]   SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114105.head.local)
+  Cleaned checkpoint sg39.ws
+[2026-03-01 15:55:02]   Cleaned checkpoint sg39.ws
+=== Done ===
+[2026-03-01 15:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:00:01] === Monitor cycle ===
+  Completed: 28 | Errors: 0
+[2026-03-01 16:00:02]   Completed: 28 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 16:00:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 16:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:05:01] === Monitor cycle ===
+  Completed: 28 | Errors: 0
+[2026-03-01 16:05:01]   Completed: 28 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 16:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 16:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:10:01] === Monitor cycle ===
+  Completed: 28 | Errors: 0
+[2026-03-01 16:10:01]   Completed: 28 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 16:10:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 16:10:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:15:01] === Monitor cycle ===
+  Completed: 29 | Errors: 0
+[2026-03-01 16:15:02]   Completed: 29 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 16:15:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#23 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114106.head.local)
+[2026-03-01 16:15:02]   SUBMIT SG#23 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114106.head.local)
+  Cleaned checkpoint sg34.ws
+[2026-03-01 16:15:02]   Cleaned checkpoint sg34.ws
+=== Done ===
+[2026-03-01 16:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:20:01] === Monitor cycle ===
+  Completed: 29 | Errors: 0
+[2026-03-01 16:20:01]   Completed: 29 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 16:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 16:20:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:25:01] === Monitor cycle ===
+  Completed: 30 | Errors: 0
+[2026-03-01 16:25:02]   Completed: 30 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 16:25:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#24 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114107.head.local)
+[2026-03-01 16:25:02]   SUBMIT SG#24 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114107.head.local)
+  Cleaned checkpoint sg18.ws
+[2026-03-01 16:25:02]   Cleaned checkpoint sg18.ws
+=== Done ===
+[2026-03-01 16:25:03] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:30:01] === Monitor cycle ===
+  Completed: 30 | Errors: 0
+[2026-03-01 16:30:01]   Completed: 30 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 16:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 16:30:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:35:01] === Monitor cycle ===
+  Completed: 30 | Errors: 0
+[2026-03-01 16:35:02]   Completed: 30 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 16:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 16:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:40:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 16:40:02]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 16:40:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#25 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114108.head.local)
+[2026-03-01 16:40:02]   SUBMIT SG#25 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114108.head.local)
+  Cleaned checkpoint sg21.ws
+[2026-03-01 16:40:02]   Cleaned checkpoint sg21.ws
+=== Done ===
+[2026-03-01 16:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:45:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 16:45:02]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 16:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 16:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:50:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 16:50:02]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 16:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 16:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 16:55:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 16:55:01]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 16:55:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 16:55:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:00:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 17:00:02]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:00:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:05:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 17:05:02]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:10:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 17:10:01]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:10:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:10:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:15:02] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 17:15:02]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:20:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 17:20:02]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:25:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 17:25:02]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:30:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 17:30:01]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:30:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:35:01] === Monitor cycle ===
+  Completed: 31 | Errors: 0
+[2026-03-01 17:35:02]   Completed: 31 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:40:01] === Monitor cycle ===
+  Completed: 32 | Errors: 0
+[2026-03-01 17:40:02]   Completed: 32 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 17:40:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#40 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114109.head.local)
+[2026-03-01 17:40:02]   SUBMIT SG#40 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114109.head.local)
+  Cleaned checkpoint sg20.ws
+[2026-03-01 17:40:02]   Cleaned checkpoint sg20.ws
+=== Done ===
+[2026-03-01 17:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:45:01] === Monitor cycle ===
+  Completed: 32 | Errors: 0
+[2026-03-01 17:45:02]   Completed: 32 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:50:01] === Monitor cycle ===
+  Completed: 32 | Errors: 0
+[2026-03-01 17:50:02]   Completed: 32 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 17:55:01] === Monitor cycle ===
+  Completed: 32 | Errors: 0
+[2026-03-01 17:55:01]   Completed: 32 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 17:55:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 17:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:00:01] === Monitor cycle ===
+  Completed: 32 | Errors: 0
+[2026-03-01 18:00:01]   Completed: 32 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:05:01] === Monitor cycle ===
+  Completed: 32 | Errors: 0
+[2026-03-01 18:05:02]   Completed: 32 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:10:01] === Monitor cycle ===
+  Completed: 32 | Errors: 0
+[2026-03-01 18:10:02]   Completed: 32 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:15:01] === Monitor cycle ===
+  Completed: 32 | Errors: 0
+[2026-03-01 18:15:02]   Completed: 32 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:15:03] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:20:01] === Monitor cycle ===
+  Completed: 33 | Errors: 0
+[2026-03-01 18:20:01]   Completed: 33 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 18:20:01]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#41 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114110.head.local)
+[2026-03-01 18:20:02]   SUBMIT SG#41 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114110.head.local)
+  Cleaned checkpoint sg23.ws
+[2026-03-01 18:20:02]   Cleaned checkpoint sg23.ws
+=== Done ===
+[2026-03-01 18:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:25:01] === Monitor cycle ===
+  Completed: 34 | Errors: 0
+[2026-03-01 18:25:01]   Completed: 34 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 18:25:01]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#42 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114111.head.local)
+[2026-03-01 18:25:02]   SUBMIT SG#42 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114111.head.local)
+  Cleaned checkpoint sg25.ws
+[2026-03-01 18:25:02]   Cleaned checkpoint sg25.ws
+=== Done ===
+[2026-03-01 18:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:30:01] === Monitor cycle ===
+  Completed: 34 | Errors: 0
+[2026-03-01 18:30:02]   Completed: 34 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:35:01] === Monitor cycle ===
+  Completed: 34 | Errors: 0
+[2026-03-01 18:35:02]   Completed: 34 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:40:01] === Monitor cycle ===
+  Completed: 34 | Errors: 0
+[2026-03-01 18:40:01]   Completed: 34 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:40:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:45:01] === Monitor cycle ===
+  Completed: 34 | Errors: 0
+[2026-03-01 18:45:02]   Completed: 34 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:50:01] === Monitor cycle ===
+  Completed: 34 | Errors: 0
+[2026-03-01 18:50:02]   Completed: 34 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 18:55:01] === Monitor cycle ===
+  Completed: 34 | Errors: 0
+[2026-03-01 18:55:01]   Completed: 34 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 18:55:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 18:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:00:01] === Monitor cycle ===
+  Completed: 34 | Errors: 0
+[2026-03-01 19:00:01]   Completed: 34 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:05:01] === Monitor cycle ===
+  Completed: 34 | Errors: 0
+[2026-03-01 19:05:02]   Completed: 34 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:10:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:10:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 19:10:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#43 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114112.head.local)
+[2026-03-01 19:10:02]   SUBMIT SG#43 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114112.head.local)
+  Cleaned checkpoint sg40.ws
+[2026-03-01 19:10:02]   Cleaned checkpoint sg40.ws
+=== Done ===
+[2026-03-01 19:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:15:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:15:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:20:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:20:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:25:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:25:01]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:25:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:30:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:30:01]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:30:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:35:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:35:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:40:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:40:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:45:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:45:01]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:45:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:50:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:50:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 19:55:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 19:55:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 19:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 19:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:00:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:00:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 20:00:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114113.head.local)
+[2026-03-01 20:00:02]   SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114113.head.local)
+=== Done ===
+[2026-03-01 20:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:05:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:05:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:10:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:10:01]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:10:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:15:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:15:01]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:15:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:15:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:20:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:20:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:25:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:25:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:30:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:30:01]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:35:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:35:01]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:35:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:35:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:40:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:40:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:45:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:45:02]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:50:01] === Monitor cycle ===
+  Completed: 35 | Errors: 0
+[2026-03-01 20:50:01]   Completed: 35 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 20:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 20:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 20:55:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 20:55:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 20:55:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#44 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114114.head.local)
+[2026-03-01 20:55:03]   SUBMIT SG#44 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114114.head.local)
+  Cleaned checkpoint sg19.ws
+[2026-03-01 20:55:03]   Cleaned checkpoint sg19.ws
+=== Done ===
+[2026-03-01 20:55:03] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:00:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:00:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:05:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:05:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:05:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:10:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:10:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:15:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:15:07]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:15:07]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:15:07] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:20:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:20:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:25:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:25:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:25:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:30:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:30:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:30:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:35:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:35:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:40:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:40:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:45:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:45:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:50:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:50:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 21:55:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 21:55:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 21:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 21:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:00:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:00:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:00:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:05:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:05:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:10:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:10:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:10:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:10:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:15:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:15:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:20:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:20:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:25:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:25:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:25:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:30:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:30:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:30:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:35:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:35:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:40:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:40:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:45:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:45:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:50:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:50:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 22:55:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 22:55:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 22:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 22:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:00:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 23:00:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:00:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:05:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 23:05:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:10:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 23:10:01]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:10:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:10:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:15:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 23:15:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:20:01] === Monitor cycle ===
+  Completed: 36 | Errors: 0
+[2026-03-01 23:20:02]   Completed: 36 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:25:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-01 23:25:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-01 23:25:01]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#45 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114115.head.local)
+[2026-03-01 23:25:02]   SUBMIT SG#45 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114115.head.local)
+  Cleaned checkpoint sg41.ws
+[2026-03-01 23:25:02]   Cleaned checkpoint sg41.ws
+=== Done ===
+[2026-03-01 23:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:30:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-01 23:30:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:35:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-01 23:35:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:40:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-01 23:40:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:40:01] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:45:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-01 23:45:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:50:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-01 23:50:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-01 23:55:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-01 23:55:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-01 23:55:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-01 23:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:00:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:00:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:05:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:05:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:10:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:10:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:15:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:15:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 00:15:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114116.head.local)
+[2026-03-02 00:15:02]   SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114116.head.local)
+=== Done ===
+[2026-03-02 00:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:20:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:20:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:25:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:25:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:30:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:30:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 00:30:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#42 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114117.head.local)
+[2026-03-02 00:30:02]   SUBMIT SG#42 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114117.head.local)
+=== Done ===
+[2026-03-02 00:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:35:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:35:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:40:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:40:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:45:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:45:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:50:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:50:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 00:55:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 00:55:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 00:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 00:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:00:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:00:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:00:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:05:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:05:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:10:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:10:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:10:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:10:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:15:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:15:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:20:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:20:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:25:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:25:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:25:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:30:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:30:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:30:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:35:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:35:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:40:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:40:02]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:45:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:45:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:50:01] === Monitor cycle ===
+  Completed: 37 | Errors: 0
+[2026-03-02 01:50:01]   Completed: 37 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 01:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 01:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 01:55:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 01:55:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 01:55:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#46 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114118.head.local)
+[2026-03-02 01:55:02]   SUBMIT SG#46 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114118.head.local)
+  Cleaned checkpoint sg44.ws
+[2026-03-02 01:55:03]   Cleaned checkpoint sg44.ws
+=== Done ===
+[2026-03-02 01:55:03] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:00:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:00:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:05:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:05:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:10:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:10:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:15:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:15:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:15:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:20:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:20:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:20:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:25:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:25:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:30:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:30:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:35:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:35:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:35:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:40:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:40:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:40:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:45:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:45:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 02:45:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114119.head.local)
+[2026-03-02 02:45:02]   SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114119.head.local)
+=== Done ===
+[2026-03-02 02:45:03] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:50:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:50:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 02:55:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 02:55:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 02:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 02:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:00:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:00:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:00:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:05:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:05:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:10:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:10:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:10:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:10:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:15:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:15:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:20:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:20:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:20:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:25:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:25:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:25:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:30:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:30:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:30:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:30:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:35:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:35:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:40:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:40:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:45:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:45:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:50:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:50:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 03:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 03:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 03:55:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 03:55:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 03:55:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#42 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114120.head.local)
+[2026-03-02 03:55:02]   SUBMIT SG#42 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114120.head.local)
+=== Done ===
+[2026-03-02 03:55:03] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:00:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:00:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:05:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:05:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:10:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:10:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:15:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:15:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:15:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:20:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:20:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:20:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:25:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:25:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:30:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:30:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:35:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:35:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:35:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:40:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:40:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:40:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:45:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:45:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:50:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:50:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 04:55:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 04:55:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 04:55:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 04:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:00:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:00:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:05:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:05:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:10:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:10:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:15:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:15:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:15:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:20:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:20:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:20:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:25:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:25:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:30:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:30:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:35:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:35:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:35:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:40:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:40:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:40:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:45:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:45:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:50:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:50:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 05:55:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 05:55:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 05:55:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 05:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:00:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:00:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:05:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:05:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:10:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:10:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:15:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:15:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:15:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:20:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:20:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:20:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:25:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:25:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:30:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:30:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:35:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:35:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:35:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:40:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:40:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:40:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:45:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:45:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:50:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:50:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 06:55:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 06:55:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 06:55:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 06:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:00:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:00:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:05:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:05:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:10:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:10:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:15:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:15:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:15:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:20:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:20:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:20:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:25:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:25:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:30:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:30:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:35:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:35:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:35:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:40:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:40:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:40:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:45:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:45:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:50:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:50:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 07:55:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 07:55:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 07:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 07:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:00:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:00:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:00:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:05:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:05:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:05:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:10:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:10:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:15:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:15:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:20:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:20:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:25:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:25:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:25:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:25:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:30:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:30:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:35:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:35:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:40:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:40:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:45:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:45:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:45:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:50:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:50:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 08:55:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 08:55:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 08:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 08:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:00:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 09:00:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:05:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 09:05:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:05:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:10:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 09:10:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:15:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 09:15:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:20:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 09:20:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:25:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 09:25:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:25:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:25:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:30:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 09:30:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:35:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 09:35:02]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:40:01] === Monitor cycle ===
+  Completed: 38 | Errors: 0
+[2026-03-02 09:40:01]   Completed: 38 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:45:01] === Monitor cycle ===
+  Completed: 39 | Errors: 0
+[2026-03-02 09:45:01]   Completed: 39 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 09:45:01]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#47 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114121.head.local)
+[2026-03-02 09:45:02]   SUBMIT SG#47 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114121.head.local)
+  Cleaned checkpoint sg46.ws
+[2026-03-02 09:45:02]   Cleaned checkpoint sg46.ws
+=== Done ===
+[2026-03-02 09:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:50:01] === Monitor cycle ===
+  Completed: 40 | Errors: 0
+[2026-03-02 09:50:02]   Completed: 40 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 09:50:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#48 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114122.head.local)
+[2026-03-02 09:50:02]   SUBMIT SG#48 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114122.head.local)
+  Cleaned checkpoint sg43.ws
+[2026-03-02 09:50:02]   Cleaned checkpoint sg43.ws
+=== Done ===
+[2026-03-02 09:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 09:55:01] === Monitor cycle ===
+  Completed: 40 | Errors: 0
+[2026-03-02 09:55:02]   Completed: 40 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 09:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 09:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:00:01] === Monitor cycle ===
+  Completed: 40 | Errors: 0
+[2026-03-02 10:00:02]   Completed: 40 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:00:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:05:01] === Monitor cycle ===
+  Completed: 40 | Errors: 0
+[2026-03-02 10:05:01]   Completed: 40 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:05:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:10:01] === Monitor cycle ===
+  Completed: 40 | Errors: 0
+[2026-03-02 10:10:01]   Completed: 40 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:10:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:10:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:15:01] === Monitor cycle ===
+  Completed: 40 | Errors: 0
+[2026-03-02 10:15:02]   Completed: 40 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:20:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 10:20:02]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 10:20:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#49 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114123.head.local)
+[2026-03-02 10:20:02]   SUBMIT SG#49 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114123.head.local)
+  Cleaned checkpoint sg24.ws
+[2026-03-02 10:20:02]   Cleaned checkpoint sg24.ws
+=== Done ===
+[2026-03-02 10:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:25:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 10:25:02]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:25:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:25:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:30:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 10:30:02]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:35:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 10:35:02]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 10:35:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114124.head.local)
+[2026-03-02 10:35:02]   SUBMIT SG#22 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114124.head.local)
+=== Done ===
+[2026-03-02 10:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:40:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 10:40:02]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:45:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 10:45:02]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:50:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 10:50:01]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 10:55:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 10:55:01]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 10:55:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 10:55:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:00:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 11:00:02]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 11:00:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#42 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114125.head.local)
+[2026-03-02 11:00:02]   SUBMIT SG#42 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114125.head.local)
+=== Done ===
+[2026-03-02 11:00:03] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:05:01] === Monitor cycle ===
+  Completed: 41 | Errors: 0
+[2026-03-02 11:05:01]   Completed: 41 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 11:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 11:05:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:10:01] === Monitor cycle ===
+  Completed: 42 | Errors: 0
+[2026-03-02 11:10:02]   Completed: 42 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 11:10:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#50 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114126.head.local)
+[2026-03-02 11:10:03]   SUBMIT SG#50 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114126.head.local)
+  Cleaned checkpoint sg45.ws
+[2026-03-02 11:10:03]   Cleaned checkpoint sg45.ws
+=== Done ===
+[2026-03-02 11:10:03] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:15:01] === Monitor cycle ===
+  Completed: 42 | Errors: 0
+[2026-03-02 11:15:02]   Completed: 42 | Errors: 0
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 11:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 11:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:20:01] === Monitor cycle ===
+  Completed: 43 | Errors: 0
+[2026-03-02 11:20:02]   Completed: 43 | Errors: 0
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 11:20:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#51 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114127.head.local)
+[2026-03-02 11:20:02]   SUBMIT SG#51 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114127.head.local)
+  Cleaned checkpoint sg47.ws
+[2026-03-02 11:20:03]   Cleaned checkpoint sg47.ws
+=== Done ===
+[2026-03-02 11:20:03] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:25:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 11:25:01]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 11:25:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 11:25:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:30:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 11:30:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 11:30:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 11:30:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:35:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 11:35:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 11:35:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 11:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:40:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 11:40:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 11:40:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 11:40:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:45:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 11:45:01]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 11:45:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 11:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:50:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 11:50:01]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 11:50:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 11:50:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 11:55:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 11:55:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 11:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 11:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:00:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:00:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 12:00:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#52 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114128.head.local)
+[2026-03-02 12:00:02]   SUBMIT SG#52 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114128.head.local)
+=== Done ===
+[2026-03-02 12:00:03] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:05:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:05:01]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:05:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:05:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:10:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:10:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:10:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:10:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:15:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:15:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:15:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:15:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:20:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:20:01]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:20:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:20:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:25:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:25:01]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:25:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:25:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:30:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:30:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 12:30:02]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#53 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114129.head.local)
+[2026-03-02 12:30:03]   SUBMIT SG#53 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114129.head.local)
+=== Done ===
+[2026-03-02 12:30:03] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:35:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:35:01]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:35:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:35:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:40:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:40:01]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:40:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:40:01] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:45:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:45:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:45:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:45:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:50:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:50:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:50:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:50:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 12:55:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 12:55:02]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 12:55:02]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 12:55:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 13:00:01] === Monitor cycle ===
+  Completed: 43 | Errors: 2
+[2026-03-02 13:00:01]   Completed: 43 | Errors: 2
+  PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+[2026-03-02 13:00:01]   PBS: R=4B+2E | idle=2B+2E (1 non-hardest)
+=== Done ===
+[2026-03-02 13:00:02] === Done ===
+=== Monitor cycle ===
+[2026-03-02 13:05:01] === Monitor cycle ===
+  Completed: 44 | Errors: 2
+[2026-03-02 13:05:01]   Completed: 44 | Errors: 2
+  PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+[2026-03-02 13:05:01]   PBS: R=4B+2E | idle=1B+2E (1 non-hardest)
+  SUBMIT SG#54 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114130.head.local)
+[2026-03-02 13:05:02]   SUBMIT SG#54 -> bigmem (
+You can check the status of node assigned to jobs by 'showq -r' 
+
+114130.head.local)
+  Cleaned checkpoint sg49.ws
+[2026-03-02 13:05:02]   Cleaned checkpoint sg49.ws
+=== Done ===
+[2026-03-02 13:05:02] === Done ===

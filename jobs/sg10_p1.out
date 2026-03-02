@@ -1,0 +1,84 @@
+Warning: no access to tty (Bad file descriptor).
+Thus no job control in this shell.
+=== DIAGNOSTICS ===
+Host: n06.local
+Date: Wed Feb 25 16:53:28 HKT 2026
+LD_LIBRARY_PATH: /home/user/xyren/miniforge3/envs/gap-centos6/lib
+=== IO package test ===
+DIAG: IO_OK ParListByFork=true
+DIAG: ParListByFork test=true
+=== IO test exit: 0 ===
+=== Starting benchmark: Phase 1 only ===
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set BROWSER_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/software/gap-4.13.1/pkg/\
+SptSet/ failed
+============================================================
+Benchmark: SG #10 (P2/m, C2h) ezSpinless
+SPTSET_PARALLEL_JOBS = 24
+SPTSET_PARALLEL_THRESHOLD = 10
+============================================================
+Resolution built: 3043 ms
+  deg 0: n = 1
+  deg 1: n = 5
+  deg 2: n = 12
+  deg 3: n = 20
+  deg 4: n = 28
+  deg 5: n = 36
+  deg 6: n = 44
+  deg 7: n = 52
+Setup complete.
+
+p+ip:
+<ZL-Module with torsions [ 2, 0 ]>
+<ZL-Module with torsions [ 0 ]>
+<ZL-Module with torsions [ 0 ]>
+<ZL-Module with torsions [ 0 ]>
+Majorana:
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ]>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
+2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
+2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+
+============================================================
+RESULTS
+============================================================
+SPTSET_PARALLEL_JOBS = 24
+Resolution time:    3043 ms
+LayersVerbose time: 9011686 ms
+Layers: [ <ZL-Module with torsions [ 0 ]>, <ZL-Module []>, 
+  <ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>, 
+  <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]> ]
+=== Benchmark exit: 0 ===
+=== End: Wed Feb 25 19:24:14 HKT 2026 ===

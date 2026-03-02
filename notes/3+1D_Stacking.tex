@@ -1,0 +1,1746 @@
+% ****** Start of file apssamp.tex ******
+%
+%   This file is part of the APS files in the REVTeX 4.2 distribution.
+%   Version 4.2a of REVTeX, December 2014
+%
+%   Copyright (c) 2014 The American Physical Society.
+%
+%   See the REVTeX 4 README file for restrictions and more information.
+%
+% TeX'ing this file requires that you have AMS-LaTeX 2.0 installed
+% as well as the rest of the prerequisites for REVTeX 4.2
+%
+% See the REVTeX 4 README file
+% It also requires running BibTeX. The commands are as follows:
+%
+%  1)  latex apssamp.tex
+%  2)  bibtex apssamp
+%  3)  latex apssamp.tex
+%  4)  latex apssamp.tex
+%
+\documentclass[%
+ reprint,
+%superscriptaddress,
+%groupedaddress,
+%unsortedaddress,
+%runinaddress,
+%frontmatterverbose, 
+%preprint,
+%preprintnumbers,
+%nofootinbib,
+%nobibnotes,
+%bibnotes,
+ amsmath,amssymb,
+ aps,
+%pra,
+prb,
+%rmp,
+%prstab,
+%prstper,
+%floatfix,
+]{revtex4-2}
+
+\usepackage{graphicx}% Include figure files
+\usepackage{dcolumn}% Align table columns on decimal point
+\usepackage{bm}% bold math
+\usepackage{hyperref}% Add hypertext capabilities
+\usepackage[mathlines]{lineno}% Enable numbering of text and display math
+\linenumbers\relax % Commence numbering lines
+
+\usepackage{adjustbox}% Enable using pictures in formulas
+\usepackage{physics}% \ket
+
+\begin{document}
+
+\preprint{APS/123-QED}
+
+\title{Stacking Group of 3+1D Fermionic Symmetry-Protected Topological Phases}
+
+\date{\today}% It is always \today, today,
+             %  but any date may be explicitly specified
+
+\begin{abstract}
+The goal of this note is to construct lattice model for the stacking group structure of 3+1D fermionic SPT phases. 
+\end{abstract}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+\subsection{Review of previous results}
+
+We give a brief review of the previous results obtained under this theoretical framework of domain wall decoration construction for interacting FSPT protected by internal discrete symmetries in Refs. \cite{Wang2018, Wang2020, ren2023stacking, Ning2025unpub}.
+
+The fermionic symmetry is described by a triplet 
+\begin{equation}
+G_f := (G_b, \omega_2, s_1), 
+\end{equation}
+where $G_b$ is a discrete group describing the bosonic symmetry, 
+\begin{equation}
+\omega_2 \in H^2(G_b, \mathbb Z_2)
+\end{equation} represents the group extension between the fermion parity $\mathbb Z_2^f$ and the bosonic part $G_b$, and 
+\begin{equation}
+s_1 \in H^1(G_b, \mathbb Z_2)
+\end{equation} 
+describes the anti-unitary part of the symmetry.
+
+\subsubsection{1+1D FSPT classification}
+
+The classification of $1+1$D interacting FSPT (more precisely, fermionic invertible symmetric states) protected by internal discrete symmetry $G_f = (G_b, \omega_2, s_1)$ is characterized by a quadruplet $(n_0,n_1,\nu_2)$:  
+\begin{enumerate}
+\item  $n_0 \in C^0(G_b, \mathbb Z_2)$ represents the 1+1D Majorana chain decoration; 
+\item  $n_1 \in C^1(G_b, \mathbb Z_2)$ represents the 0+1D complex fermion decoration;
+\item  $\nu_2 \in C^2(G_b, U(1))$ represents the 1+1D bosonic SPT phase.
+\end{enumerate}
+We call it fermionic invertible symmetric states because the Majorana chain decoration is considered here.
+If $n_0 = 0$, we can safely call the state $(n_1,\nu_2)$ an FSPT state.
+The triplet $( n_{0} ,n_{1} ,\nu _{2})$ must satisfy the following conditions: 
+\begin{align}
+\mathrm{d} n_{0} &=0 \mod 2 ,\\
+\mathrm{d} n_{1} &=\omega _{2} \cup n_{0} \mod 2 ,\\
+\mathrm{d}_{s_1} \nu _{2} &=( -1)^{\omega _{2} \cup n_{1} +\mathrm{d} n_{1} \cup _{1}\mathrm{d} n_{1} +\mathrm{d} n_{1} \cup n_{1} + s_{1} \cup \mathrm{d} n_{1}} .
+\end{align}
+Here the cup product $\cup$ and higher cup product $\cup_1$ are defined in Appendix \ref{ap:cup product}.
+
+
+\subsubsection{1+1D FSPT stacking}
+
+Given two 1+1D FSPT states $( n_{0} ,n_{1} ,\nu _{2})$ and $( n'_{0} ,n'_{1} ,\nu '_{2})$ with the same symmetry group $( G_{b} ,\omega _{2} ,s_{1})$, we can stack them into a new 1+1D FSPT state $( N_{0} ,N_{1} ,\mathcal{V}_{2}):= (n_0,n_1,\nu_2) \boxtimes (n'_0,n'_1,\nu'_2)$: 
+\begin{align}
+N_{0} &=n_{0} +n'_{0} \mod 2 ,\\
+N_{1} &=n_{1} +n'_{1} + s_{1} \cup n_{0} \cup n'_{0} \mod 2 ,\\
+\mathcal{V}_{2} &=\nu _{2} \nu '_{2}( -1)^{s_{1} \cup ( n_{1} +n'_{1}) \cup n_{0} \cup n'_{0} +n_{1} \cup n'_{1}}  .
+\end{align}
+
+
+\subsubsection{2+1D FSPT classification}
+
+The classification of $2+1$D interacting FSPT (more precisely, fermionic invertible symmetric states) protected by internal discrete symmetry $G_f = (G_b, \omega_2, s_1)$ is characterized by a quadruplet $(n_1,n_2,\nu_3)$:  
+\begin{enumerate}
+\item  $n_1 \in C^1(G_b, \mathbb Z_2)$ represents the 1+1D Majorana chain decoration; 
+\item  $n_2 \in C^2(G_b, \mathbb Z_2)$ represents the 0+1D complex fermion decoration;
+\item  $\nu_3 \in C^3(G_b, U(1))$ represents the 2+1D bosonic SPT phase.
+\end{enumerate}
+The triplet $( n_{1} ,n_{2} ,\nu _{3})$ must satisfy the following conditions:
+\begin{align}
+\mathrm{d} n_{1} &=0 \mod 2 ,\\
+\mathrm{d} n_{2} &=\omega _{2} \cup n_{1} +s_{1} \cup n_{1} \cup n_{1} \mod 2 ,\\
+\mathrm{d}_{s_1} \nu _{3} &=\mathcal{O}_{4}[ n_{2}]( 01234)\nonumber\\\nonumber
+&=( -1)^{[ \omega _{2} \cup n_{2} +n_{2} \cup n_{2} +n_{2} \cup _{1}\mathrm{d} n_{2} +\mathrm{d}( s_{1} \cup n_{2} +n_{2} \cup _{2}\mathrm{d} n_{2})]( 01234)}\\\nonumber
+&\quad\times ( -1)^{\omega _{2}( 013)\mathrm{d} n_{2}( 1234) +\mathrm{d} n_{2}( 0124)\mathrm{d} n_{2}( 0234)}\\
+&\quad\times ( -i)^{\mathrm{d} n_{2}( 0123)[ 1-\mathrm{d} n_{2}( 0124)] (\mathrm{mod}\ 2)}
+.
+\end{align}
+
+
+\subsubsection{2+1D FSPT stacking}
+
+Given two 2+1D FSPT states $( n_{1} ,n_{2} ,\nu _{3})$ and $( n'_{1} ,n'_{2} ,\nu '_{3})$ with the same symmetry group $( G_{b} ,\omega _{2} ,s_{1})$, we can stack them into a new 2+1D FSPT state $( N_{1} ,N_{2} ,\mathcal{V}_{3}) := (n_1,n_2,\nu_3) \boxtimes (n'_1,n'_2,\nu'_3)$: 
+\begin{align}
+N_{1} & =  n_{1} +n'_{1} \mod 2 , \\
+N_{2} & =  n_{2} +n'_{2} + m_2 \mod 2 , \\
+m_{2} & =  n_{1} \cup n'_{1} +s_{1} 
+\cup ( n_{1} \cup _{1} n'_{1}) \mod 2 , \\
+\mathcal{V}_{3} & =  \nu _{3} \nu '_{3}\mathcal{E}_{3} = \nu _{3} \nu '_{3} ( -1)^{\epsilon _{3}} e^{2\pi i\theta _{3}[ n_{1} ,n'_{1}]} . 
+\end{align}
+The part involving complex fermions ($n_2$ and $n_2'$) is 
+\begin{gather}
+\begin{array}{ c c l }
+\epsilon_{3} & = & n_{2} \cup _{1} n'_{2} +\mathrm{d} n_{2} \cup _{2} n_{2} +n'_{2} \cup _{2}\mathrm{d} n_{2} +\mathrm{d} n'_{2} \cup _{2} n'_{2}\\
+ &  &+(\mathrm{d} n_{2} +\mathrm{d} n'_{2}) \cup _{2} N_{2} +m_{2} \cup _{1} N_{2} +m_{2} \cup _{2}\mathrm{d} N_{2}
+\end{array} .
+\end{gather}
+The pure Majorana fermion phase $\theta _{3}$ can be divided into four components as \eqref{eq:2D Majorana phase.1}. Here, $\theta _{3}^{0}$ represents the scenario when both $\omega_{2}$ and $s_{1}$ are trivial, $\theta _{3}^{\omega _{2}}$ represents the scenario when $s_{1}$ is trivial but $\omega_{2}$ is non-trivial, $\theta _{3}^{s_{1}}$ represents the scenario when $\omega_{2}$ is trivial but $s_{1}$ is non-trivial, and $\theta _{3}^{\omega _{2} ,s_{1}}$ represents the scenario when both $\omega_{2}$ and $s_{1}$ are non-trivial. The explicit expressions of them are
+\begin{widetext}
+\begin{align}
+\theta _{3}[ n_{1} ,n'_{1}] &=\theta _{3}^{0} +\theta _{3}^{\omega _{2}} +\theta _{3}^{s_{1}} +\theta _{3}^{\omega _{2} ,s_{1}},\label{eq:2D Majorana phase.1}\\
+\theta _{3}^{0} &=\frac{1}{2} n_{1} \cup ( n_{1} \cup _{1} n'_{1}) \cup n'_{1} +\frac{1}{4} n_{1} \cup n'_{1} \cup n'_{1} ,\label{eq:2D Majorana phase.2}\\
+\theta _{3}^{\omega _{2}} &=\frac{1}{2}( \omega _{2} \cup N_{1}) \cup _{2}( n_{1} \cup n'_{1}) +\frac{3}{4} \omega _{2} \cup ( n_{1} \cup _{1} n'_{1}) ,\label{eq:2D Majorana phase.3}\\\nonumber
+\theta _{3}^{s_{1}} & =  \frac{1}{2}[s_{1} \cup s_{1} \cup ( n_{1} \cup _{1} n'_{1}) +s_{1} \cup ( s_{1} \cup _{1} n_{1} \cup _{1} n'_{1}) \cup ( n_{1} \cup _{1} n'_{1}) +n_{1} \cup ( s_{1} \cup _{1} n'_{1}) \cup ( n_{1} \cup _{1} n'_{1})\\\nonumber
+&\quad   +( s_{1} \cup _{1} n_{1}) \cup N_{1} \cup ( n_{1} \cup _{1} n'_{1}) +( s_{1} \cup _{1} n_{1}) \cup ( n_{1} \cup _{1} n'_{1}) \cup n_{1} +s_{1} \cup ( n_{1} \cup _{1} n'_{1}) \cup n'_{1}]\\
+&\quad   +\frac{1}{4}[s_{1} \cup n'_{1} \cup n_{1} +s_{1} \cup ( n_{1} \cup _{1} n'_{1}) \cup N_{1}] +\frac{5}{8} s_{1} \cup n_{1} \cup n'_{1},\label{eq:2D Majorana phase.4}\\\nonumber
+\theta _{3}^{\omega _{2} ,s_{1}} & =  \frac{1}{2}\{( \omega _{2} \cup _{1} s_{1}) \cup ( n_{1} \cup _{1} n'_{1}) +[ \omega _{2} \cup _{2}( s_{1} \cup ( n_{1} \cup _{1} n'_{1}))] \cup N_{1}\\
+&\quad   +[ \omega _{2} \cup _{2}( s_{1} \cup n'_{1})] \cup n_{1} +[ \omega _{2} \cup _{2}( s_{1} \cup n_{1})] \cup ( n'_{1} +n_{1} \cup _{1} n'_{1})\}. \label{eq:2D Majorana phase.5}
+\end{align}
+\end{widetext}
+
+
+\subsubsection{3+1D FSPT classification}
+
+The classification of $3+1$D interacting FSPT protected by internal discrete symmetry $G_f = (G_b, \omega_2, s_1)$ is characterized by a quadruplet $(n_1,n_2,n_3,\nu_4)$:  
+\begin{enumerate}
+\item $n_1 \in C^1(G_b, \mathbb Z)$ represents the 2+1D $p+ip$ superconductor decoration; 
+\item  $n_2 \in C^2(G_b, \mathbb Z_2)$ represents the 1+1D Majorana chain decoration; 
+\item  $n_3 \in C^3(G_b, \mathbb Z_2)$ represents the 0+1D complex fermion decoration;
+\item  $\nu_4 \in C^4(G_b, U(1))$ represents the 3+1D bosonic SPT phase.
+\end{enumerate}
+
+Since the $p+ip$ superconductor decoration is technically hard to do, we will drop it and just consider a triplet $(n_2,n_3,\nu_4)$.
+They should satisfy a series of cochain level twisted cocycle conditions 
+\begin{align}
+\mathrm d n_2 &= 0 \mod 2 ,\\
+\mathrm d n_3 &= n_2 \cup n_2 + \omega_2 \cup n_2 + s_1 \cup (n_2 \cup_1 n_2) \mod 2 , \\
+\mathrm{d} \nu_4 &= \mathcal{O}_5[n_3,n_2] =  \mathcal{O}^{c}_5[n_3] \cdot \mathcal{O}^{c\gamma}_5[\mathrm{d}n_3] \cdot \mathcal{O}^{\gamma}_5[n_2] .
+\end{align}
+The obstruction function $\mathcal{O}_5[n_3,n_2]$ can be divided into 3 parts: 
+\begin{enumerate}
+\item $\mathcal{O}^{c}_5[n_3]$ comes from the anti-commutation relation between complex fermions and the symmetry transformation of complex fermions as 
+\begin{equation}
+\mathcal{O}^{c}_5[n_3] = (-1)^{\omega_2 \cup n_3 + n_3 \cup_1 n_3 + \mathrm{d}n_3 \cup_2 n_3} .
+\end{equation}
+\item $\mathcal{O}^{c\gamma}_5[\mathrm{d}n_3]$ comes from the anti-commutation relation between complex fermions and Majorana fermions as 
+\begin{equation}
+\mathcal{O}^{c\gamma}_5[\mathrm{d}n_3] = (-1)^{\mathrm{d}n_3 \cup_3 \mathrm{d}n_3} .
+\end{equation}
+\item $\mathcal{O}^{\gamma}_5[n_2]$ is the pure Majorana phase involved in the superfusion heptagon equation (the symmetry transformations of Majorana fermions are also contained here), which can be written minimally as 8-th root of the unit 1:
+\begin{equation}
+\mathcal{O}^{\gamma}_5[n_2] \in \exp( i \frac{2\pi}{8} k ), \quad k \in \mathbb{Z}_8 ,
+\end{equation}
+whose form is too complicated to present here.
+\end{enumerate}
+
+
+\subsection{Summary of 3+1D FSPT stacking}
+
+Given two 3+1D FSPT states $(n_2, n_3,\nu_4)$ and $(n'_2, n'_3, \nu'_4)$ under the same symmetry group $G_f = (G_b, \omega_2, s_1)$, we can stack them to get a new 3+1D FSPT state $(N_2,N_3,\mathcal V_4) := (n_2,n_3,\nu_4) \boxtimes (n'_2,n'_3,\nu'_4)$.
+They should satisfy the following cochain level stacking rules 
+\begin{align}
+N_2 &= n_2 + n'_2 \mod 2 ,\\
+N_3 &= n_3 + n'_3 + m_3 \mod 2 ,\\
+\mathcal{V}_{4} &= \nu _{4} \nu '_{4}\mathcal{E}_{4} =\nu _{4} \nu '_{4}\mathcal{E}_{4}^{c}\mathcal{E}_{4}^{c\gamma }\mathcal{E}_{4}^{\gamma } =\nu _{4} \nu '_{4}( -1)^{\epsilon _{4}^{c} +\epsilon _{4}^{c\gamma }} e^{2\pi i\theta _{4}^{\gamma }} .
+\end{align}
+Here we denote 
+\begin{equation}
+m_3 = n_2 \cup_1 n'_2 + s_1 \cup (n_2 \cup_2 n'_2) \mod 2.
+\end{equation}
+Similar to the obstruction function, there are three parts in the stacking phase:
+\begin{enumerate}
+\item The first part $\mathcal{E}_{4}^{c}=( -1)^{\epsilon _{4}^{c}}$ comes from the anti-commutation relation of complex fermions and takes the form 
+\begin{equation}
+\epsilon _{4}^{c}  =  m_{3} \cup _{2} N_{3} +n_{3} \cup _{2} n'_{3} +n_{3} \cup _{3}\mathrm{d} n'_{3} .
+\end{equation}
+\item The second part $\mathcal{E}_{4}^{c \gamma}=( -1)^{\epsilon _{4}^{c \gamma}}$ comes from the anti-commutation relation between complex fermions and Majorana fermions and takes the form 
+\begin{widetext}
+\begin{equation}
+\epsilon _{4}^{c\gamma }  =  m_{3} \cup _{3}(\mathrm{d} n_{3} +\mathrm{d} n'_{3}) +\mathrm{d} n_{3} \cup _{4}\mathrm{d} n'_{3} +\mathrm{d} N_{3} \cup _{3} m_{3} +m_{3} \cup _{2} m_{3} +\mathrm{d} m_{3} .
+\end{equation}
+\end{widetext}
+\item The last part $\mathcal{E}_{4}^{\gamma}=e^{2\pi i\theta _{4}^{\gamma }}$ is the pure Majorana phase, which is extremely complicated and haven't been summarized into neat formulas yet.
+We will give a table fully characterizing this Majorana phase $\theta _{4}^{\gamma }$.
+\end{enumerate}
+
+\subsection{Summary of examples}
+
+\section{Setup}
+
+\subsection{Fermionic symmetry}
+In the fermionic system, the fermion parity symmetry $\mathbb Z_{2}^{f}$ is necessary and distinct.
+The total symmetry group $G_{f}$ is then understood as the central extension of a bosonic symmetry group $G_{b}$ by the fermion parity subgroup $\mathbb Z_{2}^{f}$.
+For technical reasons, we only consider the case where the group $G_{b}$ is a discrete group, which can be infinite, like space groups.
+This central extension is defined by an 2-cocycle $\omega_2 \in H^2(G_b, \mathbb Z_2)$ and fit into the following short exact sequence 
+\begin{equation}
+1 \rightarrow \mathbb Z_{2}^{f} \rightarrow G_{f} \rightarrow G_{b} \rightarrow 1.
+\end{equation}
+If the system considered contains anti-unitary symmetry operators, we use the group homomorphism $s_{1} \in H^1(G_b, \mathbb Z_2)$ mapping from $G_{b}$ to $\mathbb Z_{2}$ to distinguish between unitary and anti-unitary group elements. 
+Therefore, the symmetry group of an internal FSPT can be uniquely specified by a triple $(G_b, \omega_2, s_1)$.
+We emphasize here that the characterization of the symmetry group (involving spatial symmetry) of an crystalline FSPT is different, which will be introduced latter.
+
+
+\subsection{Domain wall decorations}
+We follow the systematic construction of internal FSPT 
+proposed by Refs. \cite{Wang2018,Wang2020}, which is called fluctuating domain wall decorations.
+This idea originates from the construction of BSPT \cite{Chen2014}.
+Roughly speaking, we first explicitly break the $G_{b}$ symmetry and decorate fermionic invertible topological orders on various codimensional domain walls of the $G_{b}$ symmetry breaking regions.
+Then we allow the symmetry breaking patterns to fluctuate (i.e., quantum superpose all the possible symmetry breaking patterns and domain wall decorations) to restore the total symmetry. 
+Mathematically, the consistency conditions of our internal FSPT construction can be organized into an Atiyah-Hirzebruch spectral sequence \cite{wang2021domain, Gaiotto2019} (see Appendix for detailed explanations).
+
+Our FSPT model is a lattice model, which is defined on 
+the \textit{triangulation} of a spacial manifold.
+We also require the triangulation to admit a \textit{branching structure}.
+One convenient way to get a branching structure is to label every vertex of the triangulation (or lattice site) with an natural number $n \in \mathbb N$.
+Then, we assign every link $\langle ij \rangle$ ($i<j$) with a direction from $i$ to $j$.
+This choice of link orientation guarantees that there is no oriented loop in any triangle, so a branching structure is obtained.
+
+To construct the 3+1D FSPT states, there are 4 layers of degrees freedom:
+\begin{enumerate}
+\item $|G_{b} |$ levels of bosonic (spin) states $\ket{g_{i}} \ ( g_{i} \in G_{b})$ on each vertex $i$ of the spatial lattice.
+\item $|G_{b} |$ species of complex fermions $c_{ijkl}^{\sigma } \ ( \sigma \in G_{b})$ at the center of each tetrahedron $\langle ijkl\rangle $.
+\item $|G_{b} |$ species of complex fermions (split to Majorana fermions) $a_{ijk}^{\sigma } =\left( \gamma _{ijk,A}^{\sigma } +i\gamma _{ijk,B}^{\sigma }\right) /2$ $( \sigma \in G_{b})$ on the two sides of each triangle $\langle ijk\rangle $.
+\item $|G_{b} |$ species of $p+ip$ chiral superconductors on the plan dual to link $\langle ij\rangle $, which may have several copies indicated by $n_{1}(g_{i}, g_{j}) \in \mathbb Z_{T}$.
+The boundary chiral Majorana modes (along the link dual to some triangle) are $\Psi _{ij,R,\alpha}^{\sigma }$ or $\Psi _{ij,L,\alpha}^{\sigma }$ $(\sigma \in G_{b})$ depending on the chirality (right- or left-hand rule with respect to the orientation of link $\langle ij \rangle$) with $\alpha = 1,2,...,|n_{1}(g_{i}, g_{j})|$ labeling the number of the chiral Majorana modes.
+\end{enumerate}
+
+The classification of the internal FSPT containing the above degrees of freedom is described by a quadruplet $( n_{1}, n_{2}, n_{3}, \nu_{4} )$:
+\begin{enumerate}
+\item $\nu_{4} (g_{i}, g_{j}, g_{k}, g_{l}, g_{m}) \in C^{4} (G_{b}, U_{T}(1))$ is a homogeneous 4-cochain representing the BSPT $U(1)$ phase factor associated to each 4-simplex $\langle ijklm\rangle $ in spacetime.
+\item $n_{3}(g_{i}, g_{j}, g_{k}, g_{l}) \in C^{3} (G_{b}, \mathbb Z_{2})$ is a homogeneous 3-cochain representing the complex fermion decoration at the center of each tetrahedron $\langle ijkl\rangle $ in space.
+If $n_{3}(g_{i}, g_{j}, g_{k}, g_{l}) = 1$, the corresponding complex fermion is decorated; else if $n_{3}(g_{i}, g_{j}, g_{k}, g_{l}) = 0$, no complex fermion is decorated.
+\item $n_{2}(g_{i}, g_{j}, g_{k}) \in C^{2} (G_{b}, \mathbb Z_{2})$ is a homogeneous 2-cochain representing the Majorana chain decoration at the center of each triangle $\langle ijk\rangle $ in space.
+If $n_{2}(g_{i}, g_{j}, g_{k}) = 1$, the corresponding Majorana chain decoration is in the nontrivial pairing state (comparing to the vacuum state); else if $n_{2}(g_{i}, g_{j}, g_{k}) = 0$, the corresponding Majorana chain decoration is in the vacuum pairing satisfying $-i\gamma _{ijk,A}^{\sigma } \gamma _{ijk,B}^{\sigma } = 1$ $(\forall \sigma \in G_{b})$.
+The nontrivial pairing state means that the Majorana modes $\gamma _{ijk,A}^{g_{i} }$ and $\gamma _{ijk,B}^{g_{i} }$ are not paired with each other (but other Majorana operators with $\sigma \neq g_{i}$ are still in the vacuum pairing), instead, they are paired with the Majorana operators in neighboring triangle $\langle i'j'k'\rangle $ and $\langle i''j''k''\rangle $ satisfying $n_{2}(g_{i'}, g_{j'}, g_{k'}) = n_{2}(g_{i''}, g_{j''}, g_{k''}) = 1$ respectively.
+\item $n_{1}(g_{i}, g_{j}) \in C^{1} (G_{b}, \mathbb Z_{T})$ is a homogeneous 1-cochain representing the $p+ip$ superconductor decoration at the plan dual to each link $\langle ij\rangle $ in space.
+If $n_{1}(g_{i}, g_{j}) > 0$ ($< 0$), $|n_{1}(g_{i}, g_{j})|$ layers if $p+ip$ ($p-ip$) superconductor are decorated, whose boundary chiral Majorana modes are $\Psi _{ij,R,\alpha}^{g_{i} }$ or $\Psi _{ij,L,\alpha}^{g_{i} }$ $(\alpha = 1,2,...,|n_{1}(g_{i}, g_{j})|)$ depending on the chirality; else if $n_{1}(g_{i}, g_{j}) = 0$, there is no $p \pm ip$ decoration.
+\end{enumerate} 
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig1.pdf}
+    \caption{3 layers of decorations in a single 3-simplex: 
+    (a) The standard resolved dual lattice of the Majorana chain decoration (red) and the complex fermion decoration (black). 
+    (b) The $p+ip$ superconductor decoration (green).
+    (c) The dual lattice (yellow): To avoid clustering, we will usually only draw the dual lattice instead of the complete resolved dual lattice in (a).}
+    \label{fig:decorations}
+\end{figure*}
+
+
+\subsection{Symmetry transformations}
+
+Since we are constructing FSPT states, these degrees of freedom should transform suitably under the symmetry action $U( g)$ defined as follows for any $g, \sigma \in G_{b}$: 
+\begin{enumerate}
+\item On the bosonic state, 
+\begin{equation}
+U( g)\ket{g_{i}} =\ket{gg_{i}} .
+\end{equation}
+\item On the complex fermions, 
+\begin{equation}
+U( g) c_{ijkl}^{\sigma } U^{\dagger }( g) =( -1)^{\omega _{2}( g,\sigma )} c_{ijkl}^{g\sigma } .
+\end{equation}
+\item On the Majorana fermions induced from the complex fermion $a_{ijk}^{\sigma } = \frac{1}{2}(\gamma _{ijk,A}^{\sigma } + i \gamma _{ijk,B}^{\sigma })$, 
+\begin{align}
+U( g) a_{ijk}^{\sigma } U^{\dagger }( g) &=( -1)^{\omega _{2}( g,\sigma )} a_{ijk}^{g\sigma } ,\\
+U( g) \gamma _{ijk,A}^{\sigma } U^{\dagger }( g) &=( -1)^{\omega _{2}( g,\sigma )} \gamma _{ijk,A}^{g\sigma } ,\label{eq:sym trans Majorana A}\\
+U( g) \gamma _{ijk,B}^{\sigma } U^{\dagger }( g) &=( -1)^{\omega _{2}( g,\sigma ) +s_{1}( g)} \gamma _{ijk,B}^{g\sigma } .\label{eq:sym trans Majorana B}
+\end{align}
+\item On the boundary chiral Majorana modes of $p \pm ip$ superconductors, 
+\begin{align}
+U( g) \Psi _{ij,R,\alpha}^{\sigma } U^{\dagger }( g) &=( -1)^{\omega _{2}( g,\sigma )} \Psi _{ij,g(R),\alpha}^{g\sigma } ,\\
+U( g) \Psi _{ij,L,\alpha}^{\sigma } U^{\dagger }( g) &=( -1)^{\omega _{2}( g,\sigma ) +s_{1}( g)} \Psi _{ij,g(L),\alpha}^{g\sigma } .
+\end{align}
+Here if $g$ is unitary, the chirality is unchanged after the symmetry action $g(R) = R$ and $g(L) = L$; else if $g$ is anti-unitary, the chirality is switched after the symmetry action $g(R) = L$ and $g(L) = R$.
+\end{enumerate}
+
+The principle of the symmetry transformations is that the bosonic degrees of freedom always form a linear representations of $G_{b}$ (and $G_{f}$).
+On the other hand, the fermionic degrees of freedom always form projective representations of $G_{b}$ with coefficient $(-1)^{\omega_{2}}$ in order to get linear representations of $G_{f}$.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig2.pdf}
+    \caption{The resolved dual lattice of Majorana chain decorations: 
+    (a) Standard resolved dual lattice. 
+    (b) Non-standard resolved dual lattice, obtained by acting the symmetry transformation $U(g_0)$ on the standard resolved dual lattice. 
+    The blue arrows indicate that the directions may change depending on $s_1(01)$ and $\omega_2(012)$ after symmetry transformation. 
+    (c) The inner part of the dual resolved lattice is a small dual 3-simplex as well. We may sometimes only draw this dual 3-simplex while omit all the other parts for simplicity.
+    Here bar upon a number means omitting that number, for example $\Bar{0}B := 123B$.}
+    \label{fig:resolved dual lattice}
+\end{figure*}
+
+\subsection{Kitaev chain decoration}
+
+Since the essence of this work lies in the calculations of Majorana operators, we review and introduce some basic facts and tools frequently used about Kitaev chain decoration in the following content.
+
+\subsubsection{Pairing and projection of Majorana operators} \label{sec2.5.1}
+
+By saying that two Majorana operators $\gamma_{1}$ and $\gamma_{2}$ are paired, we mean a state $\ket{\psi_{1 \rightarrow 2}}$ satisfying 
+\begin{equation}
+-i\gamma_{1} \gamma_{2} \ket{\psi_{1 \rightarrow 2}} = \ket{\psi_{1 \rightarrow 2}}.
+\end{equation}
+Note that the \textit{Majorana pairing} (also sometimes called \textit{Majorana dimer}) defined above has a direction from $\gamma_{1}$ to $\gamma_{2}$.
+When acting on this state $\ket{\psi_{1 \rightarrow 2}}$, the algebraic relation $-i\gamma_{1} \gamma_{2} = 1$ holds.
+From now on, we will always denote the Majorana pairing by this algebraic relation, while the underlying state is always implicit.
+
+Noticing that the Majorana operators must satisfy the symmetry transformation rules \eqref{eq:sym trans Majorana A} and \eqref{eq:sym trans Majorana B}, we are motivated to define the \textit{standard Majorana pairing} by setting the first group element to be the identity $e \in G_{b}$
+\begin{equation}
+-i\gamma _{ijk,C}^{e } \gamma _{ijk,D}^{g^{-1} h } = 1 ,
+\end{equation}
+where $C,D \in \{A, B\}$.
+Then the corresponding \textit{non-standard Majorana paring} is obtained by the symmetry action of $g$ 
+\footnote{Through out this paper, we will define many \textit{standard} and \textit{non-standard} terms to simplify the calculation. The standard one is always defined by setting the first group element to be the identity $e \in G_b$. Then the non-standard one is obtained by the corresponding symmetry action with potentially some extra $-1$ factors.}
+\begin{align}
+-i\gamma _{ijk,C}^{g } \gamma _{ijk,D}^{h }
+&= U(g) \left[-i\gamma _{ijk,C}^{e } \gamma _{ijk,D}^{g^{-1} h }\right] U^{\dagger}(g) \nonumber \\
+&= (-1)^{\omega_{2}(g, g^{-1} h) + s_{1}(g) (1 + \delta_{CB} + \delta_{DB})} , \label{eq:non-standard pairing}
+\end{align}
+where $\delta_{CB} = 1$ iff $C = B$, otherwise $\delta_{CB} = 0$.
+It is important to note the $(-1)^{\omega_{2} + s_{1} \cdot (1 + \delta_{CB} + \delta_{DB})}$ factor on the right hand side of the above equation may flip the direction of the Majorana paring: if this factor equals to $-1$, then the Majorana pairing direction is flipped $-i\gamma _{ijk,D}^{h } \gamma _{ijk,C}^{g } = 1$.
+
+In all the pictures through out this paper, we will represent a Majorana paring by a directed solid line with an arrow indicating this pairing direction.
+If the pairing direction may potentially change (compared to the standard pairing) for a non-standard Majorana pairing, we may use different colors for the solid line and the arrow attaching to it, or we may mark the factor $\omega_{2} + s_{1} \cdot (1 + \delta_{CB} + \delta_{DB})$ around the directed solid line.
+Sometimes we may also not distinguish between the standard and non-standard pairings in the picture and draw all of them as the standard direction, while the readers should be able to recognize the actual non-standard pairing direction by themselves.
+
+In order to get some particular Majorana dimer configurations desired, we need also define the \textit{standard Majorana projector} 
+\begin{equation}
+P_{ijkC,i'j'k'D}^{e,g^{-1} h} = \frac{1}{2}\left[ 1- i\gamma _{ijk,C}^{e} \gamma _{i'j'k',D}^{g^{-1} h}\right] \label{eq:Majorana projector std}
+\end{equation}
+and the \textit{non-standard Majorana projector} 
+\begin{widetext}
+\begin{align} \label{eq:Majorana projector}
+P_{ijkC,i'j'k'D}^{g,h} 
+&= U( g) P_{ijkC,i'j'k'D}^{e,g^{-1} h} U^{\dagger }( g) \\\nonumber
+&= \frac{1}{2}\left[ 1-( -1)^{\omega _{2}\left( g,g^{-1} h\right) +s_{1}( g)( 1+\delta _{CB} +\delta _{DB})} i\gamma _{ijk,C}^{g} \gamma _{i'j'k',D}^{h}\right]. \nonumber
+\end{align}
+\end{widetext}
+Denoting the state $\ket{\psi}$ with Majorana pairing corresponding to the Majorana projector $P_{ijkC,i'j'k'D}^{g,h} \ket{\psi} = \ket{\psi}$, then any state $\ket{\psi'}$ with non-zero overlap with the former ($\langle \psi | \psi' \rangle \neq 0$) can be projected to the state $\ket{\psi}$ by acting on this Majorana projector up to a normalization factor $P_{ijkC,i'j'k'D}^{g,h} \ket{\psi'} \varpropto \ket{\psi}$.
+However, if the two states are orthogonal ($\langle \psi | \psi' \rangle = 0$), then the state $\ket{\psi'}$ can not be projected to $\ket{\psi}$ by the Majorana projector $P_{ijkC,i'j'k'D}^{g,h} \ket{\psi'} = 0$.
+This fact is extremely crucial, and we will come back to this point in the subsequent sections.
+
+ 
+\subsubsection{Transition loop and Kasteleyn orientation} \label{sec2.5.2}
+
+After defining the Majorana paring and Majorana projector for one state, we are ready to deal with the transformation between two arbitrary different Majorana dimer states (see below for concrete definition).
+We will show one canonical construction of the transformation from one arbitrary Majorana dimer state to another arbitrary Majorana dimer state.
+Such a construction will enter in the re-triangulation process of underlying spatial manifold where the fixed-point wavefunction of FSPT are supported.
+First of all, we demonstrate the idea with a simple example.
+Then we will summarize the generic steps of such canonical constructions for general situations.
+
+First, let us work with one simple system with four Majorana fermions, denoted as $\gamma_i$ where $i=0,1,2,3$.
+The total fermion parity of the four-Majorana system is simply given by
+\begin{align}
+P_f=(-i)^2\gamma_0\gamma_1\gamma_2\gamma_3
+\label{eq:fermion_parity}
+\end{align}
+which satisfies $P_f^2=1$ so that its eigenvalues can be $+1$ or $-1$, that are usually called even parity and odd parity.
+So, the total Hilbert space can be divided into two parts: the even parity sector $\mathcal{H}_{\text{even}}$ and odd parity sector $\mathcal{H}_{\text{odd}}$, namely formally $\mathcal{H}=\mathcal{H}_{\text{even}}\oplus \mathcal{H}_{\text{odd}}$.
+One well-known simple but important property is that states with different fermion parities are necessary to be orthogonal.
+We note that states with the same fermion parity may or may not be orthogonal.
+In what follows, we are especially interested in the relations between different Majorana dimer states with the same or different parities.
+
+
+\textbf{Majorana dimer states with the same parity} 
+As shown in Fig. \ref{fig:Kasteleyn transition loop}, now we consider the transformation of two Majorana dimer states with the same fermion parity, that is, $\ket{\psi_0}$ and $\ket{\psi_1}$ satisfying $P_{0,1} P_{2,3} \ket{\psi_0} = \ket{\psi_0}$ and $P_{0,3} P_{1,2} \ket{\psi_1} = \ket{\psi_1}$ respectively. 
+Here $P_{i,j} = \frac{1}{2}\left[ 1- i\gamma _{i} \gamma _{j}\right]$ is just the Majorana projector that project onto state with eigenvalue $-i\gamma_i\gamma_j=1$.
+Therefore, $\ket{\psi_0}$ is a state with Majorana parings $\gamma_0 \rightarrow \gamma_1$ and $\gamma_2 \rightarrow \gamma_3$, while $\ket{\psi_1}$ is a state with Majorana parings $\gamma_0 \rightarrow \gamma_3$ and $\gamma_1 \rightarrow \gamma_2$.
+One can easily compute the eigenvalue of $P_f$ in Eq. \eqref{eq:fermion_parity} of both these two states to be even: $\ket{\psi_{0,1}} \in \mathcal{H}_{\text{even}}$.
+Therefore, these two states can be transformed to each other by fermion-parity conserved (local) operators. Two of them are the  successive actions of Majorana projectors with certain normalization, namely
+\begin{align}
+U_0=\sqrt{2} P_{0,1} P_{2,3},\quad U_0 \ket{\psi_1} \sim \ket{\psi_0} ,\\
+U_1=\sqrt{2} P_{0,3} P_{1,2}, \quad U_1 \ket{\psi_0} \sim \ket{\psi_1} ,
+\end{align}
+where the $\sqrt{2}$ is a normalization factor 
+\footnote{In general, this factor is $\prod_{\mathrm{loop} \ i} 2^{(L_i - 1)/2}$, where $2L_i$ is the length of the $i$-th loop in the transition graph of Majorana pairing dimer configurations.},
+and $\sim$ means equivalent up to an $U(1)$ phase factor. 
+It is the presence of normalization that makes $U_0$ and $U_1$ not projectors, namely $U_i^2=\sqrt{2} U_i\neq U_i$ for $i=0,1$.
+The intuitive understanding on why the two operators $U_0$ and $U_1$ work is that the $\ket{\psi_0}$ ($\ket{\psi_1}$) can be expanded into superposition of the Majorana dimer basis supported on dimers 03 and 12 (01 and 23).
+More precisely, we can expand the state $\ket{\psi_1}$ by $\ket{\psi_0}$ up to a phase
+\begin{align}
+\ket{\psi_1} \sim \frac{1}{\sqrt{2}}\big(\ket{\psi_0}+c_0^\dagger c_1^\dagger \ket{\psi_0}\big)
+\end{align}
+where $c_0={(\gamma_0+i\gamma_1)}/{2}$ and $c_1={(\gamma_2+i\gamma_3)}/{2}$.
+Note that we have $c_0\ket{\psi_0}=c_1\ket{\psi_0}=0$. 
+The projection $P_{0,1}P_{2,3}$ would select out the $\ket{\psi_0}$ component. 
+Similarly we can also consider two states with odd parity for which the transformations are constructed in a similar way.
+
+\begin{figure}
+    \centering    \includegraphics[width=0.8\linewidth]{fig13.pdf}
+    \caption{Transition between Majorana dimer states with the same parity.}
+    \label{fig:Kasteleyn transition loop}
+\end{figure}
+
+\textbf{Majorana dimer states with different parities} 
+On the other hand, if the fermion parities of the two states do not match, the overlap is then zero, which means that there is no way to transform one state to the other using just Majorana projectors which have even parity.
+To demonstrate this in Fig. \ref{fig:non-Kasteleyn transition loop}, consider another state $\ket{\psi_2}$ satisfying $P_{3,0} P_{1,2} \ket{\psi_2} = \ket{\psi_2}$, whose Majorana pairings are $\gamma_3 \rightarrow \gamma_0$ and $\gamma_1 \rightarrow \gamma_2$.
+The difference between $\ket{\psi_1}$ and $\ket{\psi_2}$ is that the pairing direction between $\gamma_0$ and $\gamma_3$ is flipped, so the fermion parity changes according to $P_f$ in Eq. \eqref{eq:fermion_parity}.
+Thus, the condition $\langle \psi_0 | \psi_2 \rangle = 0$  leads to $P_{3,0} P_{1,2} \ket{\psi_0} = 0$ and $P_{0,1} P_{2,3} \ket{\psi_2} = 0$.
+
+One way out is to use the odd-parity operators.
+We notice that the state $\gamma_i \ket{\psi_2}$ ($i=0,1,2,3$, $i$ can be chosen to be any one of them) has the same fermion parity with $\ket{\psi_1}$ and $\ket{\psi_0}$, and hence we transform the state  $\gamma_i \ket{\psi_2}$ to $\ket{\psi_0}$ by even-parity operators, following the way analogue to that from $\ket{\psi_1}$ to $\ket{\psi_0}$. 
+Therefore, if the fermion parities of the two states $\ket{\psi_2}$ and $\ket{\psi_0}$ are different, we should first insert an dangling Majorana fermion $\gamma_i$ (any one on the transition loop can do the job) to match the fermion parity, then act on the Majorana projectors 
+\begin{align}
+\tilde U_0=\sqrt{2} P_{0,1} P_{2,3} \gamma_i,\quad \tilde U_0 \ket{\psi_2} \sim \ket{\psi_0} ,\\
+\tilde U_1=\sqrt{2} P_{3,0} P_{1,2} \gamma_i,\quad \tilde U_1 \ket{\psi_0} \sim \ket{\psi_2} .
+\end{align}
+We note in fact $\gamma_0\ket{\psi_2}$ and $\gamma_3\ket{\psi_2}$ are the same state as $\ket{\psi_1}$ up to a phase. In this way, $\tilde U_0=U_0\gamma_{0(3)}$ and $\tilde U_1=\gamma_{0(3)} U_1$.
+
+Above, we have introduced a simple example to demonstrate the transformation between  Majorana dimer states.
+Before we discuss the most general case, we may introduce two more concepts which may be very useful that are the transition loop and Kasteleyn orientation. 
+
+\begin{figure}
+    \centering    \includegraphics[width=0.8\linewidth]{fig14.pdf}
+    \caption{Transition between Majorana dimer states with different parity.}
+    \label{fig:non-Kasteleyn transition loop}
+\end{figure}
+ 
+\textbf{Transition loop} 
+Now we introduce an useful way to count whether the fermion parity of the transition between two Majorana dimer states changes or not.
+
+Pictorially, we consider joining two dimer states together (the directions of dimers are important), and the overlapping of these two dimer states will form some closed loops, which are called \textit{transition loops}.
+The total number of sites involved in a transition loop is always even.
+The smallest number is four, as seen in Figs. \ref{fig:Kasteleyn transition loop} and \ref{fig:non-Kasteleyn transition loop}.
+For overlapping of arbitrary two dimer states, the total number of transition loops can be more than one.
+
+For example, the transition loop between the states $\ket{\psi_0}$ and $\ket{\psi_1}$ is a 4-length loop $\gamma_0 \rightarrow \gamma_1 \rightarrow \gamma_2 \rightarrow \gamma_3 \leftarrow \gamma_0$ shown in Fig. \ref{fig:Kasteleyn transition loop}.
+Similarly, the transition loop between the states $\ket{\psi_0}$ and $\ket{\psi_2}$ is a 4-length loop $\gamma_0 \rightarrow \gamma_1 \rightarrow \gamma_2 \rightarrow \gamma_3 \rightarrow \gamma_0$ shown in Fig. \ref{fig:non-Kasteleyn transition loop}.
+
+\textbf{Kasteleyn orientation} 
+Another useful concept is the \textit{Kasteleyn orientation} of an even-length loop \cite{Kasteleyn1963}: given a 1-dimensional lattice with $2N$ (even number) sites with periodic boundary condition, join each neighboring site by a directed bonds, then these directed bonds form a $2N$-length loop.
+We start from any site $i$ in this loop, go around the loop once and come back to this site $i$, count the number $M$ of bounds whose directions are opposite to the forward direction.
+This $2N$-length loop is \textit{Kasteleyn oriented} if this number $M$ of opposite bounds is odd.
+Otherwise if the number $M$ of opposite bonds is even, this loop is called \textit{non-Kasteleyn oriented}.
+
+The power of the two concepts---transition loop and Kasteleyn orientation---lies in the following statement: two Majorana dimer states have the same fermion parity  iff their transition loop is Kasteleyn oriented.
+In other words, we can count the fermion parity change of the Majorana dimer transition by the Kasteleyn orientation of the transition loop: if the transition loop is Kasteleyn oriented, then the fermion parity remains; else if the transition loop is non-Kasteleyn oriented, then the fermion parity changes.
+
+Returning to the previous examples, the transition loop between the states $\ket{\psi_0}$ and $\ket{\psi_1}$ is $\gamma_0 \rightarrow \gamma_1 \rightarrow \gamma_2 \rightarrow \gamma_3 \leftarrow \gamma_0$, which is Kasteleyn oriented ($M = 1$) so that the fermion parity dose not change.
+On the other hand, the transition loop between the states $\ket{\psi_0}$ and $\ket{\psi_2}$ is $\gamma_0 \rightarrow \gamma_1 \rightarrow \gamma_2 \rightarrow \gamma_3 \rightarrow \gamma_0$, which is non-Kasteleyn oriented ($M = 0$) so that the fermion parity changes.
+
+With the above preparation, now we discuss the generic steps for the transformation between  (arbitrary) two Majorana dimer states:
+\begin{enumerate}
+\item Find the transition loops of the two target Majorana dimer states, 
+\item For each transition loop, check whether it is Kasteleyn oriented or not.  If it is non-Kasteleyn oriented,  pick one and only one Majorana fermion belonging to this loop, which we term \textit{inserted} or \textit{dangling} Majorana fermion.
+Note that we are free to choose any Majorana fermion on this transition loop, this choice is just a convention.
+We will fix this convention in our derivations, while different conventions should lead to physically equivalent results.
+% All of the potentially-inserted Majorana fermions consist of a subset of Majorana fermions involved in the two dimer states. 
+\item Construct the operators that do the transformation by first adding (possibly existing) inserted Majorana fermions followed by the proper normalized Majorana projectors onto the final dimer states.
+\end{enumerate}
+We note that the two Majorana dimer states are supported on the lattice with specific oriented bonds. The normalized projectors are, in essence, projectors accompanied by proper normalization ensuring that the final state retains unit amplitude, thereby constituting unitary transformations.
+
+Through these steps, particularly, we can initially start from one state and after a sequence of transformations return to the initial state.
+Such a sequence of transformations may result in a nontrivial Berry phase, which we term the \textit{Majorana phase}.
+This Berry phase is crucial for deriving the final obstruction formula for FSPT and is generally a U(1) phase.
+In the following, we demonstrate how to calculate the Majorana phase using a minimal example.
+
+
+\subsubsection{Resolved dual lattice}
+
+Now let us introduce the concepts of the dual lattice and resolved dual lattice.
+The \textit{dual lattice} is naturally induced from its corresponding lattice.
+For our purpose, let us currently forget the link directions of the dual lattice and resolved dual lattice, which are not induced directly form the link directions of the corresponding lattice branching structure.
+Adding a now site to the center of every 3-simplex in order to form a new resolved lattice with 4 new 3-simplexes replacing the original 3-simplex, the \textit{resolved dual lattice} is defined as the dual lattice of this resolved lattice.
+
+We still want to assign a direction for every link in the resolved dual lattice, because the Majorana chains are decorated on this resolved dual lattice, which poss pairing directions.
+For this purpose, the link directions of the resolved dual lattice are actually determined by the discrete spin structure.
+The link directions of the resolved dual lattice satisfy the \textit{local Kasteleyn orientation} property: the smallest loops in the resolved dual lattice are always Kasteleyn oriented.
+
+Due to the complication of this point, we just introduce some of the basic facts above.
+The interested readers are strongly recommended to refer to the seminal paper \cite{Wang2018} for more details.
+
+In summary, we are ready to state the Majorana chain decoration rules without ambiguity at the end of this subsection.
+The standard resolved dual lattice (with the convection of its link directions) is depicted in Fig. \ref{fig:decorations} for a single 3-simplex.
+The Majorana chains are decorated on the dual resolve lattice, and the link direction of the resolved dual lattice always indicates the standard Majorana pairing direction when decorated.
+For the non-standard Majorana pairing decorated, the symmetry transformations may flip the pairing direction of the standard one depending on $\omega_2$ and $s_1$.
+The standard and non-standard resolved dual lattice are drawn in Fig. \ref{fig:resolved dual lattice} (a) and (b), respectively.
+All the 8 possibilities of the Majorana decoration within a single 3-simplex are depicted in Fig. \ref{fig:Majorana chain decoration}.
+
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig3.pdf}
+    \caption{All possibilities of Majorana chain decoration within a single 3-simplex.
+    The solid red line with arrow indicates there is a Majorana pairing, while the dotted red line with arrow indicates no Majorana pairing (just drawn as reference). 
+    (a) Vacuum state, also called reference state, in which all $n_2 = 0$.
+    (b) $n_2(012) = n_2(013) = 1$, while all other $n_2 = 0$.
+    (c-g) Similar as (b), only one non-trivial Majorana pairing within the 3-simplex. 
+    (h) All $n_2 = 1$, two non-trivial Majorana pairing within the 3-simplex.
+    We take the convention that $\gamma_{012A}$ is paired with $\gamma_{023A}$ while $\gamma_{013B}$ is paired with $\gamma_{123B}$.}
+    \label{fig:Majorana chain decoration}
+\end{figure*}
+
+
+\section{Review of 3+1D FSPT Classification}
+
+This chapter provides a review of the classification of 3+1D FSPT protected by internal discrete symmetries in the interacting systems based on Refs. \cite{Wang2020, Ning2025unpub}.
+As mentioned before, 3+1D internal FSPT is classified by a quadruplet $( n_{1}, n_{2}, n_{3}, \nu_{4} )$, where $n_1$ represents the $p+ip$ superconductor decoration, $n_2$ describes the Majorana chain decoration, $n_3$ represents the complex fermion decoration, and $\nu_4$ is the background of BSPT phase.
+Due to some technical difficulties of dealing with the $p+ip$ superconductor decoration, we will just drop it through out this paper.
+Leaving out the $p+ip$ superconductor decoration $n_1$, the 3+1D internal FSPT is classified by just a triplet $(n_{2}, n_{3}, \nu_{4} )$.
+We will now derive the consistency conditions for this triplet one by one in the following sections.
+
+
+\subsection{Closed Majorana chain condition}
+
+Recall that there are Majorana zero modes residing on the two end points of a single open Majorana chain.
+Since the FSPT states we are constructing should be gapped, the decorated Majorana chain must be closed to avoid the appearance of gapless Majorana zero modes.
+Locally, if we look at the Majorana chain decorations within a 3-simplex $\langle 0123 \rangle$, this closed Majorana chain condition translates into 
+\begin{widetext}
+\begin{equation}
+\mathrm d n_{2} (0123)= n_2(012) + n_2(013) + n_2(023) + n_2(123) = 0 \mod 2 .
+\end{equation}
+\end{widetext}
+This is the first condition obtained in this paper that the classification data must satisfy.
+There are several conventions (used through out this paper) to note:
+\begin{enumerate}
+\item We used the short-hand notation $\mathrm d n_{2} (0123) \equiv \mathrm d n_{2} (g_0, g_1, g_2, g_3)$ and $n_{2} (012) \equiv n_{2} (g_0, g_1, g_2)$ (other cases by analogy).
+\item Because $n_2$ (and $n_3$) is a $\mathbb Z_2$-valued function, the minus signs in the coboundary operator $\mathrm d$ are all written as plus signs equivalently in our formula for simplicity.
+\item This formula is written in forms of homogeneous cochains. Through out this paper, we will interchangeably use the homogeneous and inhomogeneous cochains without declaration.
+As explained in Appendix ?, a cochain can be expressed in both homogeneous and inhomogeneous forms.
+The reader should be able to distinguish them by the number of input variables: the homogeneous $n$-cochain has $n+1$ variables, while the inhomogeneous $n$-cochain only has $n$ variables.
+\end{enumerate}
+
+\subsection{$F$ move}
+
+It is well known in topology that two manifolds are topologically equivalent iff their triangulations can be transformed to each other by finite steps of Pachner moves.
+To compare the states on different triangulations of the 3D spatial manifold, we consider the 3D Pachner move, which is essentially the local re-triangulation of the 3D manifold and is realized physically as the $F$ move.
+The \textit{standard $F$ move} with the first group element set to be identity $e \in G_b$ is defined as 
+\begin{widetext}
+\begin{gather}
+\Psi \left( \adjincludegraphics[valign=c,scale=0.65]{math3.1.pdf} \right) =F^{\mathrm{std}}( e,\overline{0} 1,\overline{0} 2,\overline{0} 3,\overline{0} 4) \Psi \left( \adjincludegraphics[valign=c,scale=0.65]{math3.2.pdf} \right) , \label{eq:F move std}\\
+\begin{array}{ c c l }
+F^{\mathrm{std}}( e,\overline{0} 1,\overline{0} 2,\overline{0} 3,\overline{0} 4) & := & \nu _{4}(\overline{0} 1,\overline{1} 2,\overline{2} 3,\overline{3} 4) \left( c_{0124}^{e\dagger }\right)^{n_{3}( 0124)}\left( c_{0234}^{e\dagger }\right)^{n_{3}( 0234)}\\ 
+& \times  & \left( c_{0123}^{e}\right)^{n_{3}( 0123)}\left( c_{0134}^{e}\right)^{n_{3}( 0134)}\left( c_{1234}^{g_{0}^{-1} g_{1}}\right)^{n_{3}( 1234)} X_{01234}^{\mathrm{std}}[ n_{2}]
+\end{array} . \label{eq:F move std.1}
+\end{gather}
+\end{widetext}
+Several remarks about the notations:
+\begin{enumerate}
+\item To avoid clustering in the above figures, we only draw the dual lattice shown in Fig. \ref{fig:decorations} (c) instead of the complete resolved dual lattice in Fig. \ref{fig:decorations} (a).
+The reader should understand this picture in the way that replaces every 3-simplex with dual lattice in Fig. \ref{fig:decorations} (c) by the 3-simplex with complete decorations including Majorana chains on resolved dual lattice and complex fermion at the center in Fig. \ref{fig:decorations} (a).
+\item As we did for $n_2$, we used the short-hand notation $n_{3} (0123) \equiv n_{3} (g_0, g_1, g_2, g_3)$.
+Similarly, there are some other short-hand notations like $F(01234) \equiv F^{\mathrm{std}}( e,\overline{0} 1,\overline{0} 2,\overline{0} 3,\overline{0} 4)$ and $\nu_4(01234) \equiv \nu _{4}(\overline{0} 1,\overline{1} 2,\overline{2} 3,\overline{3} 4)$, where $\Bar{0}1 \equiv g_0^{-1} g_1$ (other cases by analogy).
+The non-standard counterparts will be introduced later.
+\item The operator $X_{01234}^{\mathrm{std}}[ n_{2}]$ in Eq. \eqref{eq:F move std.1} transforms the Majorana dimer configuration from the right-hand side to the left-hand side of Eq. \eqref{eq:F move std}.
+\item The operators $c$ and $c^\dagger$ are annihilation and creation operators of the corresponding complex fermions decorated.
+Their presences are controlled by the values of $n_3$.
+For example, if $n_3(1234)=1$, the operator $c_{1234}^{g_{0}^{-1} g_{1}}$ is present in Eq. \eqref{eq:F move std.1}; else if $n_3(1234)=0$, then $c_{1234}^{g_{0}^{-1} g_{1}}$ is absent here.
+\end{enumerate}
+
+Though the operator $X_{01234}^{\mathrm{std}}[ n_{2}]$ is the essence of the $F$ move, its explicit expression is somehow complicated.
+Let us first give the definition for this operator $X_{01234}^{\mathrm{std}}[ n_{2}]$ 
+\begin{widetext}
+\begin{equation}
+\Psi _\gamma \left( \adjincludegraphics[valign=c,scale=0.65]{math4.1.pdf} \right) = X_{01234}^{\mathrm{std}}[ n_{2}] \Psi _\gamma \left( \adjincludegraphics[valign=c,scale=0.65]{math4.2.pdf} \right) , \label{eq:F move std.2}
+\end{equation}
+\end{widetext}
+where $\Psi _\gamma$ denotes only the Majorana decoration of the whole wavefunction $\Psi$ (i.e., $\Psi _\gamma$ only represents the Majorana dimer states).
+Since only the Majorana chains are treated, we only draw resolved dual lattice here to complement Eq. \eqref{eq:F move std}.
+The figures in Eq. \eqref{eq:F move std.2} present one specific example of Majorana chain decoration, where the values of all free variables are $n_2(014) = n_2(124) = n_2(023) = n_2(034) = 1$ and $n_2(012) = n_2(234) = 0$ (other variables are not free and can be derived from these free variables).
+We only draw the `inner trivial pairings' colored yellow like $-i \gamma ^{e} _{024A} \gamma ^{e} _{024B}$ while neglecting the `outer trivial pairings' like $-i \gamma ^{e} _{012A} \gamma ^{e} _{012B}$.
+We also used the shaded gray line to cover part of a nontrivial Majorana chain.
+If jointed together, the shaded gray lines on the left-hand side and right-hand side of Eq. \eqref{eq:F move std.2} form transition loops.
+There are two transition loops in this example: the first is $\gamma ^{e} _{023A} \rightarrow \gamma ^{e} _{034A} \leftarrow \gamma ^{e} _{013A} \rightarrow \gamma ^{e} _{013B} \rightarrow \gamma ^{e} _{023A}$ and the second one is $\gamma ^{e} _{014B} \rightarrow \gamma ^{g^{-1}_0 g_1} _{124B} \rightarrow \gamma ^{g^{-1}_0 g_1} _{134A} \rightarrow \gamma ^{g^{-1}_0 g_1} _{134B} \leftarrow \gamma ^{e} _{014B}$.
+
+Roughly speaking, the operator $X_{01234}^{\mathrm{std}}[ n_{2}]$ has two considerations: the first is to match the fermion parity of both sides of Eq. \eqref{eq:F move std.2}, and the second is to transform to the Majorana dimer state on the left-hand side (see Sec. \ref{sec2.5.2} for detailed explanation).
+Precisely, the explicit expression of $X_{01234}^{\mathrm{std}}[ n_{2}]$ is 
+\begin{equation}
+X_{01234}^{\mathrm{std}} := P_{01234}^{\mathrm{std}} \Gamma_{01234}^{\mathrm{std}} .\label{eq:F move std.3}
+\end{equation}
+Here $\Gamma_{01234}^{\mathrm{std}}$ represents the inserted dangling Majorana fermions to match the fermion parity, whose explicit formula will be introduced latter.
+The explicitly expression for $P_{01234}^{\mathrm{std}}$ is 
+\begin{widetext}
+\begin{equation}
+P_{01234}^{\mathrm{std}} := \prod_{\mathrm{transition \ loop} \ j} 2^{(L_j - 1)/2} \prod _{\mathrm{all \ Majorana \ pairings \ in \ this \ state}} \mathrm{Majorana \ projector} ,\label{eq:F move std.4}
+\end{equation}
+\end{widetext}
+which is the product of all Majorana projectors defined in Eq. \eqref{eq:Majorana projector} for all Majorana pairings in the left-hand side of Eq. \eqref{eq:F move std.2}. There is an extra normalization factor, where $L_j$ is the length of $j$-th transition loop.
+
+Though above we defined the standard $F$ move, we emphasize that there is a non-standard 3-simplex $\langle 1234 \rangle$ with group elements $(g^{-1}_0 g_1, g^{-1}_0 g_2, g^{-1}_0 g_3, g^{-1}_0 g_4)$.
+
+Finally, we note that the \textit{non-standard $F$ move} is obtained by acting the symmetry transformation $U(g_0)$ on the standard one 
+\begin{widetext}
+\begin{gather}
+\begin{array}{ l }
+F( g_{0} ,g_{1} ,g_{2} ,g_{3} ,g_{4}) \equiv \ ^{g_{0}} F( 01234) :=U( g_{0}) F^{\mathrm{std}}( e,\overline{0} 1,\overline{0} 2,\overline{0} 3,\overline{0} 4) U^{\dagger }( g_{0})\\
+=\nu _{4}^{1-2s_{1}( g_{0})}(\overline{0} 1,\overline{1} 2,\overline{2} 3,\overline{3} 4)\left( c_{0124}^{g_{0} \dagger }\right)^{n_{3}( 0124)}\left( c_{0234}^{g_{0} \dagger }\right)^{n_{3}( 0234)}\\
+\times \left( c_{0123}^{g_{0}}\right)^{n_{3}( 0123)}\left( c_{0134}^{g_{0}}\right)^{n_{3}( 0134)}\left(( -1)^{\omega _{2}\left( g_{0} ,g_{0}^{-1} g_{1}\right)} c_{1234}^{g_{1}}\right)^{n_{3}( 1234)} X_{01234}[ n_{2}]
+\end{array} , \\
+X_{01234}[ n_{2}] :=U( g_{0}) X_{01234}^{\mathrm{std}}[ n_{2}] U^{\dagger }( g_{0}) .
+\end{gather}
+\end{widetext}
+The $U(1)$ phase $\nu_4$ will be complex conjugated if $g_0$ is anti-unitary.
+
+\subsection{Fermion parity conservation condition}
+
+During the $F$ move, the fermion parity of the Majorana chain decoration may change.
+This is counted by the Kasteleyn orientation of the transition loop introduced in Sec. \ref{sec2.5.2}.
+By exhausting all possibilities of Majorana chain decoration involved in the $F$ move (see Appendix \ref{ap:fermion parity}), the total fermion parity change of Majorana chain decoration can be summarized as 
+\begin{equation}
+\Delta P^{\gamma}_f[n_2] = n_2 \cup n_2 + \omega_2 \cup n_2 + s_1 \cup (n_2 \cup_1 n_2) \mod 2 .\label{eq:fermion parity change F move}
+\end{equation}
+Since the fermion parity of the whole system should conserve, the fermion parity change of the Majorana chain decoration should then be compensated by the fermion parity change of the complex fermion decoration.
+This results in the second classification condition 
+\begin{equation}
+\mathrm d n_3 = n_2 \cup n_2 + \omega_2 \cup n_2 + s_1 \cup (n_2 \cup_1 n_2) \mod 2 ,\label{eq:parity conservation}
+\end{equation}
+where the right-hand side is the fermion parity change of the complex fermion decoration 
+\begin{widetext}
+\begin{equation}
+\mathrm d n_3(01234) = n_3(0123) + n_3(0124) + n_3(0134) + n_3(0234) + n_3(1234) \mod 2 .
+\end{equation}
+\end{widetext}
+
+
+\subsection{Inserted Majorana fermions $\Gamma$} \label{sec3.4.1}
+
+The definition of the $F$ move is previously introduced in the equations. \eqref{eq:F move std}, \eqref{eq:F move std.1}, \eqref{eq:F move std.2}, \eqref{eq:F move std.3} and \eqref{eq:F move std.4}.
+However, there is still one unclear question remaining. What is the expression of the dangling Majorana fermions denoted by $\Gamma_{01234}^{\mathrm{std}}$ in Eq. \eqref{eq:F move std.3}?
+
+In the seminal paper \cite{Wang2020}, the proposed inserted Majorana fermions $\Gamma$ is not general enough, which is fixed by the subsequent work \cite{Ning2025unpub} by constructing a new set of inserted Majorana fermions $\Gamma$ in Eq. \eqref{eq:dangling Majorana correct}.
+
+The explicit expression for $\Gamma^{\mathrm{std}}_{01234}$ is complicated, so here we first state the principle of choosing dangling Majorana fermions: 
+\begin{enumerate}
+\item There should be one and only one dangling Majorana fermion inserted for each transition loop that changes fermion parity, which can be chosen to be anyone on this transition loop.
+Below we make a particular choice to pursue minimal inserted Majorana fermion types.
+\item If a fermion parity changing transition loop contains the Majorana fermion $\gamma^{g^{-1}_0 g_2}_{234B}$, then it is contained in $\Gamma^{\mathrm{std}}_{01234}$.
+\item If a fermion parity changing transition loop contains the Majorana fermion $\gamma^{g^{-1}_0 g_1}_{123A}$, while does not contain $\gamma^{g^{-1}_0 g_2}_{234B}$, then $\gamma^{g^{-1}_0 g_1}_{123A}$ is contained in $\Gamma^{\mathrm{std}}_{01234}$.
+\item If there are multiple fermion parity changing transition loops, then the order of the dangling Majorana fermions is 
+\begin{equation}
+\Gamma^{\mathrm{std}}_{01234} = \left( \gamma^{g^{-1}_0 g_2}_{234B} \right) ^{\tilde{\alpha}(01234)} \left( \gamma^{g^{-1}_0 g_1}_{123A} \right) ^{\tilde{\beta}(01234)} .\label{eq:dangling Majorana correct}
+\end{equation}
+\item If there is no fermion parity changing transition loop, then $\Gamma^{\mathrm{std}}_{01234} = 1$.
+\end{enumerate}
+The above principles cover all the possibilities of Majorana chain decoration, thus determines the explicit form of the operator $\Gamma^{\mathrm{std}}_{01234}$ uniquely.
+
+The basic idea of Eq. \eqref{eq:dangling Majorana correct} is the following: The total Majorana fermion parity change can be divided into two parts $\tilde{\alpha}$ and $\tilde{\beta}$. The non-Kasteleyn transition loop contributes to the $\tilde{\alpha}$ part must contain the Majorana fermion $\gamma _{234,B}^{g^{-1}_0 g_2}$, while the non-Kasteleyn transition loop contributes to the $\tilde{\beta}$ part must contain the Majorana fermion $\gamma _{123,A}^{g^{-1}_0 g_1}$.
+Therefore, the dangling Majorana fermions in Eq. \eqref{eq:dangling Majorana correct} covers all the possibilities of non-Kasteleyn transition loops.
+
+
+Finally, we note the non-standard version of Eq. \eqref{eq:dangling Majorana correct} is obtained by symmetry transformation $U(g_0)$ 
+\begin{widetext}
+\begin{equation}
+\begin{array}{ c c l }
+\Gamma_{01234} & := & U(g_0) \Gamma_{01234}^{\mathrm{std}} U^{\dagger}(g_0)\\
+& = & \left( (-1)^{\omega_2(g_0, g^{-1}_0 g_2) + s_1(g_0)} \gamma _{234,B}^{g_2} \right) ^{\tilde{\alpha}(01234)} \left( (-1)^{\omega_2(g_0, g^{-1}_0 g_1)} \gamma _{123,A}^{g_1} \right) ^{\tilde{\beta}(01234)}
+\end{array} .
+\end{equation}
+\end{widetext}
+
+
+\subsection{$\Bar{F}$ move: the inverse process of the $F$ move}
+
+After stating the definition of the $F$ move clearly, we also need to define the $\Bar{F}$ move representing the inverse process of the $F$ move.
+Compared to Eq. \eqref{eq:F move std} where the $F$ move transforms the right-hand side state to the left-hand side state, the $\Bar{F}$ move does the opposite: It transforms the left-hand state to the right-hand state.
+The explicit expression for the \textit{standard $\Bar{F}$ move} is then 
+\begin{widetext}
+\begin{equation}
+\begin{array}{ c c l }
+\Bar{F}^{\mathrm{std}}( e,\overline{0} 1,\overline{0} 2,\overline{0} 3,\overline{0} 4) & := & \nu ^{-1}_{4}(\overline{0} 1,\overline{1} 2,\overline{2} 3,\overline{3} 4) \Bar{X}_{01234}^{\mathrm{std}}[ n_{2}] \left( c_{1234}^{g_{0}^{-1} g_{1} \dagger} \right) ^{n_{3}( 1234)} \left( c_{0134}^{e \dagger} \right) ^{n_{3}( 0134)} \\ 
+& \times  & \left( c_{0123}^{e \dagger} \right) ^{n_{3}( 0123)} \left( c_{0234}^{e} \right) ^{n_{3}( 0234)} \left( c_{0124}^{e} \right) ^{n_{3}( 0124)} ,\label{eq:Fbar std}
+\end{array}
+\end{equation}
+\end{widetext}
+where the operator $\Bar{X}_{01234}^{\mathrm{std}}[ n_{2}]$ denotes the inverse process of $X_{01234}^{\mathrm{std}}[ n_{2}]$ in Eq. \eqref{eq:F move std.2} and \eqref{eq:F move std.3}.
+Similarly, the explicit form of $\Bar{X}_{01234}^{\mathrm{std}}[ n_{2}]$ is 
+\begin{equation}
+\Bar{X}_{01234}^{\mathrm{std}} := \Bar{P}_{01234}^{\mathrm{std}} \Bar{\Gamma}_{01234}^{\mathrm{std}} .\label{eq:Fbar std.1}
+\end{equation}
+The operator $\Bar{P}_{01234}^{\mathrm{std}}$ takes similar form as $P_{01234}^{\mathrm{std}}$ in Eq. \eqref{eq:F move std.4}, and the only difference is that $P_{01234}^{\mathrm{std}}$ transforms the right-hand state of Eq. \eqref{eq:F move std.2} to the left-hand state, while $\Bar{P}_{01234}^{\mathrm{std}}$ transforms the left-hand state to the right-hand state.
+The operator $\Bar{\Gamma}_{01234}^{\mathrm{std}}$ of dangling Majorana fermions is just the complex conjugate of $\Gamma_{01234}^{\mathrm{std}}$ as 
+\begin{equation}
+\Bar{\Gamma}_{01234}^{\mathrm{std}} := \left( \Gamma_{01234}^{\mathrm{std}} \right) ^{\dagger} = \left( \gamma _{123,A}^{g^{-1}_0 g_1} \right) ^{\tilde{\beta}(01234)} \left( \gamma _{234,B}^{g^{-1}_0 g_2} \right) ^{\tilde{\alpha}(01234)} .\label{eq:Fbar std.2}
+\end{equation}
+
+It is important to note that the $\Bar{F}$ move is not the inverse operator of $F$ move, i.e., $\Bar{F} F \neq \mathbb I$ and $F \Bar{F} \neq \mathbb I$ in general.
+Instead, the $\Bar{F}$ move represents the inverse process of the $F$ move, i.e., $\Bar{F} F = \mathbb I$ and $F \Bar{F} = \mathbb I$ only holds when acting on specific states.
+
+Finally, the non-standard $\Bar{F}$ move is obtained by the symmetry transformation.
+
+
+\subsection{$\mathcal{O}_5$ obstruction function}
+
+In this subsection, we derive the last condition for the bosonic phase $\nu_4$, also called the \textit{ $\mathcal{O}_5$ obstruction function}.
+
+\subsubsection{Superfusion hexagon and twisted cocycle equations}
+
+Now we are ready to deal with the consistency condition called \textit{twisted cocycle equation} for the bosonic phase.
+The $F$ move should satisfy the \textit{superfusion hexagon equation} of the superfustion 2-category, which is 
+\begin{widetext}
+\begin{equation}
+F( 02345) \cdot F( 01245) \cdot F( 01234) =F( 01235) \cdot F( 01345) \cdot \ ^{\overline{0} 1} F( 12345) .\label{eq:hexagon eq}
+\end{equation}
+\end{widetext}
+Note the last $F$ move $^{\overline{0} 1} F( 12345) \equiv \ ^{g^{-1}_0 g_1} F( 12345) := U(g^{-1}_0 g_1) F^{\mathrm{std}}( e,\overline{1} 2,\overline{1} 3,\overline{1} 4,\overline{1} 5) U^{\dagger}(g^{-1}_0 g_1)$ is non-standard.
+Graphically, the superfusion hexagon equation drawn in Fig. \ref{fig:hexagon eq} states the following: Starting from a wavefuntion in the right most state labeled by $\ket{\psi}$ of Fig. \ref{fig:hexagon eq}, there are two approaches to transform this state to the left most state, which should result in the same wavefunction.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig9.pdf}
+    \caption{Superfusion hexagon equation: Only dual lattices (dotted yellow lines) are represented for simplicity.
+    Every vertex of the dual lattice represents a 3-simplex; every link between two vertexes represents a shared 2-simplex between two 3-simplexes.}
+    \label{fig:hexagon eq}
+\end{figure*}
+
+Solving this superfusion hexagon equation \eqref{eq:hexagon eq} results in the twisted cocycle equation for the bosonic phase 
+\begin{equation}
+\mathrm{d} \nu_4 = \mathcal{O}_5[n_3,n_2] = \mathcal{O}^{c}_5[n_3] \cdot \mathcal{O}^{c\gamma}_5[\mathrm{d}n_3] \cdot \mathcal{O}^{\gamma}_5[n_2] ,\label{eq:O5 obstrution}
+\end{equation}
+where the coboundary operator is defined as 
+\begin{equation}
+\mathrm{d} \nu_4(012345) := \frac{\nu _{4} ^{1-2s_{1}( 01)}( 12345) \nu _{4}( 01345) \nu _{4}( 01235)}{\nu _{4}( 01234) \nu _{4}( 01245) \nu _{4}( 02345)} .
+\end{equation}
+The obstruction function $\mathcal{O}_5[n_3,n_2]$ can be divided into 4 parts: 
+\begin{enumerate}
+\item In the previous paper, there is an extra term $\mathcal{O}^{\mathrm{sym}}_5[n_3]$ coming from the symmetry transformation of complex fermions and Majorana fermions as 
+\begin{widetext}
+\begin{equation}
+\mathcal{O}^{\mathrm{sym}}_5[n_3] (012345) = (-1)^{\omega_2(012) [n_3(2345) + \tilde{\beta}(12345)] + [s_1(01) +\omega_2(013)] \tilde{\alpha}(12345)} .
+\end{equation}
+\end{widetext}
+Note we do not give the explicity formula for $\tilde{\alpha}$ and $\tilde{\beta}$.
+For this reason, in this paper we will absorb this term into $\mathcal{O}^{c}_5[n_3]$ and $\mathcal{O}^{\gamma}_5[n_2]$.
+\item $\mathcal{O}^{c}_5[n_3]$ comes from the anti-commutation relation between complex fermions (plus the symmetry transformations of complex fermions) as 
+\begin{equation}
+\mathcal{O}^{c}_5[n_3] = (-1)^{\omega_2 \cup n_3 + n_3 \cup_1 n_3 + \mathrm{d}n_3 \cup_2 n_3} .\label{eq:O5 obstruction c}
+\end{equation}
+\item $\mathcal{O}^{c\gamma}_5[\mathrm{d}n_3]$ comes from the anti-commutation relation between complex fermions and Majorana fermions as 
+\begin{equation}
+\mathcal{O}^{c\gamma}_5[\mathrm{d}n_3] = (-1)^{\mathrm{d}n_3 \cup_2 \mathrm{d}n_3} .\label{eq:O5 obstruction cgamma}
+\end{equation}
+\item $\mathcal{O}^{\gamma}_5[n_2]$ is the pure Majorana phase involved in the superfustion hexagon equation (plus the symmetry transformations of Majorana fermions), whose computation is the most challenging part in this construction. We will focus on this phase from now on.
+\end{enumerate}
+
+\subsubsection{Majorana phase}
+
+The Majorana phase is extracted by the following equation 
+\begin{equation}
+\mathcal{O}^{\gamma}_5[n_2] := \bra{\psi} \Bar{X}_{12345} \Bar{X}^{\mathrm{std}}_{01345} \Bar{X}^{\mathrm{std}}_{01235} X^{\mathrm{std}}_{02345} X^{\mathrm{std}}_{01245} X^{\mathrm{std}}_{01234} \ket{\psi} ,\label{eq:Majorana phase}
+\end{equation}
+where the $X$ operator is defined as Eqs. \eqref{eq:F move std.2} and \eqref{eq:F move std.3} in the $F$ move \eqref{eq:F move std.1}, while the $\Bar{X}$ operator is the inverse process defined in Eq. \eqref{eq:Fbar std.1}.
+Only $\Bar{X}_{12345}$ is non-standard in above equation.
+According to Fig. \ref{fig:hexagon eq}, denoting the Majorana dimer state in the right-most figure as $\ket{\psi}$, we use the Majorana transformation operators $X$ to transform this state $\ket{\psi}$ clockwise to other states in Fig. \ref{fig:hexagon eq}, and finally return to the state $\ket{\psi}$.
+A Berry phase may accumulate during this process, which is extracted by the above equation \eqref{eq:Majorana phase}.
+
+Start from Eq. \eqref{eq:Majorana phase}, substitute the newly defined inserted Majorana fermions $\Gamma$ \eqref{eq:dangling Majorana correct} into the $X$ operator \eqref{eq:F move std.3}, the complete Majorana phase is calculated by 
+\begin{widetext}
+\begin{equation}
+\begin{array}{ c c l }
+\mathcal{O}_{5}^{\gamma }[ n_2] & = & \bra{\psi }\Bar{P}_{12345} \left( (-1)^{\omega_2(012)} \gamma _{234A}^{\overline{1} 2}\right)^{\tilde{\beta}_{3}( 12345)} \left( (-1)^{\omega_2(013) + s_1(01)} \gamma _{345B}^{\overline{1} 3}\right)^{\tilde{\alpha}_{3}( 12345)}\\
+& \times  & \Bar{P}_{01345}^{\mathrm{std}} \left( \gamma _{134A}^{\overline{0} 1}\right)^{\tilde{\beta}_{3}( 01345)} \left( \gamma _{345B}^{\overline{0} 3}\right)^{\tilde{\alpha}_{3}( 01345)} \Bar{P}_{01235}^{\mathrm{std}} \left( \gamma _{123A}^{\overline{0} 1}\right)^{\tilde{\beta}_{3}( 01235)} \left( \gamma _{235B}^{\overline{0} 2}\right)^{\tilde{\alpha}_{3}( 01235)}\\
+& \times  & P_{02345}^{\mathrm{std}}\left( \gamma _{345B}^{\overline{0} 3}\right)^{ \tilde{\alpha}_{3}( 02345)} \left( \gamma _{234A}^{\overline{0} 2}\right)^{\tilde{\beta}_{3}( 02345)} P_{01245}^{\mathrm{std}} \left( \gamma _{245B}^{\overline{0} 2}\right)^{\tilde{\alpha}_{3}( 01245)} \left( \gamma _{124A}^{\overline{0} 1}\right)^{\tilde{\beta}_{3}( 01245)}\\
+& \times  & P_{01234}^{\mathrm{std}}\left( \gamma _{234B}^{\overline{0} 2}\right)^{\tilde{\alpha}_{3}( 01234)} \left( \gamma _{123A}^{\overline{0} 1}\right)^{\tilde{\beta}_{3}( 01234)} \ket{\psi }
+\end{array} .
+\end{equation}
+\end{widetext}
+This Majorana phase is calculated numerically, and is presented in Ref. \cite{Ning2025unpub}.
+Unfortunately, to the best of our knowledge, there seems to be no way to simplify this extremely complicated result to get a nice analytical formula.
+
+Now we comment that this Majorana phase is initially calculated in the seminal paper \cite{Wang2020}, which only obtained a partial result 
+\begin{widetext}
+\begin{equation}
+\begin{array}{ c c l }
+\mathcal{O}_{5}^{\gamma }[ n_{2}] & = & ( -1)^{\omega_2(012) \beta(12345) + [s_1(01) +\omega_2(013)] \alpha_4(12345) + \mathrm{d} n_{3}(\hat{1})\mathrm{d} n_{3}(\hat{4}) +\omega _{2}( 023)[\mathrm{d} n_{3}(\hat{3}) +\mathrm{d} n_{3}(\hat{4}) +\mathrm{d} n_{3}(\hat{5})]}\\
+& \times  & i^{\mathrm{d} n_{3}(\hat{3})\mathrm{d} n_{3}(\hat{5}) \bmod 2}( -i)^{[\mathrm{d} n_{3}(\hat{0}) +\mathrm{d} n_{3}(\hat{1}) +\mathrm{d} n_{3}(\hat{2})]\mathrm{d} n_{3}(\hat{4}) \bmod 2}
+\end{array} .\label{eq:Majorana phase old}
+\end{equation}
+\end{widetext}
+In the subsequent paper \cite{Ning2025unpub}, they improved the construction of inserted dangling Majorana fermions, then developed a systematic computational method to calculate the Majorana phase following \cite{ren2023stacking}.
+
+We further conjecture that without $\omega_2$ and $s_1$, the $\mathbb Z_8$ component of Majorana phase $\mathcal{O}_{d+2}^{\gamma }[ n_{d-1}]$ for a $(d+1)$D FSPT ($d$ is the spacial dimension) is 
+\begin{equation}
+\frac{1}{8} \mathbf {Sq}^3(n_{d-1}) \mod \frac{1}{4} ,
+\end{equation}
+where $\mathbf {Sq}$ means the Steenrod square.
+In our current case, $d = 3$ such that 
+\begin{equation}
+\frac{1}{8} \mathbf {Sq}^3(n_{2}) = 0 \mod \frac{1}{4} ,
+\end{equation}
+which means all the the $\mathbb Z_8$ component of Majorana phase $\mathcal{O}_{5}^{\gamma }[ n_{2}]$ above should be a coboundary when $\omega_2$ and $s_1$ both vanish.
+Below we verify this conjecture and solve this coboundary numerically.
+
+\begin{widetext}
+To solve this coboundary equation numerically, we write down the explicit form
+\begin{equation}
+\mathrm{d} \mu_4[n_2] = \Delta \mathcal{O}_{5}^{\gamma , \mathbb Z_8 }[ n_{2}] := \mathcal{O}_{5}^{\gamma , \mathbb Z_8 } [n_2] - \frac{1}{8} \mathbf {Sq}^3(n_{2}) \mod \frac{1}{4} .
+\end{equation}
+It is important to note that the equation is $\mod 1/4$ instead of $\mod 1$, because we can only match this $\mathbb Z_8$ component, while the remaining $\mathbb Z_4$ component is not determined.
+Here the $\Delta \mathcal{O}_{5}^{\gamma , \mathbb Z_8 }$ depends on $10$ independent $n_2$ variables 
+\begin{equation}
+\Delta \mathcal{O}_{5}^{\gamma , \mathbb Z_8 } (012345): n_2(012), n_2(013), n_2(014), n_2(015), n_2(023), n_2(024), n_2(025), n_2(034), n_2(035), n_2(045)
+\end{equation}
+such that we have $2^{10} = 1024$ line of equations, because each $n_2$ can take $2$ possible values.
+As for the unknown $\mu_4$, we only have $6$ independent $n_2$ variables 
+\begin{equation}
+\mu _4(01234): n_2(012), n_2(013), n_2(014), n_2(023), n_2(024), n_2(034)
+\end{equation}
+such that the number of unknown variables is only $2^6 = 64$.
+Therefore, this is just a modular integer linear system of size $2^{10} \times 2^{6}$ ($2^{10}$ rows and $2^6$ columns).
+We shall solve it by $\mod 8$ or $\mod 16$.
+The coboundary operation shall be 
+\begin{equation}
+\mathrm{d} \nu_4 (012345) = \nu_4(12345) - \nu_4(02345) + \nu_4(01345) - \nu_4(01245) + \nu_4(01235) - \nu_4(01234) \mod 1,
+\end{equation}
+with the variable dependencies 
+\begin{align}
+&\mu _4(01235): n_2(012), n_2(013), n_2(015), n_2(023), n_2(025), n_2(035) ; \\
+&\mu _4(01245): n_2(012), n_2(014), n_2(015), n_2(024), n_2(025), n_2(045) ; \\
+&\mu _4(01345): n_2(013), n_2(014), n_2(015), n_2(034), n_2(035), n_2(045) ; \\
+&\mu _4(02345): n_2(023), n_2(024), n_2(025), n_2(034), n_2(035), n_2(045) ; \\
+&\mu _4(12345): n_2(123), n_2(124), n_2(125), n_2(134), n_2(135), n_2(145) .
+\end{align}
+Notice that in the last line, these $n_2$ are not free variables, they depends on the $10$ free $n_2$.
+We solved this coboundary equation numerically, and find a $\mathbb Z_8$ valued coboundary.
+Then this conjecture is nicely verified!
+And our new results are compatible with the previous one up to a coboundary.
+\end{widetext}
+
+
+\subsection{Self-consistency check}
+
+In summary, we obtained a series of cocycle equations for the triplet $(n_2, n_3, \nu_4)$.
+The form of these equations states an implicit constrain for the obstruction function.
+Let us focus on $\nu_4$ because it is the most complicated obstruction function so that the self-consistency check is highly non-trivial, if we take an extra coboundary operation on both sides of equation \eqref{eq:O5 obstrution}, we will get 
+\begin{equation}
+\mathrm{d} \mathcal{O}_5 \equiv 0 ,
+\end{equation}
+which means any obstruction function should be a cocycle.
+Though it seems that this is not a nontrivial constraint, it is rather strong and very helpful during our calculation process.
+
+
+\section{Stacking Group of 3+1D FSPT}
+
+It is well known that SPT states are invertible under stacking operation.
+The \textit{stacking operation $\boxtimes$} is best understood in 2 or lower spacial dimensions: we just put two layers of systems close to each other, assuming local layer-layer interaction, we can view this two-layer system as a new single-layer system as a whole.
+For 3 or higher spacial dimensions, though it is impossible for human to imagine the stacking operation pictorially, the definition of stacking is by analogy.
+By \textit{invertible}, we mean that for a given SPT state $\ket{\psi}$, we can always find another SPT state $\ket{\psi^{-1}}$ such that the stacking of these two states $\ket{\psi} \boxtimes \ket{\psi^{-1}}$ is equivalent to the vacuum state.
+
+In fact, the stacking operation of SPT has more structures than just the existence of the inverse states.
+Fix the global symmetry, the classification of SPT states forms an Abelian group under the stacking operation, which is called the \textit{stacking group structure} of SPT states protected by the given symmetry.
+While the stacking group structure of BSPT is simple, the fermionic counterpart is still unknown for a general global symmetry due to the complicated structure of domain wall decorations.
+In this section, we will derive the stacking group structure (also called \textit{stacking rules} or \textit{group extension problem}) of 3+1D internal FSPT states protected by any discrete onsite symmetry without $p+ip$ superconductor decoration.
+
+We will start with two 3+1D internal FSPT states without $p+ip$ superconductor decoration labeled by two triplets $(n_2, n_3, \nu_4)$ and $(n'_2, n'_3, \nu'_4)$, then ask what is the triplet $(N_2, N_3, \mathcal{V}_4) = (n_2, n_3, \nu_4) \boxtimes (n'_2, n'_3, \nu'_4)$ classifying the FSPT after stacking.
+We hope to explicitly express the triplet $(N_2, N_3, \mathcal{V}_4)$ after stacking in forms of the original two triplets $(n_2, n_3, \nu_4)$ and $(n'_2, n'_3, \nu'_4)$ before stacking.
+These stacking rules define the multiplication operation $\boxtimes$ in the stacking group.
+
+The core strategy of deriving the stacking rules is starting with the two-layer system with the upper layer $(n_2, n_3, \nu_4)$ and lower layer $(n'_2, n'_3, \nu'_4)$, assuming the two layers have the same spacial triangulation  
+\footnote{In general, the upper layer and lower layer can take different triangulations. However, from a practical point of view, we do not know how to design the FSLU transformations in the most general case. The validity of assuming the same triangulation for the upper layer and lower layer is argued in \cite{ren2023stacking}.}, 
+applying finite-depth FSLU transformations such that the upper layer becomes $(N_2, N_3, \mathcal{V}_4)$ while the lower layer becomes trivial $(0, 0, 1)$.
+
+The construction of this section follows the previous work in Ref. \cite{ren2023stacking}, which deals with the cases of 2 spacial dimensions or below. Though the ideas are similar, we emphasize that the construction and calculation of 3-dimensional case is much more complicated and challenging.
+
+
+\subsection{$\mathcal P$ move}
+
+To describe the process of stacking two layers of FSPT into a single layer, we define the \textit{$\mathcal P$ move}, which is an FSLU transformation that projects the initial two-layer system onto the desired one-layer system.
+The explicit form of the \textit{standard $\mathcal P$ move} is 
+\begin{widetext}
+\begin{gather}
+\Psi \left( \adjincludegraphics[valign=c,scale=0.75]{math1.1.pdf} \right) 
+=\mathcal{P}_{0123}^{\mathrm{std}} \Psi \left( \adjincludegraphics[valign=c,scale=0.65]{math1.2.pdf} \right) ,\label{eq:P move std}\\
+\mathcal{P}_{0123}^{\mathrm{std}} := X_{0123}^{\mathrm{std}}[ n_{2} ,n'_{2}]\left( C_{0123}^{e\dagger }\right)^{N_{3}( 0123)}\left( c^{\prime e}_{0123}\right)^{n'_{3}( 0123)}\left( c_{0123}^{e}\right)^{n_{3}( 0123)} .\label{eq:P move std.1}
+\end{gather}
+Here $c$, $c'$ and $C$ denote the annihilation operators of complex fermions in the initial upper layer, lower layer and the final single layer, respectively.
+The $X_{0123}^{\mathrm{std}}[ n_{2} ,n'_{2}]$ operator transforms the Majorana chain decorations on the right-hand side of \eqref{eq:P move std} to the left-hand side.
+It is important to note that this operator $X$ (note that it is different from the one \eqref{eq:F move std.3} in the $F$ move) is the essence of our construction, which depends on the Majorana chain configurations during the transformation process.
+Therefore, we will first design the FSLU transformations for the Majorana chain decorations in the next subsection before specifying the explicit form of this operator.
+
+Here are several things to clarify.
+Firstly, the figures in Eq. \eqref{eq:P move std} only show a specific example (because it is tedious to draw all of them) with the decoration data fixed as $n_2(012)$, $n_2(013)$, $n'_2(012)$, $n'_2(123)$ and $n'_3(0123)$ equal to 1, while $n_2(023)$, $n_2(123)$, $n'_2(013)$, $n'_2(123)$ and $n_3(0123)$ equal to 0.
+However, we remind the reader that the $\mathcal P$ move should be applicable to any possible value of the decoration data $n_2, n'_2, n_3, n'_3$.
+Secondly, though we only draw a one-layer system on the left-hand side of Eq. \eqref{eq:P move std}, it should be viewed as a two-layer system as following 
+\begin{equation}
+\Psi \left( \adjincludegraphics[valign=c,scale=0.75]{math1.1.pdf} \right) \equiv 
+\Psi \left( \adjincludegraphics[valign=c,scale=0.65]{math1.3.pdf} \right) ,
+\end{equation}
+by which we mean the system is the $(N_2, N_3, \mathcal V_4)$ state stacked with a trivial (vacuum) state $(0,0,1)$.
+
+As we mentioned before, the standard $\mathcal P$ move is obtained by setting the first group elements of both layers to be identity $e \in G_b$, while the \textit{non-standard $\mathcal P$ move} is obtained by acting the symmetry transformation $U(g_0)$ on the standard one 
+\begin{gather}
+\Psi \left( \adjincludegraphics[valign=c,scale=0.75]{math2.1.pdf} \right) =\mathcal{P}_{0123} \Psi \left( \adjincludegraphics[valign=c,scale=0.65]{math2.2.pdf} \right) ,\\
+\mathcal{P}_{0123} := U(g_0) \mathcal{P}_{0123}^{\mathrm{std}} U^{\dagger}(g_0) = X_{0123}[ n_{2} ,n'_{2}]\left( C_{0123}^{g_0\dagger }\right)^{N_{3}( 0123)}\left( c^{\prime g_0}_{0123}\right)^{n'_{3}( 0123)}\left( c_{0123}^{g_0}\right)^{n_{3}( 0123)} .\label{eq:P move non-std}
+\end{gather}
+\end{widetext}
+The operator $X_{0123}[ n_{2} ,n'_{2}] := U(g_0) X_{0123}^{\mathrm{std}}[ n_{2} ,n'_{2}] U^{\dagger}(g_0)$ is the non-standard version of the standard operator $X_{0123}^{\mathrm{std}}[ n_{2} ,n'_{2}]$ defined in Eq. \eqref{eq:P move std}.
+
+
+\subsection{Projection scheme of Majorana chain decoration}
+
+In this subsection, we aim to design a set of systematic FSLU transformation rules, also called a \textit{projection scheme}, to transform the two-layer system in the right-hand side of Eq. \eqref{eq:P move std} to the left-hand side one-layer system.
+The definition of the standard operator $X_{0123}^{\mathrm{std}}[ n_{2} ,n'_{2}]$ in Eq. \eqref{eq:P move std.1} and the non-standard version $X_{0123}[ n_{2} ,n'_{2}]$ in Eq. \eqref{eq:P move non-std} naturally follow after the projection scheme.
+
+To cover all the possibilities of the Majorana chain decoration, we will design the projection scheme case by case in the following.
+There are in total 4 general cases and 2 special cases.
+A general case contains many possibilities of the Majorana chain decoration, but we only present one specific example for each general case for simplicity.
+The reader should be able to learn from this example and generalize it to all the possibilities of that case.
+A special case contains only one or two possibilities of the Majorana chain decoration, but it is slightly different from all the other general cases.
+
+We list all the possible Majorana decorations and the first step of the transition processes in the Appendix \ref{}.
+Since the fermion parity may only change in the first step, the remaining steps are not shown, which we believe the reader can construct them easily based on the following existing examples.
+
+\subsubsection{Case 1}
+
+If the upper layer has a non-trivial Majorana pairing $\gamma_1 \rightarrow \gamma_2$ while the lower layer also has the same non-trivial Majorana pairing $\gamma'_1 \rightarrow \gamma'_2$ (i.e., these two Majorana pairings are parallel), this scenario falls into case 1 of the projection scheme.
+To illustrate the detailed processes, we choose one specific example in Fig. \ref{fig:projection scheme 1}, while the reader should be able to apply this projection scheme to any possible decoration of case 1.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig4.pdf}
+    \caption{Projection scheme case 1:
+    The red or green solid line with an arrow always represents the existing Majorana pairing, while the dotted line represent no Majorana pairing (just drawn for reference).
+    The gray shaded loops are the transition loops from last state to this state.
+    If a gray shaded line is not closed to form a loop in the figure, that means part of this transition loop lies in the neighboring 3-simplex so that we can not draw it completely if only one 3-simplex is shown.
+    (a) Initial state.
+    (b) intermediate state with 2 vertical bridge pairings within the 3-simplex.
+    The other two vertical bridge pairings $-(-1)^{s_1(g_0)} i \gamma^{\prime g_0}_{012B} \gamma^{g_0}_{012B}$ and $-(-1)^{s_1(g_1)} i \gamma^{g_1}_{123A} \gamma^{\prime g_1}_{123A}$ are outside of this 3-simplex and belong to other 3-simplexes such that the transition loops containing them are also within other 3-simplexes.
+    Therefore, we only draw part of these transition loops, and their fermion parity changes are counted in other 3-simplexes instead of this 3-simplex under consideration.
+    (c) Final state, all the Majorana pairings are vacuum.}
+    \label{fig:projection scheme 1}
+\end{figure*}
+
+In Fig. \ref{fig:projection scheme 1} (a), there is only one non-trivial Majorana pairing in each layer of the initial state, which are $-(-1)^{\omega_2(g_0, g^{-1}_0 g_1)} i \gamma^{g_1}_{123B} \gamma^{g_0}_{012A}$ and $-(-1)^{\omega_2(g_0, g^{-1}_0 g_1)} i \gamma^{\prime g_1}_{123B} \gamma^{\prime g_0}_{012A}$ respectively.
+Two steps are needed to project the initial state (a) to the final state (c).
+
+The first transition process from Fig. \ref{fig:projection scheme 1} (a) to (b) is achieved by the operator $P_1 \Gamma$, in which $P_1$ is the product of all Majorana projectors defined in Eq. \eqref{eq:Majorana projector} involved in (b) (up to an unimportant normalization factor), and $\Gamma$ denotes the possible dangling Majorana fermions inserted for fermion parity matching.
+The nontrivial Majorana pairings in (b) within the 3-simplex are $-(-1)^{s_1(g_0)} i \gamma^{g_0}_{012A} \gamma^{\prime g_0}_{012A}$ and $-(-1)^{s_1(g_1)} i \gamma^{\prime g_1}_{123B} \gamma^{g_1}_{123B}$.
+The Majorana dimer involving both $\gamma$ in the upper layer and $\gamma'$ in the lower layer is called \textit{bridge pairing/dimer} (usually drawn as a solid green line with an arrow in the figures), because it connects the Majorana chain decoration in the upper and lower layer.
+Connecting the 4 nontrivial Majorana pairings above, we get a transition loop with the fermion parity change $(-1)^{s_1(g_0)+s_1(g_1)} = (-1)^{s_1(g^{-1}_0 g_1)}$.
+Therefore, the inserted dangling Majorana mode is chosen to be $\Gamma^{\mathrm{std}} = (\gamma^{\prime g^{-1}_0 g_1}_{123B}) ^{s_1(g^{-1}_0 g_1)}$ for the standard case and $\Gamma = \left[ (-1) ^{\omega_2(g_0, g^{-1}_0 g_1) + s_1(g_0)} \gamma^{\prime g_1}_{123B} \right] ^{s_1(g^{-1}_0 g_1)}$ for the non-standard case in this particular example.
+
+The second transition process from Fig. \ref{fig:projection scheme 1} (b) to (c) is achieved by the operator $P_2$, which is the product of all Majorana projectors involved in (c).
+All Majorana pairings in (c) are just vacuum pairings.
+Since the fermion parity is always conserved in this step, no dangling Majorana fermion need to be inserted.
+
+We usually use the name \textit{vertical bridge pairing/dimer} to denote Majorana dimers like $-(-1)^{s_1(g_0)} i \gamma^{g_0}_{012A} \gamma^{\prime g_0}_{012A}$ or $-(-1)^{s_1(g_1)} i \gamma^{\prime g_1}_{123B} \gamma^{g_1}_{123B}$.
+The two Majorana fermions in the vertical bridge pairing are at the same place of the resolved dual lattice but belong to different layers, and the pairing direction convention for the standard vertical bridge pairing is always pointing from $\gamma_A$ to $\gamma'_A$ or from $\gamma'_B$ to $\gamma_B$.
+This convention is convenient because of the fermion parity conservation property in the second transition process.
+
+In summary, we introduce two vertical bridge pairings within the 3-simplex under consideration in case 1, and the fermion parity may change only in the first step.
+The standard operator $X^{\mathrm{std}}_{0123}[ n_{2} ,n'_{2}]$ introduced in Eq. \eqref{eq:P move std.1} is defined as $X^{\mathrm{std}}_{0123} := P^{\mathrm{std}}_2 P^{\mathrm{std}}_1 \Gamma^{\mathrm{std}} = P^{\mathrm{std}}_2 P^{\mathrm{std}}_1 (\gamma^{\prime g^{-1}_0 g_1}_{123B}) ^{s_1(g^{-1}_0 g_1)}$ in this particular example.
+While the non-standard operator $X_{0123}[ n_{2} ,n'_{2}]$ introduced in Eq. \eqref{eq:P move non-std} is then similarly defined as $X_{0123} := P_2 P_1 \Gamma = P_2 P_1 \left[ (-1) ^{\omega_2(g_0, g^{-1}_0 g_1) + s_1(g_0)} \gamma^{\prime g_1}_{123B} \right] ^{s_1(g^{-1}_0 g_1)}$.
+The non-standard operator is obtained from the standard one by symmetry transformation, so we only have to specify one of them in the following.
+
+\subsubsection{Case 2}
+
+If the lower layer has a nontrivial Majorana pairing $\gamma'_1 \rightarrow \gamma'_2$ while the upper layer has no corresponding nontrivial Majorana pairing involving neither $\gamma_1$ nor $\gamma_2$, this scenario falls into the case 2 of the projection scheme.
+One specific example is shown in Fig. \ref{fig:projection scheme 2}.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig5.pdf}
+    \caption{Projection scheme case 2:
+    The gray shaded lines are parts of the 6-length transition loops from last state to this state.
+    Note that the transition loops must be of length 6 in this case to ensure fermion parity conservation.
+    (a) Initial state.
+    (b) intermediate state with an inclined bridge pairing within the 3-simplex.
+    (c) Final state.}
+    \label{fig:projection scheme 2}
+\end{figure*}
+
+In Fig. \ref{fig:projection scheme 2} (a), there is only one non-trivial Majorana pairing in the lower layer of the initial state, which is $-(-1)^{\omega_2(g_0, g^{-1}_0 g_1)} i \gamma^{\prime g_1}_{123B} \gamma^{\prime g_0}_{012A}$.
+
+The first transition process from Fig. \ref{fig:projection scheme 2} (a) to (b) is achieved by the operator $P_1$, which is the product of all Majorana projectors involved in (b).
+The second transition process from Fig. \ref{fig:projection scheme 2} from (b) to (c) is achieved by the operator $P_2$, which is the product of all Majorana projectors involved in (c).
+The single bridge pairing in (b) is $-(-1)^{\omega_2(g_0, g^{-1}_0 g_1)} i \gamma^{\prime g_1}_{123B} \gamma^{g_0}_{012A}$.
+The transition loops of $P_1$ and $P_2$ are of length 6, which cross two neighboring 3-simplexes such that we can only draw part of them within the 3-simplex under consideration.
+It is important to note that the transition loop under this circumstance must to be of length 6, since the fermion parity will always conserve for this kind of transition loop containing bridge pairings.
+
+In contrast to the vertical bridge pairing defined in case 1, we use the name \textit{inclined bridge pairing} to denote the Majorana pairing like $-(-1) ^{\omega_2(g_0, g^{-1}_0 g_1)} i \gamma^{\prime g_1}_{123B} \gamma^{g_0}_{012A}$.
+The two Majorana modes in the inclined bridge pairing must be at different but neighboring places of the resolved dual lattice crossing different layers, and the convention of pairing direction for the inclined bridge pairing (both standard and non-standard) is always the same as their one-layer counterpart $-(-1) ^{\omega_2(g_0, g^{-1}_0 g_1)} i \gamma^{g_1}_{123B} \gamma^{g_0}_{012A}$.
+This convention is convenient because of the fermion parity conservation property of the 6-length transition loop introduced above.
+
+In summary, we introduce one inclined bridge pairing within the 3-simplex in case 2, and the fermion parity always conserves as long as the above 6-length transition loop is used.
+The non-standard operator $X_{0123}[ n_{2} ,n'_{2}]$ in Eq. \eqref{eq:P move non-std} is defined as $X_{0123} := P_2 P_1$ in this example.
+
+\subsubsection{Case 3}
+
+If the upper layer has a nontrivial Majorana pairing between $\gamma_1$ and $\gamma_2$ while the lower layer has a nontrivial Majorana pairing between $\gamma'_1$ and $\gamma'_3$, this scenario falls into case 3 of the projection scheme.
+A specific example is presented in Fig. \ref{fig:projection scheme 3}.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig6.pdf}
+    \caption{Projection scheme case 3:
+    (a) Initial state.
+    (b) Intermediate state with an inclined bridge pairing and a vertical bridge pairing within the 3-simplex.
+    (c) Final state.}
+    \label{fig:projection scheme 3}
+\end{figure*}
+
+In Fig. \ref{fig:projection scheme 3} (a), there is only one nontrivial Majorana pairing in each layer of the initial state, which are $-(-1)^{\omega_2(g_0, g^{-1}_0 g_1)} i \gamma^{g_1}_{123B} \gamma^{g_0}_{023A}$ and $-(-1)^{\omega_2(g_0, g^{-1}_0 g_1)} i \gamma^{\prime g_1}_{123B} \gamma^{\prime g_0}_{012A}$ respectively.
+The transformation from (a) to (b) is achieved by $P_1 \Gamma$, while the one from (b) to (c) is achieved by $P_2$.
+The nontrivial Majorana pairings in (b) within the 3-simplex are an inclined bridge pairing $-(-1)^{s_1(g_0)} i \gamma^{\prime g_0}_{012A} \gamma^{g_0}_{023A}$ and a vertical bridge pairing $-(-1)^{s_1(g_1)} i \gamma^{\prime g_1}_{123B} \gamma^{g_1}_{123B}$.
+The fermion parity change of the transition loop from (a) to (b) is $(-1)^{1 + s_1(g_0) + s_1(g_1)} = (-1)^{1 + s_1(g^{-1}_0 g_1)}$. Therefore, the non-standard dangling Majorana fermion is chosen to be $\Gamma = \left[ 
+(-1)^{\omega_2(g_0, g^{-1}_0 g_1) + s_1(g_0)} \gamma^{\prime g_1}_{123B} \right] ^{1 + s_1(g^{-1}_0 g_1)}$.
+The transition process from Fig. \ref{fig:projection scheme 3} (b) to (c) has two transition loops, in which one is dealt with the same as Fig. \ref{fig:projection scheme 1} (c) while the other is the same as Fig. \ref{fig:projection scheme 2} (c).
+
+In summary, we introduce an inclined bridge pairing and a vertical bridge pairing within the 3-simplex in case 3, and the fermion parity may change only in the first step.
+The non-standard operator $X_{0123}[ n_{2} ,n'_{2}]$ in Eq. \eqref{eq:P move non-std} is defined as $X_{0123} := P_2 P_1 \Gamma = P_2 P_1 \left[ 
+(-1)^{\omega_2(g_0, g^{-1}_0 g_1) + s_1(g_0)} \gamma^{\prime g_1}_{123B} \right] ^{1 + s_1(g^{-1}_0 g_1)}$ in this example.
+
+\subsubsection{Case 4}
+
+If one of the two layers has two nontrivial Majorana pairings while the other has only one nontrivial Majorana pairing being neither between $013B$ and $123B$ nor between $012A$ and $023A$ (i.e., not parallel to any one of the two nontrivial Majorana pairings in the other layer), this scenario falls into case 4 of the projection scheme.
+A specific example is depicted in Fig. \ref{fig:projection scheme 4}.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig7.pdf}
+    \caption{Projection scheme case 4:
+    (a) Initial state.
+    (b) Intermediate state with two vertical bridge pairings within the 3-simplex.
+    (c) Intermediate state (not the final state because the lower layer still has one nontrivial pairing).
+    Extra transition processes of case 2 type are needed to get the desired final state.}
+    \label{fig:projection scheme 4}
+\end{figure*}
+
+In Fig. \ref{fig:projection scheme 4} (a), there are two nontrivial Majorana pairings in the lower layer, which are $-(-1)^{s_1(g_0)} i \gamma^{\prime g_0}_{012A} \gamma^{\prime g_0}_{023A}$ and $-(-1)^{\omega_2(g_0, g^{-1}_0 g_1) + s_1(g_0)} i \gamma^{\prime g_0}_{013B} \gamma^{\prime g_1}_{123B}$.
+While there is only one nontrivial Majorana pairing $-(-1)^{\omega_2(g_0, g^{-1}_0 g_1)} i \gamma^{g_1}_{123B} \gamma^{g_0}_{023A}$ in the upper layer, which is not parallel to anyone of the lower layer.
+The transformation from (a) to (b) is achieved by $P_1 \Gamma$, while the one from (b) to (c) is achieved by $P_2$.
+There are three nontrivial Majorana pairings in (b) within the 3-simplex: two vertical bridge pairings $-(-1)^{s_1(g_0)} i \gamma^{g_0}_{023A} \gamma^{\prime g_0}_{023A}$ and $-(-1)^{s_1(g_1)} i \gamma^{\prime g_1}_{123B} \gamma^{g_1}_{123B}$, and one nontrivial pairing in the lower layer $-i \gamma^{\prime g_0}_{013B} \gamma^{\prime g_0}_{012A}$.
+
+It is important to note that the transition loop within the 3-simplex from Fig. \ref{fig:projection scheme 4} (a) to (b) is of length 6 instead of length 4 like Fig. \ref{fig:projection scheme 3} or Fig. \ref{fig:projection scheme 1}, while it is also different from the 6-length loop in Fig. \ref{fig:projection scheme 2} because it is within only one 3-simplex and the fermion parity may change.
+The fermion parity change of this transition loop is $(-1)^{1 + s_1(g_0) + s_1(g_1)} = (-1)^{1 + s_1(g^{-1}_0 g_1)}$, and the non-standard inserted dangling Majorana mode is chosen to be $\Gamma = \left[ 
+(-1)^{\omega_2(g_0, g^{-1}_0 g_1) + s_1(g_0)} \gamma^{\prime g_1}_{123B} \right] ^{1 + s_1(g^{-1}_0 g_1)}$.
+
+The transition process from Fig. \ref{fig:projection scheme 4} (b) to (c) is dealt with the same as Fig. \ref{fig:projection scheme 1} (b) to (c).
+The difference here is that Fig. \ref{fig:projection scheme 4} (c) may not be the final state here.
+In this example, there are still one nontrivial Majorana pairing $-i \gamma^{\prime g_0}_{013B} \gamma^{\prime g_0}_{012A}$ in the lower layer, while the upper layer is vacuum.
+Now we need to apply the transition process in the projection scheme case 2 shown in Fig. \ref{fig:projection scheme 2} to reduce this state to the desired final state.
+In general, if we start from an initial state with two nontrivial pairings in the lower layer, we will not get the final state after the transition process depicted in Fig. \ref{fig:projection scheme 4}, and extra transition processes of the projection scheme case 2 are needed.
+However, if we start from an initial state with two nontrivial pairings in the upper layer, we will get the final state directly.
+
+In summary, we introduce two vertical bridge pairings within the 3-simplex in case 4, and the fermion parity may change only in the first step with a 6-length transition loop.
+We may not end up with the desired final state (the lower layer being vacuum), under this circumstance extra transition processes in the projection scheme case 2 are needed.
+The non-standard operator $X_{0123}[ n_{2} ,n'_{2}]$ in Eq. \eqref{eq:P move non-std} is defined as $X_{0123} := P^{\mathrm{case 2}}_2 P^{\mathrm{case 2}}_1 P^{\mathrm{case 4}}_2 P^{\mathrm{case 4}}_1 \Gamma$ in this example.
+
+\subsubsection{Two special cases}
+
+Finally, let us present two more special cases: case 5 and case 6.
+
+If one of the two layers has only one nontrivial Majorana pairing between $013B$ and $023A$ while the other also has only one nontrivial Majorana pairing being between $012A$ and $123B$, this scenario falls into case 5 of the projection scheme.
+One of the two possibilities is shown in Fig. \ref{fig:projection scheme 5}.
+We only emphasize that in this special case, there are two inclined bridge pairings as drawn in (b): $-(-1)^{s_1(g_0)} i \gamma^{\prime g_0}_{012A} \gamma^{g_0}_{023A}$ and $-(-1)^{\omega_2(g_0, g^{-1}_0 g_1) + s_1(g_0)} i \gamma^{g_0}_{013B} \gamma^{\prime g_1}_{123B}$.
+All the other things are similarly treated as above cases.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig8.pdf}
+    \caption{Projection scheme case 5 (special case):
+    (a) Initial state.
+    (b) Intermediate state with two inclined bridge pairings within the 3-simplex.
+    (c) Final state.}
+    \label{fig:projection scheme 5}
+\end{figure*}
+
+The second special case (case 6) is that there are two nontrivial Majorana pairings in both layers.
+We do not draw this case to avoid clustering figure.
+This case can be treated by the application of two transition processes of case 1 type.
+The point here is that this case will have two transition loops that may change the fermion parity, and for every fermion parity changing transition loop we must assign one and only one dangling Majorana fermion.
+The non-standard operator $X_{0123}[ n_{2} ,n'_{2}]$ in Eq. \eqref{eq:P move non-std} is similarly defined as $X_{0123} := P_2 P_1 \Gamma$, while the difference is that there are two dangling Majorana fermions inserted $\Gamma = (\gamma^{\prime g_0}_{012A}) \left[ 
+(-1)^{\omega_2(g_0, g^{-1}_0 g_1) + s_1(g_0)} \gamma^{\prime g_1}_{123B} \right] ^{1 + s_1(g^{-1}_0 g_1)}$ in this particular example.
+The order of insertion of these two dangling Majorana modes is important, which can not be changed due to the consistency with the $F$ move discussed later.
+
+
+\subsubsection{Stacking rule of Majorana chain decoration}
+
+In the above, we designed a projection scheme by a categorized discussion.
+All possible Majorana chain decorations and their transition processes can be treated using one or two cases discussed above.
+We list all of these possibilities and the first steps of their transition processes with fermion parity change counted in the Appendix \ref{ap:fermion parity}.
+Direct observation tells us the following stacking rule for the Majorana chain decoration 
+\begin{equation}
+N_2 = n_2 + n'_2 \mod 2 . \label{eq:n2 stacking}
+\end{equation}
+
+Although this formula seems simple, we emphasize that it is not obvious at first glance.
+Physically, it just represents the stacking rule of Kitaev chains, which from a $\mathbb Z_2$ stacking group.
+Instead of guessing, this formula is summarized from the final states obtained from the initial states with all the possible Majorana chain decorations counted after a projection scheme is designed.
+
+\subsubsection{Stacking rule of complex fermion decoration}
+
+As we emphasized before, only the first step of the transition processes in our projection scheme may change the fermion parity, which can be counted by the Kasteleyn orientation of the corresponding transition loops.
+The fermion parity change of the Majorana chain decoration within a single 3-simplex is summarized from Appendix \ref{ap:fermion parity} as 
+\begin{equation}
+m_3 = n_2 \cup_1 n'_2 + s_1 \cup (n_2 \cup_2 n'_2) \mod 2 .
+\end{equation}
+
+As a fermionic system, the total fermion parity should always be conserved.
+Though the fermion parity of the Majorana chain decoration may change, it can be compensated by the fermion parity change of the complex fermion decoration.
+Therefore, the fermion parity conservation requires 
+\begin{equation}
+N_3 = n_3 + n'_3 + m_3 \mod 2 . \label{eq:n3 stacking}
+\end{equation}
+
+\subsection{Stacking consistency equation}
+
+In the last subsection, we obtained two stacking rules about the Majorana chain decoration in Eq. \eqref{eq:n2 stacking} and complex fermion decoration in Eq. \eqref{eq:n3 stacking}.
+These two stacking rules are naturally summarized from a given projection scheme.
+However, the stacking rule of the bosonic phase is much more complicated so that it is one of the most challenging calculations in this paper.
+In this subsection, we aim to derive this last stacking rule.
+
+\subsubsection{$\mathcal P$ move revisited}
+
+The definition of the standard $\mathcal P$ move first appearing in Eq. \eqref{eq:P move std} and \eqref{eq:P move std.1} is not clear until a projection scheme is stated and the operator $X ^{\mathrm{std}} _{0123}$ is clearly defined.
+So after introducing the projection scheme, let us write down the explicit expression for the $\mathcal P$ move here.
+
+Suppose there are $n$ steps needed to transform the initial state to the final state in the projection scheme, then the operator $X ^{\mathrm{std}} _{0123}$ is defined as 
+\begin{equation}
+X ^{\mathrm{std}} _{0123} := P^{\mathrm{std}}_n \dots P^{\mathrm{std}}_2 P^{\mathrm{std}}_1 \Gamma^{\mathrm{std}} . \label{eq:X operator stacking}
+\end{equation}
+Here $P^{\mathrm{std}}_i$ for $i = 0, 1, \dots, n$ is the product of Majorana projectors defined in Eq. \eqref{eq:Majorana projector} of all Majorana pairings (both trivial and non-trivial) after the $i$-th transition processes of the projection scheme 
+\begin{widetext}
+\begin{equation}
+P^{\mathrm{std}}_i := \prod_{\mathrm{transition \ loop} \ j} 2^{(L_j - 1)/2} \prod _{\mathrm{all \ Majorana \ pairings \ in \ next \ state}} \mathrm{Majorana \ projector} ,
+\end{equation}
+\end{widetext}
+where $L_j$ is the length of $j$-th transition loop.
+
+The operator $\Gamma^{\mathrm{std}}$ denotes the possible dangling Majorana fermions inserted for fermion parity matching, which should be inserted at the place when the fermion parity changes.
+Since only the first step of the projection scheme may change the fermion parity, the dangling Majorana modes are inserted at the rightmost of the above equation.
+The explicit expression for $\Gamma^{\mathrm{std}}$ is a little complicated, so here we state the principle of choosing dangling Majorana fermions: 
+\begin{enumerate}
+\item There should be one and only one dangling Majorana mode inserted for each transition loop that changes fermion parity.
+\item If a fermion parity changing transition loop contains the Majorana mode $\gamma^{\prime g^{-1}_0 g_1}_{123B}$, then this Majorana mode is inserted at the rightmost of $\Gamma^{\mathrm{std}}$.
+If this is the only fermion parity changing transition loop, then $\Gamma^{\mathrm{std}} = \gamma^{\prime g^{-1}_0 g_1}_{123B}$.
+\item If a fermion parity changing transition loop contains the Majorana mode $\gamma^{\prime e}_{012A}$ while does not contain the Majorana mode $\gamma^{\prime g^{-1}_0 g_1}_{123B}$, then the former $\gamma^{\prime e}_{012A}$ is inserted in $\Gamma^{\mathrm{std}}$.
+If this is the only fermion parity changing transition loop, then $\Gamma^{\mathrm{std}} = \gamma^{\prime e}_{012A}$.
+\item If there are two fermion parity changing transition loops (only in the case 6 of the projection scheme), the Majorana mode $\gamma^{\prime e}_{012A}$ is inserted after (on the left-hand side of) $\gamma^{\prime g^{-1}_0 g_1}_{123B}$ such that $\Gamma^{\mathrm{std}} = \gamma^{\prime e}_{012A} \gamma^{\prime g^{-1}_0 g_1}_{123B}$.
+\item If there is no fermion parity changing transition loop, then $\Gamma^{\mathrm{std}} = 1$.
+\end{enumerate}
+The above principles cover all the possibilities of Majorana chain decoration, thus determining the explicit form of the operator $\Gamma^{\mathrm{std}}$ uniquely.
+
+Now all the ingredients of the standard $\mathcal P$ move are clear.
+The non-standard counterparts are easily obtained by a symmetry transformation, which are totally determined once the standard ones are set.
+
+\subsubsection{$\Bar{\mathcal P}$ move: the inverse process of the $\mathcal P$ move}
+
+Given a $\mathcal P$ move, we sometimes need to construct its inverse process $\Bar{\mathcal P}$.
+The essential point here is that the $\Bar{\mathcal P}$ move is not the inverse operator of the corresponding $\mathcal P$ move, i.e., $\Bar{\mathcal P} \mathcal P \neq \mathbb I$ and $\mathcal P \Bar{\mathcal P} \neq \mathbb I$ when acting on a general state.
+Instead, the $\Bar{\mathcal P}$ move represents the inverse process of the projection scheme, i.e., $\Bar{\mathcal P} \mathcal P = \mathbb I$ and $\mathcal P \Bar{\mathcal P} = \mathbb I$ hold only when acting on specific states: $\Bar{\mathcal P} \mathcal P = \mathbb I$ holds only when acting on the initial state of the projection scheme, while $\mathcal P \Bar{\mathcal P} = \mathbb I$ holds only when acting on the final state of the projection scheme.
+
+The standard $\Bar{\mathcal P}$ move can be constructed as
+\begin{widetext}
+\begin{equation}
+\Bar{\mathcal{P}} _{0123}^{\mathrm{std}} := \left( c_{0123}^{e \dagger}\right)^{n_{3}( 0123)} \left( c^{\prime e \dagger}_{0123}\right)^{n'_{3}( 0123)} \left( C_{0123}^{e}\right)^{N_{3}( 0123)} \Bar{X} _{0123}^{\mathrm{std}}[ n_{2} ,n'_{2}] ,\label{eq:Pbar std}
+\end{equation}
+\end{widetext}
+where $\Bar{X} _{0123}^{\mathrm{std}}[ n_{2} ,n'_{2}]$ represents the inverse transformation process of the operator $X_{0123}^{\mathrm{std}}[ n_{2} ,n'_{2}]$.
+Compared to Eq. \eqref{eq:X operator stacking}, the operator $\Bar{X} _{0123}^{\mathrm{std}}$ is defined as 
+\begin{equation}
+\Bar{X} ^{\mathrm{std}} _{0123} := \Bar{P} ^{\mathrm{std}}_1 \Bar{\Gamma} ^{\mathrm{std}} \Bar{P} ^{\mathrm{std}}_2 \dots \Bar{P} ^{\mathrm{std}}_n .\label{eq:Pbar X std}
+\end{equation}
+The operator $\Bar{P} ^{\mathrm{std}}_i$ for $i = 0, 1, \dots, n$ is the product of Majorana projectors defined in Eq. \eqref{eq:Majorana projector} of all Majorana pairings (both trivial and non-trivial) before the $i$-th transition processes of the projection scheme.
+For example, in Fig. \ref{fig:projection scheme 1}, $P_1$ denotes the projection to the state in (b), $P_2$ denotes the projection to the state in (c); while $\Bar{P} _1$ denotes the projection to the state in (a), $\Bar{P} _2$ denotes the projection to the state in (b).
+The dangling Majorana fermions $\Bar{\Gamma} ^{\mathrm{std}}$ are obtained by complex conjugation $\Bar{\Gamma} ^{\mathrm{std}} := \Gamma^{\mathrm{std} \dagger}$.
+It is important to note that the operator $\Bar{\Gamma} ^{\mathrm{std}}$ is inserted between $\Bar{P} ^{\mathrm{std}}_1$ and $\Bar{P} ^{\mathrm{std}}_2$ instead of after (on the left-hand side of) $\Bar{P} ^{\mathrm{std}}_1$.
+This is because the fermion parity may change only in the first step of the projection scheme, the dangling Majorana modes should be inserted before (on the right-hand side, instead of left-hand side) the action of $P_1$ or $\Bar{P} _1$ to match the fermion parity.
+
+As we mentioned many times, the non-standard $\Bar{\mathcal P}$ move is obtained from the standard one by symmetry transformation.
+
+\subsubsection{Compatibility between the $F$ and $\mathcal P$ moves}
+
+Similar to the construction of 2+1D FSPT stacking group structure, the $F$ move and the $\mathcal P$ move should also commute in the 3+1D case, which gives rise to the stacking rules for the bosonic phase.
+As drawn in Fig. \ref{fig:stacking coherence}, the coherence condition states 
+\begin{widetext}
+\begin{equation}
+\left(\mathcal{P}_{0124}^{\mathrm{std}} \otimes \mathcal{P}_{0234}^{\mathrm{std}}\right) \cdot \left( F_{01234}^{\mathrm{std}} \otimes F^{\prime \mathrm{std}}_{01234}\right) =F_{01234}^{\mathrm{tot} ,\mathrm{std}} \cdot \left(\mathcal{P}_{0123}^{\mathrm{std}} \otimes \mathcal{P}_{0134}^{\mathrm{std}} \otimes \mathcal{P}_{1234}\right) .\label{eq:stacking coherence}
+\end{equation}
+\end{widetext}
+The tensor product is defined as $\mathcal{P}_{0124}^{\mathrm{std}} \otimes \mathcal{P}_{0234}^{\mathrm{std}} = 
+\mathcal{P}_{0124}^{\mathrm{std}}\mathcal{P}_{0234}^{\mathrm{std}} =  \mathcal{P}_{0234}^{\mathrm{std}}\mathcal{P}_{0124}^{\mathrm{std}}$ because the operators $\mathcal{P}_{0124}^{\mathrm{std}}$ and $\mathcal{P}_{0234}^{\mathrm{std}}$ commute with each other.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{fig10.pdf}
+    \caption{Coherence condition in stacking: The $F$ move and $\mathcal P$ move should commute.
+    The only non-standard operator here is $^{\Bar{0}1}\mathcal{P}_{1234}$.}
+    \label{fig:stacking coherence}
+\end{figure*}
+
+From the above \eqref{eq:stacking coherence}, we can derive the stacking rule for the bosonic phase
+\begin{equation}
+\mathcal{V}_{4} =\nu _{4} \nu '_{4}\mathcal{E}_{4} =\nu _{4} \nu '_{4}\mathcal{E}_{4}^{c}\mathcal{E}_{4}^{c\gamma }\mathcal{E}_{4}^{\gamma } =\nu _{4} \nu '_{4}( -1)^{\epsilon _{4}^{c} +\epsilon _{4}^{c\gamma }} e^{2\pi i\theta _{4}^{\gamma }} .\label{eq:bosonic stacking rule}
+\end{equation}
+Similar to the obstruction function, there are three parts in the stacking phase.
+The first part $\mathcal{E}_{4}^{c}=( -1)^{\epsilon _{4}^{c}}$ comes from the anti-commutation relation of complex fermions and takes the form 
+\begin{equation}
+\epsilon _{4}^{c}  =  m_{3} \cup _{2} N_{3} +n_{3} \cup _{2} n'_{3} +n_{3} \cup _{3}\mathrm{d} n'_{3} .
+\end{equation}
+The second part $\mathcal{E}_{4}^{c \gamma}=( -1)^{\epsilon _{4}^{c \gamma}}$ comes from the anti-commutation relation between complex fermions and Majorana fermions and takes the form 
+\begin{equation}
+\epsilon _{4}^{c\gamma }  =  m_{3} \cup _{3}(\mathrm{d} n_{3} +\mathrm{d} n'_{3}) +\mathrm{d} n_{3} \cup _{4}\mathrm{d} n'_{3} +\mathrm{d} N_{3} \cup _{3} m_{3} +m_{3} \cup _{2} m_{3} +\mathrm{d} m_{3} .
+\end{equation}
+The last part $\mathcal{E}_{4}^{\gamma}=e^{2\pi i\theta _{4}^{\gamma }}$ is the pure Majorana phase, which is extremely complicated and haven't been summarized into neat formulas yet.
+We will discuss this Majorana phase $\theta _{4}^{\gamma }$ below.
+
+\subsubsection{Stacking Majorana phase}
+
+Similar as the Majorana phase $\mathcal{O}^{\gamma}_5$ in the obstruction function, the stacking Majorana phase $\mathcal{E}_{4}^{\gamma}=e^{2\pi i\theta _{4}^{\gamma }}$ is extracted by the following equation 
+\begin{widetext}
+\begin{equation}
+\mathcal{E}_{4}^{\gamma} := \bra{\psi} \Bar{X}^{\mathrm{tot,std}}_{01234} X^{\mathrm{std}}_{0124} X^{\mathrm{std}}_{0234} X^{\mathrm{std}}_{01234} X^{\prime \ \mathrm{std}}_{01234} \Bar{X}^{\mathrm{std}}_{0123} \Bar{X}^{\mathrm{std}}_{0134} \Bar{X}_{1234} \ket{\psi} ,\label{eq:stacking Majorana phase}
+\end{equation}
+\end{widetext}
+where the $X$ operators are defined as Eqs. \eqref{eq:F move std.2} and \eqref{eq:F move std.3} in the $F$ move \eqref{eq:F move std.1} and Eq. \eqref{eq:X operator stacking} in the $\mathcal{P}$ move \eqref{eq:P move std.1}, while the $\Bar{X}$ operators are the corresponding inverse processes defined in Eqs. \eqref{eq:Fbar std.1} and \eqref{eq:Pbar X std}.
+Only $\Bar{X}_{1234}$ is non-standard in above equation.
+According to Fig. \ref{fig:stacking coherence}, denoting the Majorana dimer state in the lower right figure as $\ket{\psi}$, we use the Majorana transformation operators $X$ to transform this state $\ket{\psi}$ counterclockwise to other states in Fig. \ref{fig:stacking coherence}, and finally return to the state $\ket{\psi}$.
+A Berry phase may accumulate during this process, which is extracted by the above equation \eqref{eq:stacking Majorana phase}.
+
+As emphasized before, We do not have a systematic way to simplify the formula for the Majorana phase.
+So, we only give the numerical value of the stacking Majorana phase $\theta _{4}^{\gamma }$ in Ref. \cite{}.
+
+\subsection{Self-consistency check}
+
+There are similar consistency conditions for the stacking rules.
+If we take coboundary operation on both sides of Eq. \eqref{eq:bosonic stacking rule}, we will get 
+\begin{equation}
+\mathrm{d}\mathcal{E}_{4} =\Delta \mathcal{O}_{5} =\frac{\mathcal{O}_{5} [N_{3} ,N_{2} ]}{\mathcal{O}_{5} [n_{3} ,n_{2} ]\mathcal{O}_{5} [n'_{3} ,n'_{2} ]} .
+\end{equation}
+We have numerically checked this equation.
+
+
+\section{Simple Examples}
+
+\subsection{$G_f = \mathbb Z_4^{f,T}$}
+
+The simplest and most important example is when $G_b = Z_2^T$ with non-trivial extension $T^2 = P_f$ (fermion parity).
+Since $G_b = \mathbb Z_2^T$ is very simple, instead of solving these equations step by step, we will just guess an answer, then check whether this educated guess satisfies the formulas.
+We first list the related group cohomology results:
+\begin{align}
+H^1(\mathbb Z_2, \mathbb Z_2) &= \mathbb Z_2 ,\\
+H^2(\mathbb Z_2, \mathbb Z_2) &= \mathbb Z_2 ,\\
+H^3(\mathbb Z_2, \mathbb Z_2) &= \mathbb Z_2 ,\\
+H^4(\mathbb Z_2, U(1)_T) &= \mathbb Z_2 , \\
+H^5(\mathbb Z_2, U(1)_T) &= \mathbb Z_1 ,
+\end{align}
+which are just all $\mathbb Z_2$ except the last one is trivial (which means there is no obstruction for the bosonic layer).
+The generators of the non-trivial cocycle in above $\mathbb Z_2$ cohomology classes are denoted as $m_1^d$ (or $(-1)^{m_1^d}$ in the $U(1)$ coefficient case) for a $d$-cocycle, where $m_1(0) = 0, m_1(1) = 1$, and $m_1^d(1,1,\cdots, 1) = 1$ otherwise $0$.
+
+Below we first work on the triplet $(n_2, n_3, \nu_4)$.
+Given the symmetry group $G_f := (G_b, \omega_2, s_1) = (\mathbb Z_2, m^2_1, m_1)$, here we state the results:
+\begin{enumerate}
+\item The obstruction functions all vanish with solution $(\mathbb Z_2, \mathbb Z_2, \mathbb Z_2)$.
+\item The stacking rules lead to the extension of stacking group $\mathbb Z_8$.
+\item The cochain level generators of these $\mathbb Z_2$ groups should be 
+\begin{align}
+&(m^2_1 ,& 0 &,& 1 &) ,\\
+&(0 ,& m^3_1 &,& 1 &) ,\\
+&(0 ,& 0 &,& (-1)^{m^4_1} &) .
+\end{align}
+These solutions are numerically checked!
+They satisfy the obstruction functions and extend to $\mathbb Z_8$ group under stacking rules.
+\end{enumerate}
+
+For the complete classification of FSPT with $(n_1, n_2, n_3, \nu_4)$, the obstruction functions should all vanish with the solution $(\mathbb Z_2, \mathbb Z_2, \mathbb Z_2, \mathbb Z_2)$.
+The stacking rules should lead to the extension of these $\mathbb Z_2$ groups to the stacking group $\mathbb Z_{16}$.
+
+Below we start to take care of the $p+ip$ superconductor decoration.
+Since in this case $G_b = \mathbb Z_2$ and $s_1 = m_1$, this cohomology class is simply 
+\begin{equation}
+H^1(\mathbb Z_2, \mathbb Z_T) = \mathbb Z_2 \label{eq:cohomology p+ip Z_2 s_1},
+\end{equation}
+where $\mathbb Z_T$ means the action of anti-unitary group elements is non-trivial.
+It is important to note that if $s_1 = 0$ (no anti-unitary element), then the corresponding cohomology class will just be trivial
+\begin{equation}
+H^1(\mathbb Z_2, \mathbb Z) = \mathbb Z_1 . 
+\end{equation}
+
+The generator of the non-trivial cohomology group in Eq. \eqref{eq:cohomology p+ip Z_2 s_1} is still $m_1$.
+We guess the cochain level solution of $(n_1, n_2, n_3, \nu_4)$ is 
+\begin{align}
+&(m_1 ,& 0 &, & 0 &, & 1 &) .
+\end{align}
+Then we guess the stacking rule for this root state.
+Obviously we have 
+\begin{equation}
+N_1 = n_1 + n'_1 ,
+\end{equation}
+which should hold in $\mathbb Z$ value instead of $\mod 2$.
+Upon this stacking rule, we will first get 
+\begin{equation}
+N_1 = 2m_1 = \mathrm{d} _{s_1} m_0 ,
+\end{equation}
+where $m_0 = -1$ is just a constant function in $H^0(\mathbb Z_2, \mathbb Z_T)$.
+Since the leading layer $N_1 = \mathrm{d} _{s_1} m_0$ of $(N_1, N_2, N_3, \mathcal{V} _4)$ is a non-zero coboundary instead of exactly zero, we need to first shift it to zero using the obstruction function
+\begin{equation}
+\mathrm{d} \Delta_{2} =\omega _{2} \cup N_{1} +s_{1} \cup N_{1} \cup N_{1} = 0 \mod 2,
+\end{equation}
+which means no shift is needed $\Delta _2 = 0$.
+
+Based on the first stacking rule above, however, there are some choices for the next stacking rule  
+\begin{equation}
+N_2 = n_2 + n'_2 + m_2 \mod 2,
+\end{equation}
+where the $m_2$ part can either be 
+\begin{equation}
+m_2 = n_1 \cup n'_1 ,
+\end{equation}
+or 
+\begin{equation}
+m_2 = s_1 \cup (n_1 \cup_1 n'_1)  \label{eq:stacking p+ip} .
+\end{equation}
+Since these two terms both give the expected result $N_2 = m^2_1$, they can not co-exist, otherwise they will cancel each other.
+
+We should also check the other properties of stacking rules.
+The first is that it should be compatible with the obstruction function.
+Take coboundary operations on both sides of the stacking rule 
+\begin{equation}
+\mathrm{d} N_2 = \mathrm{d} n_2 + \mathrm{d} n'_2 + \mathrm{d} m_2 \mod 2,
+\end{equation}
+then substitute the obstruction functions into this equation we will finally get 
+\begin{equation}
+\mathrm{d} m_2 = s_1 \cup n_1 \cup n'_1 + s_1 \cup n'_1 \cup n_1 \mod 2.
+\end{equation}
+This confirms the form of this stacking rule to be Eq. \eqref{eq:stacking p+ip}.
+
+
+\subsection{Point group $S_4$}
+
+The second simple non-trivial example is from the crystalline FSPT protected by the point group $S_4$ (not the permutation group), which is isomorphic to $\mathbb Z_4$.
+Using the fermionic crystalline equivalence principle, we can map this crystalline FSPT to an internal FSPT.
+We first list the related group cohomology results:
+\begin{align}
+H^1(\mathbb Z_4, \mathbb Z_T) &= \mathbb Z_2 , \\
+H^1(\mathbb Z_4, \mathbb Z_2) &= \mathbb Z_2 ,\\
+H^2(\mathbb Z_4, \mathbb Z_2) &= \mathbb Z_2 ,\\
+H^3(\mathbb Z_4, \mathbb Z_2) &= \mathbb Z_2 ,\\
+H^4(\mathbb Z_4, U(1)_T) &= \mathbb Z_2 , \\
+H^5(\mathbb Z_4, U(1)_T) &= \mathbb Z_1 ,
+\end{align}
+which should be the same as the $G_b = \mathbb Z_2$ case.
+However, the cochain generators have subtle differences from the $G_b = \mathbb Z_2$ case.
+There are two kinds of cochain generators here:
+\begin{equation}
+l_1 (a) = [a]_2 := a \mod 2 ,
+\end{equation}
+and 
+\begin{equation}
+l_2 (a, b) = \left\lfloor \frac{a + b}{4} \right\rfloor ,
+\end{equation}
+where $a, b \in \mathbb Z_4 := \{ 0,1,2,3 \}$, and $[a]_i$ means $\mod i$ while $\lfloor r \rfloor$ means the largest integer number equal or smaller than $r \in \mathbb R$.
+Here $l_1$ is the cocycle generator in $H^1(\mathbb Z_4, \mathbb Z_2)$, while $l_2$ is the cocycle generator in $H^2(\mathbb Z_4, \mathbb Z_2)$.
+It is important to note that $l_1^2 := l_1 \cup l_1 = \mathrm{d} l'_1$ is a coboundary with 
+\begin{equation}
+l'_1 = \left\lfloor \frac{a}{2} \right\rfloor \mod 2 ,
+\end{equation}
+instead of a cocycle in $H^2(\mathbb Z_4, \mathbb Z_2)$.
+Then all the higher cocycles are generated by the cup product of these two generators.
+For example, the cocycle in $H^3(\mathbb Z_4, \mathbb Z_2)$ is $l_1 \cup l_2$, while the cocycle in $H^4(\mathbb Z_4, \mathbb Z_2)$ is $l_2 \cup l_2$.
+
+There are two possibilities below by the fermionic crystalline equivalence principle.
+
+\subsubsection{$G_f = \mathbb Z_8^{f,T}$}
+
+If we map to a spin-$1/2$ case such that $G_f = \mathbb Z_8^{f,T}$ and $(G_b, \omega_2, s_1) = (\mathbb Z_4, l_2, l_1)$, then we should have the solution $(\mathbb Z_1, \mathbb Z_2, \mathbb Z_1, \mathbb Z_2) \rightarrow \mathbb Z_4$.
+We first list the cochain solutions of $(n_1, n_2, n_3, \nu_4)$ below 
+\begin{align}
+&(0 ,& l_2 &, & 0 &,& ? &) ,\\
+&(0 ,& 0 &, & 0 &,& (-1)^{l_2 \cup l_2} &) .
+\end{align}
+
+\paragraph{$p+ip$ state}
+Because of the existence of $\omega_2 = l_2$, the $p+ip$ superconductor state $n_1 = l_1$ is obstructed by the non-trivial cocycle $\omega_2 \cup n_1 = l_2 \cup l_1$.
+
+\paragraph{Majorana chain state}
+Then we start with the Majorana chain state with $n_2 = l_2$.
+The complex fermion obstruction function is 
+\begin{equation}
+\mathrm{d} n_3 = l_1 \cup (l_2 \cup_1 l_2) = 0,
+\end{equation}
+where 
+\begin{equation}
+l_{2} \cup _{1} l_{2}( a,b,c) =l_{2}( ab,c) l_{2}( a,b) +l_{2}( a,bc) l_{2}( b,c) = 0.
+\end{equation}
+This can be seem from the Steenrod square
+\begin{equation}
+\mathbf {Sq}^1(l_{2}) = l_2 \cup_1 l_2 = 0.
+\end{equation}
+Note a very subtle but crucial problem: when evaluating the $l_2$ by the formula above, we will sometimes meet the situation  
+\begin{equation}
+l_2(ab, c) = \left\lfloor \frac{[a + b]_4 + c}{4} \right\rfloor \neq \left\lfloor \frac{a + b + c}{4} \right\rfloor .
+\end{equation}
+If evaluate it naively using the latter wrong form, the obstruction function will take a wrong non-zero form
+\begin{equation}
+\mathrm{d} n_3 (a, b, c, d) = [a]_2 \cdot \left\lfloor \frac{b+c+d}{4} \right\rfloor \cdot [\left\lfloor \frac{b+c}{4} \right\rfloor + \left\lfloor \frac{c+d}{4} \right\rfloor]_2 ,
+\end{equation}
+which has no solution.
+
+Now since the complex fermion obstruction function just vanishes, we have a choice of the non-trivial cocycle 
+\begin{equation}
+n_3 = l_1 \cup l_2 ,
+\end{equation}
+or the trivial cocycle 
+\begin{equation}
+n_3 = 0 .
+\end{equation}
+For simplicity, let us chose the trivial one first.
+Then we are left with the last bosonic layer.
+
+\paragraph{Complex fermion state} The complex fermion state is just $n_3 = l_2 \cup l_1$.
+Then we first consider the term $n_3 \cup_1 n_3$ in the bosonic layer obstruction function, which is the Steenrod square
+\begin{equation}
+\mathbf {Sq}^2(n_3) = n_3 \cup_1 n_3 = l_2 \cup l_2 \cup l_1 .
+\end{equation}
+Using Cartan's formula
+\begin{equation}
+\mathbf {Sq}^2(l_2 \cup l_1) = \mathbf {Sq}^2(l_2) \cup l_1 + \mathbf {Sq}^1(l_2) \cup \mathbf {Sq}^1(l_1) + l_2 \cup \mathbf {Sq}^2(l_1) ,
+\end{equation}
+we can see the last term vanishes $\mathbf {Sq}^2(l_1) = 0$, while the second term also vanishes $\mathbf {Sq}^1(l_2) = 0$ as we calculated before (this is a non-trivial property for this cocycle).
+This results in a non-trivial cocycle in $H^5(\mathbb Z_4, \mathbb Z_2)$.
+However, the term we are considering is $(-1)^{n_3 \cup_1 n_3} \in C^5(\mathbb Z_4, U(1)_T)$.
+
+It is important to note a very crucial relation for the twisted module action $s_1$ on $U(1)_T$: given a $\mathbb Z_2$-coefficient cochain $p$, the $s_1$-twisted coboundary operation will give 
+\begin{equation}
+\mathrm{d}_{s_1} i ^{q} = (-1)^{s_1 \cup q} \cdot i^{\mathrm{d} q} .
+\end{equation}
+Therefore, this term is actually a coboundary 
+\begin{equation}
+(-1)^{n_3 \cup_1 n_3} = (-1)^{l_1 \cup l_2 \cup l_2} = \mathrm{d}_{s_1} i^{l_2 \cup l_2} .
+\end{equation}
+The other term $(-1)^{\omega_2 \cup n_3} = (-1)^{l_2 \cup l_1 \cup l_2}$ is also a coboundary in the similar way.
+
+Then the bosonic layer obstruction function just vanishes because the two terms just cancel each other.
+
+If we stack two complex fermion state, we will get a trivial bosonic state 
+\begin{equation}
+\nu_4 = (-1)^{l_1 \cup l_1 \cup l_2} = \mathrm{d} (-1)^{l'_1 \cup l_2} .
+\end{equation}
+
+Though this complex fermion state $(0, 0, l_2 \cup l_1, 1)$ seems to be very nice, it is actually trivialized by a 2+1D anomalous FSPT state.
+
+\paragraph{Bosonic state} The bosonic state is simply the cocycle generator $\nu_4 = (-1)^{l_2 \cup l_2}$.
+
+
+
+\subsubsection{$G_f = \mathbb Z_2^f \times \mathbb Z_4^T$}
+
+On the other hand, if we map it to a spinless case such that $G_f = \mathbb Z_2^f \times \mathbb Z_4^T$ and $(G_b, \omega_2, s_1) = (\mathbb Z_4, 0, l_1)$, we should have the solution $(\mathbb Z_2, \mathbb Z_1, \mathbb Z_2, \mathbb Z_1) \rightarrow \mathbb Z_4$.
+This means the following: we only have two generators: a $p+ip$ superconductor state and a complex fermion state; and the stacking of two $p+ip$ superconductor state (complex fermion state) will lead to a complex fermion state (vacuum state).
+We first list the cochain solutions of $(n_1, n_2, n_3, \nu_4)$ below 
+\begin{align}
+&(l_1 ,& l_1 \cup l'_1 &, & ? &,& ? &) ,\\
+&(0 ,& 0 &, & l_1 \cup l_2 &,& i^{l_2 \cup l_2} &) .
+\end{align}
+
+\paragraph{$p+ip$ state}
+The $p+ip$ state is characterized by a 1-cocycle $n_1 = l_1$.
+The Majorana chain obstruction function is 
+\begin{equation}
+\mathrm{d} n_2 = l_1 \cup l_1 \cup l_1 ,
+\end{equation}
+which is a coboundary by a special solution
+\begin{equation}
+n_2 = l_1 \cup l'_1 .
+\end{equation}
+Then the complex fermion obstruction function is 
+\begin{align}
+\mathrm{d} n_3 &= n_2 \cup n_2 + s_1 \cup (n_2 \cup_1 n_2) \\
+&= l_1 \cup l'_1 \cup l_1 \cup l'_1 + l_1 \cup \left[ (l_1 \cup l'_1) \cup_1 (l_1 \cup l'_1) \right] \nonumber . 
+\end{align}
+It is important to note that the right-hand side is not a coboundary, even worse, it is not a cocycle.
+This means that the obstruction functions are incomplete, which should contain more contributions from the $p+ip$ layer.
+
+However, for this particular state, we can use a trick here to alleviate this contradiction: we can shift $\omega_2 = 0$ with a coboundary $\omega_2 = l_1 \cup l_1$, then the Majorana chain obstruction function just vanishes with the solution $n_2 = 0$.
+Then we guess all the higher obstruction functions also vanish with the solution $(l_1, 0, 0, 1)$.
+
+If we stack two $p+ip$ state, we will have $(2l_1, l_1 \cup l_1, 0, 1) \simeq (0, 0, 0, 1)$, which is equivalent to the vacuum by the following calculation.
+Upon the $n_1$ stacking rule, we will first get 
+\begin{equation}
+N_1 = 2l_1 = \mathrm{d} _{s_1} l_0 ,
+\end{equation}
+where $l_0 = -1$ is just a constant function in $H^0(\mathbb Z_2, \mathbb Z_T)$.
+Since the leading layer $N_1 = \mathrm{d} _{s_1} m_0$ of $(N_1, N_2, N_3, \mathcal{V} _4)$ is a non-zero coboundary instead of exactly zero, we need to first shift it to zero using the obstruction function
+\begin{equation}
+\mathrm{d} \Delta_{2} =\omega _{2} \cup N_{1} +s_{1} \cup N_{1} \cup N_{1} = l_1 \cup l_1 \cup \mathrm{d} l_0 + l_1 \cup \mathrm{d}l_0 \cup \mathrm{d} l_0  \mod 2,
+\end{equation}
+which gives a shift $\Delta _2 = l_1 \cup l_1$.
+This shift will cancel the $s_1 \cup (n_1 \cup_1 n'_1) = l_1 \cup l_1$ term, so in total we just get a vacuum state.
+
+We can see the above results are not compatible with the real space construction and the cobordism result, which states that the $p+ip$ state should extend to the complex fermion state.
+This implies that the higher obstruction functions and higher stacking rules of $p+ip$ state are necessary and unavoidable.
+
+Below we start to guess these higher obstruction functions and stacking rules.
+We start with the complex fermion obstruction function.
+The first principle is that the obstruction function should be a cocycle (closed form).
+The original obstruction is closed only when the Majorana fermion layer is a cocycle $\mathrm{d} n_2 = 0$.
+Now because of the $p+ip$ layer contribute to the Majorana obstruction function, the $n_2$ data is not a cocycle but a cochain in general.
+Then we should add these $\mathrm{d} n_2$ contributions first.
+For the $n_2 \cup n_2$ term, we should add a $\mathrm{d} n_2 \cup_1 n_2$ term.
+For the $s_1 \cup (n_2 \cup_1 n_2)$ term, we should add a $s_1 \cup (\mathrm{d} n_2 \cup_2 n_2)$ term.
+After adding these terms, the contribution from $n_2$ is totally canceled, then we just need to add terms to cancel the $n_1$ contribution.
+
+
+\paragraph{Majorana chain state}
+The Majorana chain state with $n_2 = l_2$ is simply obstructed by the complex fermion obstruction function $n_2 \cup n_2 + s_1 \cup (n_2 \cup_1 n_2)$, where the first term is a non-trivial cocycle while the second term vanishes.
+
+\paragraph{Complex fermion state}
+The complex fermion state is just $n_3 = l_1 \cup l_2$.
+Since $\omega_2 = 0$, there is only one obstruction term $n_3 \cup_1 n_3$.
+As we should before, the solution is $\nu_4 = i^{l_2 \cup l_2}$.
+
+If we stack two complex fermion state, we will get a non-trivial bosonic state $\mathcal{V}_4 = (-1)^{l_2 \cup l_2 + l_1 \cup l_1 \cup l_2}$ , where the first term $(-1)^{l_2 \cup l_2}$ is a non-trivial cocycle, while the second term $(-1)^{l_1 \cup l_1 \cup l_2} = \mathrm{d} (-1)^{l'_1 \cup l_2}$ is just a coboundary.
+
+\paragraph{Bosonic state} The bosonic state is simply the cocycle generator $\nu_4 = (-1)^{l_2 \cup l_2}$.
+However, this state is trivialized by a 2+1D anomalous FSPT state $(\hat{n}_1, \hat{n}_2, \hat{\nu}_3) = (0, l_2, 1)$.
+
+
+\section{Stacking Group of Topological Crystalline Superconductors}
+
+It is important to note that for our framework in this paper, we only consider the symmetry to be on-site or internal, which means that $G_b$ only acts on the internal degrees of freedom instead of spacial degrees of freedom like space groups.
+However, in practice, the materials made in laboratories mainly posses crystalline symmetries instead of internal symmetries.
+Then an important and natural question is how can we make our framework useful?
+The answer is the following fermionic crystalline equivalence principle.
+
+\subsection{Fermionic crystalline equivalence principle}
+
+According to the crystalline equivalence principle \cite{Else2018} for bosonic SPT, crystalline topological liquids with symmetry group $G$ are in one-to-one correspondence with topological phases protected by the same symmetry $G$, but acting
+internally, where if an element of $G$ is orientation reversing, it is realized as an anti-unitary symmetry in the internal symmetry group.
+
+However, the fermionic crystalline equivalence principle is somewhat more intricate~\cite{Debray2021,Manjunath2023}. Here, we follow the conjecture proposed in Ref.~\cite{Manjunath2023}, which is supported by the mathematical background provided in Ref.~\cite{Debray2021}.
+
+We quote this conjecture from Ref. \cite{Manjunath2023}:
+\begin{quote}
+``The fermionic crystalline equivalence principle conjecture asserts that there exists a one-to-one correspondence between the classification of invertible fermionic topological phases with spatial symmetry $G_{f}$,
+defined by the data $(G_{b}, \omega _{2}, s_{1})$, and the classification of invertible fermionic topological phases with an effective internal symmetry $G_{f} ^{\mathrm{eff}}$, defined by data $(G_{b}, \omega _{2} ^{\mathrm{eff}}, s_{1} ^{\mathrm{eff}})$, where $G_{b}$ acts trivially on space. The internal symmetry data can be fully determined by the crystalline symmetry data according to 
+\begin{align}
+s_{1} ^{\mathrm{eff}} &=s_{1} +w_{1} ,\label{eq6.1}\\
+\omega _{2} ^{\mathrm{eff}} &=\omega _{2} + w_{2} + w_{1} \cup ( s_{1} + w_{1}) .\label{eq6.2}
+\end{align}
+In these equations, the $w_{1}$ and $w_{2}$ are obtained by pulling back the Stiefel-Whitney classes. If there are no reflections in $G_{f}$, $w_{1}=0$; if there are no rotations, $w_{2}=0$.''
+\end{quote}
+As the formulation may appear intricate, we recommend interested readers to refer to Ref.~\cite{Manjunath2023} for a more detailed and physical explanation.
+
+
+\subsection{spinless case}
+
+\subsection{spinful case}
+
+\section{Summaries and Discussions}
+
+
+\appendix
+
+\section{\label{ap:group cohomology}Group Cohomology}
+
+In this appendix, we will briefly introduce the mostly used mathematical concepts and formulas in this paper.
+We emphasize that our construction is physical, which does not require any prerequisites for any mathematics.
+
+\subsection{$G$-module}
+
+Given a group $G$ and an Abelian group $M$, the $G$-module is defined by a $G$ action on $M$, denoted as $g\triangleright a\in M$ for $g\in G$ and $a,b\in M$, such that the $G$ action is compatible with the group multiplication of $M$  
+\begin{equation}
+g\triangleright ( ab) =( g\triangleright a)( g\triangleright b) .\label{eq.ap1.1}
+\end{equation}
+In this paper, we always consider $M$ to be the $U( 1)$ phase. If $G$ contains only unitary operation, then we set the $G$ action to be trivial $g\triangleright a=a$; while if $G$ contains anti-unitary operation such as time-reversal transformation, we define the $G$ action as $g\triangleright a=a^{s_{1}( g)}$, where $s_{1}( g) =-1$ if group element $g$ is anti-unitary, otherwise $s_{1}( g) =1$.
+
+\subsection{Inhomogeneous cochain}
+
+An $n$-cochain $\omega _{n}( g_{1} ,g_{2} ,\cdots ,g_{n})$ is a function of $n$ group elements with values in the $G$-module $M$. In other words, an $n$-cochain is a map $\omega _{n} :G^{n} \rightarrow M$ from the Cartesian product $G\times G\times \cdots \times G$ to $M$. The set of all $n$-cochains is denoted as $\mathcal{C}^{n}( G,M)$.
+
+The coboundary homomorphism $\mathrm{d}_{n} :\mathcal{C}^{n}( G,M) \rightarrow \mathcal{C}^{n+1}( G,M)$, for $n\in \mathbb{Z}^{+}$, is a map from the set of all $n$-cochains $\mathcal{C}^{n}( G,M)$ to the set of all $( n+1)$-cochains $\mathcal{C}^{n+1}( G,M)$. Given an $n$-cochain $\omega _{n}( g_{1} ,g_{2} ,\cdots ,g_{n})$, we apply the coboundary homomorphism $\mathrm{d}_{n}$ to obtain an $( n+1)$-cochain $(\mathrm{d}_{n} \omega _{n})( g_{1} ,g_{2} ,\cdots ,g_{n} ,g_{n+1})$ 
+\begin{equation}
+\begin{array}{ l }
+(\mathrm{d}_{n} \omega _{n})( g_{1} ,\cdots ,g_{n+1})\\
+=[ g_{1}\triangleright \omega _{n}( g_{2} ,\cdots ,g_{n+1})] \omega _{n}^{( -1)^{n+1}}( g_{1} ,\cdots ,g_{n}) \\
+\times \prod _{i=1}^{n} \omega _{n}^{( -1)^{i}}( g_{1} ,\cdots ,g_{i-1} ,g_{i} g_{i+1} ,g_{i+2} ,\cdots ,g_{n+1})
+\end{array} .\label{eq.ap1.2}
+\end{equation}
+In some cases, we may omit the subscript $n$ of $\mathrm{d}_{n}$ if there is no ambiguity. Using \eqref{eq.ap1.2}, we can explicitly verify that the composition map of $\mathrm{d}_{n}$ and $\mathrm{d}_{n+1}$ satisfies 
+\begin{equation}
+\mathrm{d}_{n+1} \circ \mathrm{d}_{n} =0, \label{eq.ap1.3}
+\end{equation}
+where $0$ is the identity element of $M$. This implies that the image $\mathcal{B}^{n}$ of map $\mathrm{d}_{n-1}$ 
+\begin{equation}
+\begin{array}{ l }
+\mathcal{B}^{n}( G,M) =\\
+\left\{\omega _{n} \in \mathcal{C}^{n}( G,M) |\omega _{n} =\mathrm{d}_{n-1} \omega _{n-1} |\omega _{n-1} \in \mathcal{C}^{n-1}( G,M)\right\}
+\end{array} \label{eq.ap1.4}
+\end{equation}
+is contained in the kernel $\mathcal{Z}^{n}$ of map $\mathrm{d}_{n}$
+\begin{equation}
+\mathcal{Z}^{n}( G,M) =\left\{\omega _{n} \in \mathcal{C}^{n}( G,M) |\mathrm{d}_{n} \omega _{n} =0\right\} . \label{eq.ap1.5}
+\end{equation}
+This allows us to define the cohomology group $\mathcal{H}^{n}( G,M)$ as the quotient 
+\begin{equation}
+\mathcal{H}^{n}( G,M) =\mathcal{Z}^{n}( G,M) /\mathcal{B}^{n}( G,M). \label{eq.ap1.6}
+\end{equation}
+An element in $\mathcal{B}^{n}( G,M)$ is called an $n$-coboundary, while an element in $\mathcal{Z}^{n}( G,M)$ is called an $n$-cocycle.
+
+\subsection{Homogeneous cochain}
+
+What we introduced above is referred to as an inhomogeneous cochain $\omega _{n} :G^{n} \rightarrow M$. This inhomogeneous cochain can be transformed into a homogeneous cochain $\nu _{n} :G^{n+1} \rightarrow M$ by the correspondence 
+\begin{equation}
+\begin{array}{ l }
+\omega _{n}( g_{1} ,g_{2} ,\cdots ,g_{n})\\
+=\nu _{n}( 1,g_{1} ,g_{1} g_{2} ,g_{1} g_{2} g_{3} ,\cdots ,g_{1} g_{2} \cdots g_{n})\\
+\equiv \nu _{n}( 1,\tilde{g}_{1} ,\tilde{g}_{2} ,\cdots ,\tilde{g}_{n})
+\end{array} \label{eq.ap1.7}
+\end{equation}
+with $\tilde{g}_{i} =g_{1} g_{2} \cdots g_{i}$. The $G$-action on the homogeneous cochain satisfies 
+\begin{equation}
+g\triangleright \nu _{n}( g_{0} ,g_{1} ,\cdots ,g_{n}) =\nu _{n}( gg_{0} ,gg_{1} ,\cdots ,gg_{n}) . \label{eq.ap1.8}
+\end{equation}
+Using \eqref{eq.ap1.2}, we can check that the coboundary homomorphism $\mathrm{d}_{n} :\nu _{n} \mapsto \nu _{n+1}$ can be reduced to a simplified form 
+\begin{equation}
+\begin{array}{ l }
+(\mathrm{d}_{n} \nu _{n})( g_{0} ,g_{1} ,\cdots ,g_{n+1})\\
+=\prod\nolimits _{i=0}^{n+1} \nu _{n}^{( -1)^{i}}( g_{0} ,\cdots ,\hat{g}_{i} ,\cdots ,g_{n+1})
+\end{array} , \label{eq.ap1.9}
+\end{equation}
+where $\hat{g}_{i}$ denotes omit $g_{i}$. The inhomogeneous $n$-cochain $\omega _{n}( g_{1} ,\cdots ,g_{n})$ and the corresponding homogeneous $n$-cochain $\nu _{n}( g_{0} ,g_{1} ,\cdots ,g_{n})$ can be easily distinguished: the former has $n$ input group element, while the latter has $( n+1)$. Therefore, in the main text, we may not always explicitly indicate whether a cochain is inhomogeneous or homogeneous, but the reader should be able to distinguish them easily.
+
+\subsection{\label{ap:cup product}Steenrod's higher cup product}
+
+The Steenrod's higher cup product is defined in Ref.~\cite{Steen1974}. Since the definition of higher cup is more involved, here we only list the cup-0 and cup-1, with the assumption of trivial $G$-action on the coefficient $M$. Given two cochain $f_{m} \in \mathcal{C}^{m}( G,M)$ and $h_{n} \in \mathcal{C}^{n}( G,M)$, the cup product (cup-0) is a map $\cup \ :\mathcal{C}^{m}( G,M) \times \mathcal{C}^{n}( G,M) \rightarrow \mathcal{C}^{m+n}( G,M)$ that is defined as 
+\begin{equation}
+( f_{m} \cup h_{n})( g_{1} ,\cdots ,g_{m+n}) =f_{m}( g_{1} ,\cdots ,g_{m}) h_{n}( g_{m+1} ,\cdots ,g_{m+n}) . \label{eq.ap1.10}
+\end{equation}
+The cup-$1$ product is a map $\cup_{1} :\mathcal{C}^{m}( G,M) \times \mathcal{C}^{n}( G,M) \rightarrow \mathcal{C}^{m+n-1}( G,M)$ that is defined as 
+\begin{equation}
+\begin{array}{ l }
+( f_{m} \cup _{1} h_{n})( g_{1} ,\cdots ,g_{m+n-1})\\
+=\sum _{j=0}^{m-1}( -1)^{( m-j)( n+1)} f_{m}( g_{1} ,\cdots ,g_{j} ,g_{j+n} ,\cdots ,g_{m+n-1})\\
+\times h_{n}( g_{j} ,\cdots ,g_{j+n-1})
+\end{array} . \label{eq.ap1.11}
+\end{equation}
+The higher cup products satisfy the following Leibniz's rule 
+\begin{equation}
+\begin{array}{ l }
+\mathrm{d}( f_{m} \cup _{i} h_{n}) =\mathrm{d} f_{m} \cup _{i} h_{n} +( -1)^{m} f_{m} \cup _{i}\mathrm{d} h_{n}\\
++( -1)^{m+n-i} f_{m} \cup _{i-1} h_{n} +( -1)^{mn+m+n} h_{n} \cup _{i-1} f_{m}
+\end{array} . \label{eq.ap1.12}
+\end{equation}
+
+
+\section{\label{ap:fermion parity}Fermion Parity Counting}
+
+\section{\label{ap:projection scheme}Projection Scheme}
+
+\section{\label{ap:fermionic coboundary}Fermionic Coboundary}
+
+The formula in this paper can be actually reformulated nicely by the following fermionic coboundary operation.
+
+Notice that the classification of the 3+1D FSPT in this paper is described by the quadruplet $(n_1, n_2, n_3, \nu_4)$, which must satisfy series of cocycle conditions for a physically legitimate FSPT.
+In this sense, we are assuming this system is anomaly free, which means the 4+1D bulk of this 3+1D FSPT is just trivial.
+
+However, if we change our point of view such that a nontrivial 4+1D FSPT bulk $(\tilde n_2, \tilde n_3, \tilde n_4, \tilde \nu_5)$ is allowed, then the cocycle conditions of the anomaly-free 3+1D FSPT can be violated.
+The \textit{fermionic coboundary $\delta$} operation is defined to find the bulk state of a given (potentially anomalous) FSPT.
+Then our formula can be formulated as the fermionic coboundary of these three root states plus the bosonic $U(1)$ phase:
+\begin{enumerate}
+\item Bosonic phase $(0, 0, 0, \nu_4)$ denoted by $\nu_4$:
+\begin{equation}
+\delta \nu_4 = (0, 0, 0, \frac{1}{\mathrm{d} \nu_4}).
+\end{equation}
+\item Complex fermion $(0, 0, n_3, 1)$ denoted by $n_3$:
+\begin{equation}
+\delta n_3 = (0, 0, -\mathrm{d} n_3, \mathcal{O}_{5}^{c}[n_3]),
+\end{equation}
+where $\mathcal{O}_{5}^{c}[n_3]$ is formulated in \eqref{eq:O5 obstruction c}.
+\item Majorana chain $(0, n_2, 0, 1)$ denoted by $n_2$:
+\begin{equation}
+\delta n_2 = (0, -\mathrm{d} n_2, \Delta P^{\gamma}_f[n_2], \mathcal{O}_{5}^{\gamma}[n_2]),
+\end{equation}
+where $\Delta P^{\gamma}_f[n_2]$ is formulated in \eqref{eq:fermion parity change F move}, while $\mathcal{O}_{5}^{\gamma}[n_2]$ is formulated in \eqref{eq:Majorana phase}.
+\item $p+ip$ superconductor $(n_1, 0, 0, 1)$ denoted by $n_1$:
+\begin{equation}
+\delta n_1 = (-\mathrm{d} n_1, \Delta N_{\gamma}^{\Psi}[n_1], \Delta P^{\Psi}_{\gamma}[n_1], \mathcal{O}_{5}^{\Psi}[n_1]),
+\end{equation}
+where $\Delta N_{\gamma}^{\Psi}[n_1]$ is formulated in \eqref{eq:p+ip obstruction}, while $\Delta P^{\Psi}_{\gamma}[n_1]$ and $\mathcal{O}_{5}^{\Psi}[n_1]$ are still unknown to the best of our knowledge.
+\end{enumerate}
+
+If we assume that the fermionic coboundary operation $\delta$ commutes with the stacking operation $\boxtimes$, the formulas in \eqref{} can be reorganized into the fermionic coboundary of 3+1D FSPT and some stacking rules of the 4+1D FSPT.
+
+Given an 3+1D FSPT $(n_2, n_3, \nu_4):= (0, n_2, n_3, \nu_4)$, we can take the fermionic coboundary 
+\begin{widetext}
+\begin{equation}
+\begin{array}{ c c l }
+\delta (n_{2} ,n_{3} ,\nu _{4}) & = & \delta [(n_{2} ,0,1) \boxtimes (0,n_{3} ,1) \boxtimes (0, 0, \nu _{4})]\\
+& = & \delta (n_{2} ,0,1) \boxtimes \delta (0,n_{3} ,1) \boxtimes \delta (0,0,\nu _{4})]\\
+& = & \left(-\mathrm{d} n_{2} ,\Delta P_{f}^{\gamma }[ n_{2}] ,\mathcal{O}_{5}^{\gamma }[ n_{2}]\right) \boxtimes \left(0,-\mathrm{d} n_{3} ,\mathcal{O}_{5}^{c}[ n_{3}]\right) \boxtimes \left(0,0,\frac{1}{\mathrm{d} \nu _{4}}\right)\\
+& = & \left(-\mathrm{d} n_{2} ,\Delta P_{f}^{\gamma }[ n_{2}] -\mathrm{d} n_{3} ,\frac{\mathcal{O}_{5}^{\gamma }[ n_{2}] \cdotp \mathcal{O}_{5}^{c}[ n_{3}] \cdotp \mathcal{O}_{5}^{c\gamma }[ n_{3} ,n_{2}]}{\mathrm{d} \nu _{4}}\right)
+\end{array},
+\end{equation}
+\end{widetext}
+where the $\mathcal{O}_{5}^{c\gamma }[ n_{3} ,n_{2}]$ term comes naturally from the stacking of $\Delta P_{f}^{\gamma }[ n_{2}]$ and $-\mathrm{d} n_{3}$ in 4+1D.
+Now if we require this 3+1D FSPT $(0, n_2, n_3, \nu_4)$ to be anomaly-free, then its 4+1D bulk FSPT state must be trivial $\delta (0, n_{2}, n_{3}, \nu _{4}) = (0,0,0,1)$, which leads to the cocycle conditions we listed before.
+
+\section{\label{ap:Majorana}Majorana Phase}
+
+% The \nocite command causes all entries in a bibliography to be printed out
+% whether or not they are actually referenced in the text. This is appropriate
+% for the sample file to show the different styles of references, but authors
+% most likely will not want to use it.
+\nocite{*}
+
+\bibliography{apssamp}% Produces the bibliography via BibTeX.
+
+\end{document}
+%
+% ****** End of file apssamp.tex ******

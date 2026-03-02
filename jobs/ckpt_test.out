@@ -1,0 +1,253 @@
+Warning: no access to tty (Bad file descriptor).
+Thus no job control in this shell.
+=== Checkpoint Test on Compute Node ===
+Host: n06.local
+Date: Thu Feb 26 23:46:08 HKT 2026
+Cores: 28
+Workers: 24
+[INFO] Running on compute node (centos6 libs detected)
+============================================================
+SG #10 Checkpoint Thorough Test
+  PARALLEL_JOBS: 24
+  GAP: /home/user/xyren/software/gap-4.13.1/gap
+  Checkpoint dir: /home/user/xyren/checkpoints/test_sg10_n06
+  Date: Thu Feb 26 23:46:08 HKT 2026
+============================================================
+
+==== PHASE 1: Full computation with per-step checkpoint saves ====
+
+[Phase 1] Starting full computation...
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set BROWSER_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/software/gap-4.13.1/pkg/\
+SptSet/ failed
+============================================================
+Checkpoint Test Phase 1: Full computation with per-step saves
+  SPTSET_PARALLEL_JOBS = 24
+  SPTSET_PHASE2_ENABLED = true
+  Save directory: /home/user/xyren/checkpoints/test_sg10_n06
+============================================================
+
+Building resolution for SG #10...
+  Resolution built in 3584 ms
+  Dimensions: 1 5 12 20 28 36 44 
+SS object created.
+  step_00.ws saved (resolution + SS, no pages yet).
+
+Total classification pages: 14
+
+[1/14] E^{1,3}_2 (p+ip:)
+  Result: <ZL-Module with torsions [ 2, 0 ]>
+  Time: 18 ms
+  Checkpoint saved: step_1.ws
+
+[2/14] E^{1,3}_3 (p+ip:)
+  Result: <ZL-Module with torsions [ 0 ]>
+  Time: 472 ms
+  Checkpoint saved: step_2.ws
+
+[3/14] E^{1,3}_4 (p+ip:)
+  Result: <ZL-Module with torsions [ 0 ]>
+  Time: 6270 ms
+  Checkpoint saved: step_3.ws
+
+[4/14] E^{1,3}_5 (p+ip:)
+  Result: <ZL-Module with torsions [ 0 ]>
+  Time: 3625423 ms
+  Checkpoint saved: step_4.ws
+
+[5/14] E^{2,2}_2 (Majorana:)
+  Result: <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ]>
+  Time: 13 ms
+  Checkpoint saved: step_5.ws
+
+[6/14] E^{2,2}_3 (Majorana:)
+  Result: <ZL-Module []>
+  Time: 13 ms
+  Checkpoint saved: step_6.ws
+
+[7/14] E^{2,2}_4 (Majorana:)
+  Result: <ZL-Module []>
+  Time: 0 ms
+  Checkpoint saved: step_7.ws
+
+[8/14] E^{3,1}_2 (Complex fermion:)
+  Result: <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,\
+ 2, 2, 2, 2, 2, 2 ]>
+  Time: 47 ms
+  Checkpoint saved: step_8.ws
+
+[9/14] E^{3,1}_3 (Complex fermion:)
+  Result: <ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>
+  Time: 669 ms
+  Checkpoint saved: step_9.ws
+
+[10/14] E^{3,1}_4 (Complex fermion:)
+  Result: <ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>
+  Time: 3 ms
+  Checkpoint saved: step_10.ws
+
+[11/14] E^{4,0}_2 (Bosonic:)
+  Result: <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,\
+ 2, 2, 2, 2 ]>
+  Time: 271 ms
+  Checkpoint saved: step_11.ws
+
+[12/14] E^{4,0}_3 (Bosonic:)
+  Result: <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+  Time: 6073 ms
+  Checkpoint saved: step_12.ws
+
+[13/14] E^{4,0}_4 (Bosonic:)
+  Result: <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+  Time: 33400 ms
+  Checkpoint saved: step_13.ws
+
+[14/14] E^{4,0}_5 (Bosonic:)
+  Result: <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+  Time: 4 ms
+  Checkpoint saved: step_14.ws
+
+============================================================
+Classification complete: 3706851 ms
+============================================================
+
+Computing group structure (SptSetSpecSeqResult)...
+  Group structure: <ZL-Module with torsions [ 2, 4, 4, 4, 4, 4, 0 ]>
+  Time: 6979126 ms
+  step_ext.ws saved.
+
+============================================================
+Phase 1 COMPLETE
+============================================================
+Checkpoint files saved in: /home/user/xyren/checkpoints/test_sg10_n06/
+Reference file: /home/user/xyren/checkpoints/test_sg10_n06/reference.txt
+Total time: 10694 s
+
+Page-by-page results:
+  Step 1: E^{1,3}_2 torsions=[ 2, 0 ] (18 ms)
+  Step 2: E^{1,3}_3 torsions=[ 0 ] (472 ms)
+  Step 3: E^{1,3}_4 torsions=[ 0 ] (6270 ms)
+  Step 4: E^{1,3}_5 torsions=[ 0 ] (3625423 ms)
+  Step 5: E^{2,2}_2 torsions=[ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ] (13 ms)
+  Step 6: E^{2,2}_3 torsions=[  ] (13 ms)
+  Step 7: E^{2,2}_4 torsions=[  ] (0 ms)
+  Step 8: E^{3,1}_2 torsions=[ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+  2, 2, 2, 2, 2 ] (47 ms)
+  Step 9: E^{3,1}_3 torsions=[ 2, 2, 2, 2, 2 ] (669 ms)
+  Step 10: E^{3,1}_4 torsions=[ 2, 2, 2, 2, 2 ] (3 ms)
+  Step 11: E^{4,0}_2 torsions=[ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+  2, 2, 2 ] (271 ms)
+  Step 12: E^{4,0}_3 torsions=[ 2, 2, 2, 2, 2, 2 ] (6073 ms)
+  Step 13: E^{4,0}_4 torsions=[ 2, 2, 2, 2, 2, 2 ] (33400 ms)
+  Step 14: E^{4,0}_5 torsions=[ 2, 2, 2, 2, 2, 2 ] (4 ms)
+Error, Record Element: '<rec>.torsions' must have an assigned value
+not in any function at /home/user/xyren/software/gap-4.13.1/pkg/SptSet/jobs/test_ckpt_sg10_save.g:
+161
+type 'quit;' to quit to outer loop
+[1m[34m[0m[31m[Phase 1] Done.
+
+Checkpoint files created:
+-rw-r--r-- 1 xyren users 129M Feb 26 23:46 /home/user/xyren/checkpoints/test_sg10_n06/step_00.ws
+-rw-r--r-- 1 xyren users 129M Feb 26 23:46 /home/user/xyren/checkpoints/test_sg10_n06/step_01.ws
+-rw-r--r-- 1 xyren users 129M Feb 26 23:46 /home/user/xyren/checkpoints/test_sg10_n06/step_02.ws
+-rw-r--r-- 1 xyren users 129M Feb 26 23:46 /home/user/xyren/checkpoints/test_sg10_n06/step_03.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:47 /home/user/xyren/checkpoints/test_sg10_n06/step_04.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:47 /home/user/xyren/checkpoints/test_sg10_n06/step_05.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:47 /home/user/xyren/checkpoints/test_sg10_n06/step_06.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:47 /home/user/xyren/checkpoints/test_sg10_n06/step_07.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:47 /home/user/xyren/checkpoints/test_sg10_n06/step_08.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:47 /home/user/xyren/checkpoints/test_sg10_n06/step_09.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:47 /home/user/xyren/checkpoints/test_sg10_n06/step_10.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:47 /home/user/xyren/checkpoints/test_sg10_n06/step_11.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:47 /home/user/xyren/checkpoints/test_sg10_n06/step_12.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:48 /home/user/xyren/checkpoints/test_sg10_n06/step_13.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 00:48 /home/user/xyren/checkpoints/test_sg10_n06/step_14.ws
+-rw-r--r-- 1 xyren users 130M Feb 27 02:44 /home/user/xyren/checkpoints/test_sg10_n06/step_ext.ws
+
+
+==== PHASE 2: Verify resume from every checkpoint ====
+
+--- Testing resume from step_00 ---
+  => step_00: PASS
+
+--- Testing resume from step_01 ---
+  => step_01: PASS
+
+--- Testing resume from step_02 ---
+  => step_02: PASS
+
+--- Testing resume from step_03 ---
+  => step_03: PASS
+
+--- Testing resume from step_04 ---
+  => step_04: PASS
+
+--- Testing resume from step_05 ---
+  => step_05: PASS
+
+--- Testing resume from step_06 ---
+  => step_06: PASS
+
+--- Testing resume from step_07 ---
+  => step_07: PASS
+
+--- Testing resume from step_08 ---
+  => step_08: PASS
+
+--- Testing resume from step_09 ---
+  => step_09: PASS
+
+--- Testing resume from step_10 ---
+  => step_10: PASS
+
+--- Testing resume from step_11 ---
+  => step_11: PASS
+
+--- Testing resume from step_12 ---
+  => step_12: PASS
+
+--- Testing resume from step_13 ---
+  => step_13: PASS
+
+--- Testing resume from step_14 ---
+  => step_14: PASS
+
+--- Testing resume from step_ext ---
+  => step_ext: PASS
+
+============================================================
+CHECKPOINT TEST SUMMARY
+============================================================
+  Total checkpoints tested: 16
+  Passed: 16
+  Failed: 0
+
+  *** ALL TESTS PASSED ***
+
+  Logs in: /home/user/xyren/checkpoints/test_sg10_n06/logs/
+  Date: Sat Feb 28 11:59:31 HKT 2026
+============================================================
+=== Exit: 0 ===
+=== End: Sat Feb 28 11:59:31 HKT 2026 ===

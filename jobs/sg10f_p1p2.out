@@ -1,0 +1,81 @@
+Warning: no access to tty (Bad file descriptor).
+Thus no job control in this shell.
+=== DIAGNOSTICS ===
+Host: n05.local
+Date: Thu Feb 26 12:20:52 HKT 2026
+=== IO test ===
+DIAG: IO_OK ParListByFork=true
+DIAG: ParListByFork test=true
+=== IO test exit: 0 ===
+=== Starting: Phase 1+2+2b (full) ===
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set BROWSER_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/software/gap-4.13.1/pkg/\
+SptSet/ failed
+============================================================
+Benchmark: SG #10 (P2/m, C2h) ez FULL (classification + group structure)
+SPTSET_PARALLEL_JOBS = 24
+SPTSET_PARALLEL_THRESHOLD = 10
+SPTSET_PHASE2_ENABLED = true
+============================================================
+Resolution built.
+p+ip:
+<ZL-Module with torsions [ 2, 0 ]>
+<ZL-Module with torsions [ 0 ]>
+<ZL-Module with torsions [ 0 ]>
+<ZL-Module with torsions [ 0 ]>
+Majorana:
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ]>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
+2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, \
+2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+
+Classification done. Starting group structure...
+
+============================================================
+RESULTS
+============================================================
+SPTSET_PARALLEL_JOBS = 24
+LayersVerbose:  3665683 ms
+SpecSeqResult:  6963515 ms
+Total:          10629199 ms
+Group structure: <ZL-Module with torsions [ 2, 4, 4, 4, 4, 4, 0 ]>
+=== SptSet Parallel Stats ===
+Config: JOBS=24 THRESHOLD=10 PHASE2=true
+P1 (MapFromBarCocycle): 19 parallel calls (9861441ms), 0 sequential calls (
+0ms)
+P2 (BuildDerivative): 8 calls (524528ms), max_m=20
+P2b (SpecSeqResult ext): 1 calls (237757ms), max_ngens=5
+=== Exit: 0 ===
+=== End: Thu Feb 26 15:18:36 HKT 2026 ===

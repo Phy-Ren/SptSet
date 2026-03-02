@@ -1,0 +1,14 @@
+Error, cannot compute this
+ at /home/user/xyren/software/gap-4.13.1/pkg/polycyclic/gap/pcpgrp/general.gi:
+28 called from
+MappedVector( exp, matsP 
+ ) at /home/user/xyren/software/gap-4.13.1/pkg/cryst/gap/pcpgrp.gi:181 called from
+ImagesRepresentative( map, gen 
+ ) at /home/user/xyren/software/gap-4.13.1/lib/mapphomo.gi:311 called from
+func( C[i] ) at /home/user/xyren/software/gap-4.13.1/lib/coll.gi:663 called from
+List( GeneratorsOfMagmaWithInverses( elms ), function ( gen )
+      return ImagesRepresentative( map, gen );
+  end ) at /home/user/xyren/software/gap-4.13.1/lib/mapphomo.gi:311 called from
+ImagesSet( map, elm 
+ ) at /home/user/xyren/software/gap-4.13.1/lib/mapping.gi:133 called from
+...  at /home/user/xyren/software/gap-4.13.1/pkg/SptSet/jobs/checkpoint_driver.g:57
