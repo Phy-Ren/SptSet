@@ -240,9 +240,10 @@ Assertion check "top layer is not a cocycle" explained:
   OBSTRUCTION (not the trivialization alpha) is a well-defined cocycle in integer coefficients.
   Physically: given d(alpha) = O5, the O5 obstruction must be closed (dO5 = 0) for the
   equation to be consistent. The assertion checks this by verifying that the Bockstein image
-  of the U(1)-valued O5 cochain is an integer vector. If it contains rationals, it means the
-  U(1) cochain values were not properly normalized to [0,1), causing Bockstein to output
-  non-integers. Root cause: SptSetBockstein (bockstein.gi) has `vx := vx - Int(vx)` commented
-  out, so negative U(1) values like -7/8 are not mapped to their [0,1) representative 1/8.
-  The affected formula is d_{3,2,2} (O5 obstruction in ss_fermion.gi:128-170), which returns
-  raw o5sym + t5 values that can be negative fractions.
+  of the U(1)-valued O5 cochain is an integer vector.
+  UPDATED: The root cause is NOT Bockstein normalization (that was a wrong direction).
+  The actual root cause is in the stacking computation (addTwister) — see debug_cluster.md §12.
+  The stacking result violates dO5=0 because addTwister(4,0) produces wrong Bosonic phase
+  when Majorana cochains n21/n22 are non-zero. This bug is masked when CF≠0 because
+  PurifySpecSeqClass breaks at p=3 (CF) without ever validating p=4 (Bosonic).
+  Same root cause as C3v/C4v s12 assertion errors.

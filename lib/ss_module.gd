@@ -5,6 +5,7 @@ DeclareGlobalFunction("SptSetSpecSeqModuleClassToVector");
 DeclareGlobalFunction("SptSetSpecSeqModuleExtension");
 DeclareGlobalFunction("SptSetSpecSeqResult");
 DeclareGlobalFunction("SptSetSpecSeqResultOld");
+DeclareGlobalFunction("SptSetSpecSeqResultLayerwise");
 DeclareOperation("SptSetMapInducedByGroupHomomorphism",
     [IsCategoryOfSptSetFpZModule, IsCategoryOfSptSetFpZModule, IsGroupHomomorphism]
     );

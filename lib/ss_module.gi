@@ -115,14 +115,12 @@ InstallGlobalFunction
     function(M, cl)
         local pRange, p, ss, deg, v;
         pRange := M!.pRange;
-        # if Length(pRange) > 1 then
-        #     Error("Not implemented");
-        # fi;
         ss := M!.specSeq;
         deg := M!.deg;
-           
+
         SptSetPurifySpecSeqClass(cl);
         p := LeadingLayer(cl);
+
         if p < First(pRange) then
             return fail;
         fi;
@@ -132,8 +130,6 @@ InstallGlobalFunction
         fi;
 
         v := SptSetMapFromBarCocycle(ss!.brMap, p, ss!.spectrum[deg - p +1], cl!.cochain!.layers[p + 1]);
-        # Display(v);
-        # return v * M!.res_projections[p];
         return SptSetFpZModuleCanonicalElm(M!.components[p], v) * M!.vector_embedings[p];
     end);
 
@@ -178,11 +174,9 @@ function(M1, M2)
     local deg, pf, n1, n2, n, r1, r2, r, Emat, Pmat, Rmat, i, j, tj, vjn, cjn, vjnf, Mext, p;
 
     Assert(0, M1!.deg = M2!.deg);
-    Assert(0, Length(M2!.pRange) = 1);
     Assert(0, Last(M1!.pRange) + 1 = M2!.pRange[1]);
 
     deg := M1!.deg;
-    pf := M2!.pRange[1];
 
     SptSetFpZModuleCanonicalForm(M1);
     if SptSetFpZModuleIsZero(M1) then
@@ -258,8 +252,10 @@ function(M1, M2)
     od;
     #Display(["r1", r1]);
     # Display(["M2!.vec_emb", M2!.vector_embedings]);
-    Mext.components[pf] := M2!.components[pf];
-    Mext.vector_embedings[pf] := List(M2!.vector_embedings[pf], x -> Concatenation(Zero([1..n1]), x));
+    for p in M2!.pRange do
+        Mext.components[p] := M2!.components[p];
+        Mext.vector_embedings[p] := List(M2!.vector_embedings[p], x -> Concatenation(Zero([1..n1]), x));
+    od;
     # Display(["Mext!.vec_emb", Mext!.vector_embedings]);
     Mext.generators := Emat;
     Mext.projection := Pmat;
@@ -286,20 +282,128 @@ function(ss, deg, pRange)
     return M;
 end);
 
-# Layer-wise extension: compute each layer independently, then assemble.
+# Hybrid extension:
 #
-# The physical stacking rules are between adjacent layers only.
-# For each pair of adjacent layers (p, p+1), we independently compute
-# how tj * (generator of layer p) projects into layer (p+1).
-# This avoids the "mixed generator" problem where different Z-lifts
-# of Z_n cochains can cause non-physical cancellations in the stacking
-# twisters at higher layers.
+# For layers that include p+ip (p=1):
+#   p+ip is handled separately because addTwister(1,3) and addTwister(2,2) are
+#   physically unknown (set to zero). p+ip can only reliably extend to MC.
+#   MC/CF/Bos are extended sequentially (old approach) because addTwister(3,1)
+#   and addTwister(4,0) are fully known — the sequential approach correctly
+#   captures all cross-layer coefficients (including MC→Bos).
 #
-# The full relation matrix is upper triangular:
-#   R[i,i] = torsion of generator i
-#   R[i,j] = extension coefficient (only for generators in adjacent layers)
-# The Smith Normal Form of R gives the final group.
+# For layers without p+ip:
+#   Sequential extension (old approach) is used for all layers.
 InstallGlobalFunction(SptSetSpecSeqResult,
+function(ss, deg, pRange)
+    local nLayers, Epip, M_rest, M, p, Epq, t_start, dt;
+    nLayers := Length(pRange);
+    if nLayers = 0 then
+        return SptSetZeroModule();
+    fi;
+
+    if pRange[1] = 1 and nLayers > 1 then
+        # Hybrid mode: p+ip separate, rest sequential
+        if SPTSET_CHECKPOINT_HOOK <> false then
+            Print("  Result(deg=", deg, "): hybrid [p+ip separate, MC/CF/Bos sequential]\n");
+        fi;
+
+        t_start := NanosecondsSinceEpoch();
+        Epip := SptSetSpecSeqComponentEx(ss, 1, deg - 1);
+        SptSetFpZModuleCanonicalForm(Epip);
+        dt := Int((NanosecondsSinceEpoch() - t_start) / 1000000);
+        if SPTSET_CHECKPOINT_HOOK <> false then
+            if SptSetFpZModuleIsZero(Epip) then
+                Print("    p+ip: trivial [", dt, " ms]\n");
+            else
+                Print("    p+ip: ", SptSetNumberOfGenerators(Epip),
+                    " generators [", dt, " ms]\n");
+            fi;
+        fi;
+
+        M_rest := fail;
+        for p in pRange{[2..nLayers]} do
+            t_start := NanosecondsSinceEpoch();
+            Epq := SptSetSpecSeqComponentEx(ss, p, deg - p);
+            SptSetFpZModuleCanonicalForm(Epq);
+            dt := Int((NanosecondsSinceEpoch() - t_start) / 1000000);
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                if SptSetFpZModuleIsZero(Epq) then
+                    Print("    p=", p, ": trivial [", dt, " ms]\n");
+                else
+                    Print("    p=", p, ": ", SptSetNumberOfGenerators(Epq),
+                        " generators [", dt, " ms]\n");
+                fi;
+            fi;
+            if M_rest = fail then
+                M_rest := Epq;
+            else
+                t_start := NanosecondsSinceEpoch();
+                M_rest := SptSetSpecSeqModuleExtension(M_rest, Epq);
+                SptSetFpZModuleCanonicalForm(M_rest);
+                dt := Int((NanosecondsSinceEpoch() - t_start) / 1000000);
+                if SPTSET_CHECKPOINT_HOOK <> false then
+                    Print("    extension done [", dt, " ms]\n");
+                fi;
+            fi;
+        od;
+
+        if SptSetFpZModuleIsZero(Epip) then
+            return M_rest;
+        fi;
+        if M_rest = fail or SptSetFpZModuleIsZero(M_rest) then
+            return Epip;
+        fi;
+
+        t_start := NanosecondsSinceEpoch();
+        if SPTSET_CHECKPOINT_HOOK <> false then
+            Print("    extending p+ip by MC/CF/Bos module...\n");
+        fi;
+        M := SptSetSpecSeqModuleExtension(Epip, M_rest);
+        dt := Int((NanosecondsSinceEpoch() - t_start) / 1000000);
+        if SPTSET_CHECKPOINT_HOOK <> false then
+            Print("    p+ip extension done [", dt, " ms]\n");
+        fi;
+        return M;
+    else
+        # No p+ip: sequential extension
+        if SPTSET_CHECKPOINT_HOOK <> false then
+            Print("  Result(deg=", deg, "): sequential, pRange=", pRange, "\n");
+        fi;
+        M := fail;
+        for p in pRange do
+            t_start := NanosecondsSinceEpoch();
+            Epq := SptSetSpecSeqComponentEx(ss, p, deg - p);
+            SptSetFpZModuleCanonicalForm(Epq);
+            dt := Int((NanosecondsSinceEpoch() - t_start) / 1000000);
+            if SPTSET_CHECKPOINT_HOOK <> false then
+                if SptSetFpZModuleIsZero(Epq) then
+                    Print("    p=", p, ": trivial [", dt, " ms]\n");
+                else
+                    Print("    p=", p, ": ", SptSetNumberOfGenerators(Epq),
+                        " generators [", dt, " ms]\n");
+                fi;
+            fi;
+            if M = fail then
+                M := Epq;
+            else
+                t_start := NanosecondsSinceEpoch();
+                M := SptSetSpecSeqModuleExtension(M, Epq);
+                SptSetFpZModuleCanonicalForm(M);
+                dt := Int((NanosecondsSinceEpoch() - t_start) / 1000000);
+                if SPTSET_CHECKPOINT_HOOK <> false then
+                    Print("    extension done [", dt, " ms]\n");
+                fi;
+            fi;
+        od;
+        if M = fail then return SptSetZeroModule(); fi;
+        return M;
+    fi;
+end);
+
+# Previous layer-wise implementation (kept for reference/comparison).
+# This version computes each layer independently and uses a relation matrix,
+# but misses cross-layer extension coefficients (e.g., MC→Bos when CF≠0).
+InstallGlobalFunction(SptSetSpecSeqResultLayerwise,
 function(ss, deg, pRange)
     local nLayers, Exs, nGens, totalGens, Rmat,
           offsets, pi, pj, p, j, k, tj, cjn, vjnf, M,
