@@ -33,6 +33,7 @@ end);
 InstallValue(AddTwister2DTable@, LoadExtDataFile@(9, "AddTwister2D.dat"));
 InstallValue(AddTwister3DTable@, LoadExtDataFile@(15, "AddTwister3D.dat"));
 InstallValue(O5gamma@, LoadExtDataFile@(15, "O5gamma.dat"));
+InstallValue(O5gamma_xingyu@, LoadExtDataFile@(15, "O5gamma_xingyu.dat"));
 
 InstallGlobalFunction(ExtData@,
 function(datavar, params...)

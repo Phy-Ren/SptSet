@@ -1,0 +1,116 @@
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set NEATO_PATH manually if needed.
+#I  HAP warning: Set DOT_PATH manually if needed.
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/software/gap-4.13.1/pkg/\
+SptSet/ failed
+================================================================
+C4v s12 clean diagnostic trace
+  no workspace, no code changes, only observation
+================================================================
+
+Diagnostic wrapper installed.
+
+Setting up C4v s12...
+  Resolution dims: 1 3 5 7 10 12 13 
+  |G| = 8
+
+========== PHASE A: E-pages ==========
+
+p+ip:
+<ZL-Module with torsions [ 2 ]>
+    d2^{1,3}_2 gen 1/1 (target_dim=7)...
+      gen 1 done [2876 ms]
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Majorana:
+<ZL-Module with torsions [ 2, 2, 2 ]>
+    d2^{2,2}_2: 3 gens (target_dim=10) done [parallel, 4 workers, 11933 ms]
+<ZL-Module with torsions [ 2 ]>
+    d2^{3,1}_2: 7 gens (target_dim=13) done [parallel, 4 workers, 155267 ms]
+    d2^{2,2}_3 gen 1/1 (target_dim=13)...
+      gen 1 done [5339563 ms]
+<ZL-Module with torsions [ 2 ]>
+Complex fermion:
+<ZL-Module with torsions [ 2, 2, 2, 2 ]>
+    d^{1,2}_2: 3 gens (target_dim=4) done [parallel, 4 workers, 2964 ms]
+<ZL-Module []>
+<ZL-Module []>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 2 ]>
+    d^{2,1}_2: 5 gens (target_dim=3) done [parallel, 4 workers, 24423 ms]
+<ZL-Module with torsions [ 2, 2, 2 ]>
+    d2^{1,2}_2: 3 gens (target_dim=7) done [parallel, 4 workers, 3055 ms]
+    d^{1,2}_3: 3 gens (target_dim=3) done [parallel, 4 workers, 2270287 ms]
+<ZL-Module with torsions [ 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2 ]>
+
+  Phase A done: 7810743 ms
+  Fraction warnings so far: 0
+
+E_inf summary:
+  E_inf^{2,2}: <ZL-Module with torsions [ 2 ]>
+  E_inf^{3,1}: <ZL-Module []>
+  E_inf^{4,0}: <ZL-Module with torsions [ 2, 2, 2 ]>
+
+========== PHASE B: Extension ==========
+
+  Result(deg=4): 3 layers, pRange=[ 2, 3, 4 ]
+  Step1: layer 1/3 (p=2, q=2)...
+    ComponentEx(2,2): 1 generators
+    ComponentEx(2,2) class 1/1...
+    d^{2,2}_2: 3 gens (target_dim=10) done [parallel, 4 workers, 11496 ms]
+    d2^{4,1}_2: 10 gens (target_dim=15) done [parallel, 4 workers, 618 ms]
+    d^{3,1}_2: 4 gens (target_dim=6) done [parallel, 4 workers, 39243 ms]
+    d^{2,2}_3 gen 1/1 (target_dim=6)...
+      gen 1 done [5323660 ms]
+      class 1 done [21399939 ms]
+  Step1: layer 1 done: 1 generators, torsion=[ 2 ] [21399941 ms]
+  Step1: layer 2/3 (p=3, q=1)...
+    ComponentEx(3,1): 0 generators
+  Step1: layer 2 done: 0 generators, trivial [0 ms]
+  Step1: layer 3/3 (p=4, q=0)...
+    ComponentEx(4,0): 3 generators
+    ComponentEx(4,0) class 1/3...
+      class 1 done [22 ms]
+    ComponentEx(4,0) class 2/3...
+      class 2 done [22 ms]
+    ComponentEx(4,0) class 3/3...
+      class 3 done [22 ms]
+  Step1: layer 3 done: 3 generators, torsion=[ 2, 2, 2 ] [72 ms]
+  Step1 done: totalGens=4, nGens=[ 1, 0, 3 ]
+  Step3: extension computation, 1 tasks across 2 layers [parallel, 4 workers]
+    ext layer 1 (p=2) gen 1/1 (torsion=2)...
+      gen 1 done [23588288 ms]
+
+  Phase B done: 44988304 ms
+  Total fraction warnings: 0
+
+Classification result:
+<ZL-Module with torsions [ 2, 2, 2, 2 ]>
+
+========== DIAGNOSTIC SUMMARY ==========
+  Total elapsed: 52802261 ms
+  Total fraction warnings: 0
+========================================

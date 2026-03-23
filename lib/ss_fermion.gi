@@ -125,47 +125,50 @@ function(R, auMap, w)
     end;
   end);
 
+  # -- old InstallCoboundary(ss, 3, 2, 2) using o5sym formula + O5gamma@ table --
+  # SptSetInstallCoboundary(ss, 3, 2, 2,
+  # function(n2, dn2)
+  #   return function(g1, g2, g3, g4, g5)
+  #     local n2_123, n2_134, n2_125, n2_145,
+  #       n2_234, n2_245, n2_235, n2_345,
+  #       a4, b4, N2345, L12345, a4t, b4t, o5sym, t5;
+  #     n2_123 := n2(g2, g3) mod 2;
+  #     n2_134 := n2(g2*g3, g4) mod 2;
+  #     n2_125 := n2(g2, g3*g4*g5) mod 2;
+  #     n2_145 := n2(g2*g3*g4, g5) mod 2;
+  #     n2_234 := n2(g3, g4) mod 2;
+  #     n2_245 := n2(g3*g4, g5) mod 2;
+  #     n2_235 := n2(g3, g4*g5) mod 2;
+  #     n2_345 := n2(g4, g5) mod 2;
+  #     a4 := ((n2_123 + w(g2, g3) + s(g2) * n2_235) * n2_345) mod 2;
+  #     b4 := (s(g2) * n2_245 * n2_234) mod 2;
+  #     N2345 := (n2_234 * n2_235 * n2_245 * n2_345) mod 2;
+  #     L12345 := (n2_123 * n2_134 * (1-n2_125) * (1-n2_145)
+  #               + n2_134 * n2_145 * (1-n2_123) * (1-n2_125)
+  #               + (1-n2_123) * (1-n2_125) * (1-n2_134) * (1-n2_145)) mod 2;
+  #     a4t := a4 + N2345 * (1-L12345) * b4;
+  #     b4t := b4 + N2345 * (L12345-1) * b4;
+  #     o5sym := 1/2 * (s(g1) * a4t + w(g1, g2*g3) * a4t + w(g1, g2) * b4t);
+  #     t5 := ExtData@(O5gamma@, s(g1*g2), s(g1), w(g1*g2, g3), w(g1, g2*g3), w(g1, g2),
+  #       n2(g1, g2), n2(g1, g2*g3), n2(g1, g2*g3*g4), n2(g1, g2*g3*g4*g5),
+  #       n2(g1*g2, g3), n2(g1*g2, g3*g4), n2(g1*g2, g3*g4*g5),
+  #       n2(g1*g2*g3, g4), n2(g1*g2*g3, g4*g5), n2(g1*g2*g3*g4, g5));
+  #     return o5sym + t5;
+  #   end;
+  # end);
+
+  # xingyu 2026 0319: direct C++ classification_Majorana table lookup
+  # replaces o5sym formula + O5gamma@ with unified O5gamma_xingyu@ table
+  # bit order follows C++ exactly: s1[1] s1[0] omega2[2..0] n2[9..0]
   SptSetInstallCoboundary(ss, 3, 2, 2,
   function(n2, dn2)
     return function(g1, g2, g3, g4, g5)
-      local n2_123, n2_134, n2_125, n2_145,
-        n2_234, n2_245, n2_235, n2_345,
-        a4, b4, N2345, L12345, a4t, b4t, o5sym, t5;
-
-      n2_123 := n2(g2, g3) mod 2;
-      n2_134 := n2(g2*g3, g4) mod 2;
-      n2_125 := n2(g2, g3*g4*g5) mod 2;
-      n2_145 := n2(g2*g3*g4, g5) mod 2;
-
-      n2_234 := n2(g3, g4) mod 2;
-      n2_245 := n2(g3*g4, g5) mod 2;
-      n2_235 := n2(g3, g4*g5) mod 2;
-      n2_345 := n2(g4, g5) mod 2;
-        
-      a4 := ((n2_123 + w(g2, g3) + s(g2) * n2_235) * n2_345) mod 2;
-      b4 := (s(g2) * n2_245 * n2_234) mod 2;
-
-      N2345 := (n2_234 * n2_235 * n2_245 * n2_345) mod 2;
-      L12345 := (n2_123 * n2_134 * (1-n2_125) * (1-n2_145)
-                + n2_134 * n2_145 * (1-n2_123) * (1-n2_125)
-                + (1-n2_123) * (1-n2_125) * (1-n2_134) * (1-n2_145)) mod 2;
-      a4t := a4 + N2345 * (1-L12345) * b4;
-      b4t := b4 + N2345 * (L12345-1) * b4;
-
-      o5sym := 1/2 * (s(g1) * a4t + w(g1, g2*g3) * a4t + w(g1, g2) * b4t);
-
-      t5 := ExtData@(O5gamma@, s(g1*g2), s(g1), w(g1*g2, g3), w(g1, g2*g3), w(g1, g2),
-        n2(g1, g2), n2(g1, g2*g3), n2(g1, g2*g3*g4), n2(g1, g2*g3*g4*g5),
-        n2(g1*g2, g3), n2(g1*g2, g3*g4), n2(g1*g2, g3*g4*g5),
-        n2(g1*g2*g3, g4), n2(g1*g2*g3, g4*g5), n2(g1*g2*g3*g4, g5));
-      # t5 := ExtData@(O5gamma@,
-      #   n2(g1*g2*g3*g4, g5), n2(g1*g2*g3, g4*g5), n2(g1*g2*g3, g4),
-      #   n2(g1*g2, g3*g4*g5), n2(g1*g2, g3*g4), n2(g1*g2, g3), 
-      #   n2(g1, g2*g3*g4*g5), n2(g1, g2*g3*g4), n2(g1, g2*g3), n2(g1, g2), 
-      #   w(g1, g2), w(g1, g2*g3), w(g1*g2, g3), s(g1), s(g1*g2)
-      #   );
-
-      return o5sym + t5;
+      return ExtData@(O5gamma_xingyu@,
+        s(g1*g2), s(g1),
+        w(g1*g2, g3), w(g1, g2*g3), w(g1, g2),
+        n2(g1*g2*g3*g4, g5), n2(g1*g2*g3, g4*g5), n2(g1*g2*g3, g4),
+        n2(g1*g2, g3*g4*g5), n2(g1*g2, g3*g4), n2(g1*g2, g3),
+        n2(g1, g2*g3*g4*g5), n2(g1, g2*g3*g4), n2(g1, g2*g3), n2(g1, g2));
     end;
   end);
 

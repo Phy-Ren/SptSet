@@ -1,0 +1,94 @@
+=== SptSet Space Group #219 (FIX: trivial-page early return) ===
+Host: n09.local
+Date: Sat Mar 14 18:13:45 HKT 2026
+Fresh start with fixed ss_vanilla.gi
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set BROWSER_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/software/gap-4.13.1/pkg/\
+SptSet/ failed
+============================================================
+SptSet Checkpoint Driver
+  Space group: #219
+  Mode: ez
+  Checkpoint file: /home/user/xyren/checkpoints/sg219fix.ws
+  Parallel: JOBS=26 THRESHOLD=5 PHASE2=true
+  Group structure: true
+============================================================
+Building resolution for SG #219...
+  Resolution built in 29923119 ms
+  Dimensions: 1 6 18 38 66 102 144 
+Spectral sequence created.
+
+FRESH START — beginning computation.
+
+Phase A: Classification (14 pages)
+------------------------------------------------------------
+Syntax warning: Unbound global variable in /home/user/xyren/software/gap-4.13.\
+1/pkg/SptSet/jobs/checkpoint_driver.g:137
+                  j_ -> Erpq_!.relations[j_][j_]), "\n");;
+                        ^^^^^
+[1/14] Computing E^{1,3}_2 (p+ip:)...
+  E^{1,3}_2 = <ZL-Module with torsions [ 2 ]>
+  Generators: 1, torsion: [ 2 ]
+  Time: 71 ms  (elapsed: 29923s)
+  Checkpoint saved (step 1/14).
+
+[2/14] Computing E^{1,3}_3 (p+ip:)...
+    d2^{1,3}_2 gen 1/1 (target_dim=38)...
+      gen 1 done [43512 ms]
+    [checkpoint #1]
+  E^{1,3}_3 = <ZL-Module with torsions [ 2 ]>
+  Generators: 1, torsion: [ 2 ]
+  Time: 48591 ms  (elapsed: 29975s)
+  Checkpoint saved (step 2/14).
+
+[3/14] Computing E^{1,3}_4 (p+ip:)...
+    d2^{2,2}_2: 18 gens (target_dim=66) done [parallel, 26 workers, 
+10234936 ms]
+    [checkpoint #2]
+    d2^{1,3}_3 gen 1/1 (target_dim=66)...
+      gen 1 done [35632480 ms]
+    [checkpoint #3]
+  E^{1,3}_4 = <ZL-Module []>
+  Time: 45882101 ms  (elapsed: 75861s)
+  Checkpoint saved (step 3/14).
+
+[4/14] Computing E^{1,3}_5 (p+ip:)...
+  E^{1,3}_5 = <ZL-Module []>
+  Time: 0 ms  (elapsed: 75866s)
+  Checkpoint saved (step 4/14).
+
+[5/14] Computing E^{2,2}_2 (Majorana:)...
+  E^{2,2}_2 = <ZL-Module with torsions [ 2, 2, 2 ]>
+  Generators: 3, torsion: [ 2, 2, 2 ]
+  Time: 34 ms  (elapsed: 75871s)
+  Checkpoint saved (step 5/14).
+
+[6/14] Computing E^{2,2}_3 (Majorana:)...
+  E^{2,2}_3 = <ZL-Module with torsions [ 2 ]>
+  Generators: 1, torsion: [ 2 ]
+  Time: 1591 ms  (elapsed: 75877s)
+  Checkpoint saved (step 6/14).
+
+[7/14] Computing E^{2,2}_4 (Majorana:)...

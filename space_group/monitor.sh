@@ -5,10 +5,11 @@
 # Keeps cluster busy while maintaining high Maui fair-share priority.
 #
 # Strategy:
-#   - ALL jobs use extended queue (INFINITY walltime, no interruptions)
-#   - bigmem queue only for utilizing bigmem nodes (PBS/Maui limitation)
-#   - Control queue depth to avoid Maui fair-share penalty
-#   - NEVER touch hardest SGs (210/219/228) - they are sacred
+#   - HARDEST SGs (210/219/228) + their fix variants: extended queue only
+#   - ALL other SGs: long queue (336h=14 days, all nodes, no MAXPROC limit)
+#   - extended has MAXPROC=168 (6 nodes max) — reserved for 6 hardest jobs
+#   - Control long queue depth to avoid Maui fair-share penalty
+#   - NEVER touch hardest SGs (210/219/228) or their fix variants
 #
 # Usage:
 #   ./monitor.sh              One monitoring cycle (for cron)
@@ -26,13 +27,21 @@ HEAD="head"
 QSUB_CMD="cd ~/software/gap-4.13.1/pkg/SptSet && qsub"
 
 # HARDEST SGs: ABSOLUTELY NEVER cancel, NEVER delete checkpoint, NEVER modify
+# This also protects "fix" variants (sg210fix etc.) — see sg_number_from_name()
 HARDEST="210 219 228"
 SKIP="1"
 
-# How many IDLE jobs to maintain per queue type
-# Keep extended low to avoid Maui fair-share penalty (INFINITY walltime!)
-TARGET_IDLE_BIGMEM=2
-TARGET_IDLE_EXTENDED=1
+# Extract SG number from PBS job name. Strips "sg" prefix, leading zeros, AND "fix" suffix.
+# e.g. "sg210" -> "210", "sg210fix" -> "210", "sg088" -> "88"
+sg_number_from_name() {
+    echo "$1" | sed 's/^sg0*//;s/fix$//'
+}
+
+# How many IDLE long-queue jobs to maintain (drip-feed to avoid fair-share penalty)
+# extended is reserved for HARDEST only — no non-hardest extended submissions
+# long walltime (336h) is much less toxic to fair-share than extended (4320h),
+# so we can afford more queued jobs. 6 covers typical checkpoint resubmissions.
+TARGET_IDLE_LONG=6
 
 DRY_RUN=false
 
@@ -50,15 +59,40 @@ completed_sgs() {
 }
 
 errored_sgs() {
+    # Pattern-matched errors (ModRat, Resolution)
     (grep -rl "Resolution3DSpaceGroup" "$BASE/results/" 2>/dev/null; \
      grep -rl "ModRat" "$BASE/results/" 2>/dev/null) | \
         sed -n 's/.*sg0*\([0-9]*\)\..*/\1/p' | sort -nu || true
+    # Generic crash: GAP exited (has "Exit:" line) but didn't complete ("ALL DONE")
+    for f in "$BASE/results"/sg*.log "$BASE/results"/sg*.out; do
+        [ -f "$f" ] || continue
+        grep -q "^=== Exit:" "$f" 2>/dev/null || continue
+        grep -q "ALL DONE" "$f" 2>/dev/null && continue
+        sed -n 's/.*sg0*\([0-9]*\)\..*/\1/p' <<< "$f"
+    done
 }
 
-# Parse qstat. Sets: PBS_LIST, RUN_B, IDLE_B, RUN_E, IDLE_E, IDLE_E_OTHER
+# Check if a specific SG's job crashed (GAP exited on its own without completing).
+# Returns 0 (true) if the job crashed and should NOT be resubmitted.
+# Returns 1 (false) if safe to resubmit (walltime kill or no log).
+sg_crashed() {
+    local sg=$1 p logfile
+    p=$(printf '%03d' "$sg")
+    for logfile in "$BASE/results/sg${p}.log" "$BASE/results/sg${p}.out"; do
+        [ -f "$logfile" ] || continue
+        if grep -q "^=== Exit:" "$logfile" 2>/dev/null; then
+            if ! grep -q "ALL DONE" "$logfile" 2>/dev/null; then
+                return 0
+            fi
+        fi
+    done
+    return 1
+}
+
+# Parse qstat. Sets: PBS_LIST, RUN_L, IDLE_L, RUN_E, IDLE_E
 parse_pbs() {
     PBS_LIST=""
-    RUN_B=0; IDLE_B=0; RUN_E=0; IDLE_E=0; IDLE_E_OTHER=0
+    RUN_L=0; IDLE_L=0; RUN_E=0; IDLE_E=0
     local qstat
     qstat=$(ssh "$HEAD" 'qstat -a' 2>/dev/null | grep xyren || true)
     [ -z "$qstat" ] && return
@@ -67,30 +101,59 @@ parse_pbs() {
         name=$(echo "$line" | awk '{print $4}')
         queue=$(echo "$line" | awk '{print $3}')
         state=$(echo "$line" | awk '{print $10}')
-        sg=$(echo "$name" | sed 's/^sg0*//')
+        sg=$(sg_number_from_name "$name")
         [ -z "$sg" ] && continue
         [ "$state" = "C" ] && continue
         PBS_LIST="$PBS_LIST $sg"
         if [ "$state" = "R" ]; then
             case "$queue" in
-                bigmem)   ((RUN_B++)) || true ;;
+                long)     ((RUN_L++)) || true ;;
                 extended) ((RUN_E++)) || true ;;
+                bigmem)   ((RUN_L++)) || true ;;
             esac
         else
             case "$queue" in
-                bigmem)   ((IDLE_B++)) || true ;;
-                extended)
-                    ((IDLE_E++)) || true
-                    if ! contains "$sg" $HARDEST; then
-                        ((IDLE_E_OTHER++)) || true
-                    fi
-                    ;;
+                long)     ((IDLE_L++)) || true ;;
+                extended) ((IDLE_E++)) || true ;;
+                bigmem)   ((IDLE_L++)) || true ;;
             esac
         fi
     done <<< "$qstat"
 }
 
-# Cancel EXCESS non-hardest extended idle jobs (keep at most TARGET_IDLE_EXTENDED)
+# Cancel queued jobs for SGs that are already completed or errored (zombie jobs)
+cancel_stale_jobs() {
+    local done_err="$1"
+    [ -z "$done_err" ] && return
+    local qstat stale_found=false
+    qstat=$(ssh "$HEAD" 'qstat -a' 2>/dev/null | grep xyren || true)
+    [ -z "$qstat" ] && return
+    while IFS= read -r line; do
+        local jobid name state sg
+        jobid=$(echo "$line" | awk '{print $1}' | sed 's/\..*//')
+        name=$(echo "$line" | awk '{print $4}')
+        state=$(echo "$line" | awk '{print $10}')
+        sg=$(sg_number_from_name "$name")
+        [ "$state" = "R" ] && continue
+        [ "$state" = "C" ] && continue
+        contains "$sg" $HARDEST && continue
+        if contains "$sg" $done_err; then
+            if $DRY_RUN; then
+                info "  [DRY-RUN] Would cancel stale SG#$sg ($jobid) - already done/errored"
+            else
+                ssh -n "$HEAD" "qdel $jobid" 2>/dev/null || true
+                info "  CANCEL stale SG#$sg ($jobid) - already done/errored"
+                stale_found=true
+            fi
+        fi
+    done <<< "$qstat"
+    if $stale_found; then
+        sleep 2
+        parse_pbs
+    fi
+}
+
+# Cancel EXCESS non-hardest idle long jobs (keep at most TARGET_IDLE_LONG)
 cleanup_excess() {
     local qstat count=0
     qstat=$(ssh "$HEAD" 'qstat -a' 2>/dev/null | grep xyren || true)
@@ -101,13 +164,14 @@ cleanup_excess() {
         name=$(echo "$line" | awk '{print $4}')
         queue=$(echo "$line" | awk '{print $3}')
         state=$(echo "$line" | awk '{print $10}')
-        sg=$(echo "$name" | sed 's/^sg0*//')
+        sg=$(sg_number_from_name "$name")
         [ "$state" = "R" ] && continue
         [ "$state" = "C" ] && continue
-        [ "$queue" != "extended" ] && continue
         contains "$sg" $HARDEST && continue
+        # Count queued jobs in long (or legacy bigmem)
+        case "$queue" in long|bigmem) ;; *) continue ;; esac
         ((count++)) || true
-        if [ "$count" -gt "$TARGET_IDLE_EXTENDED" ]; then
+        if [ "$count" -gt "$TARGET_IDLE_LONG" ]; then
             if $DRY_RUN; then
                 info "  [DRY-RUN] Would cancel excess SG#$sg ($jobid)"
             else
@@ -153,12 +217,15 @@ do_monitor() {
     parse_pbs
 
     info "  Completed: $(echo $DONE | wc -w) | Errors: $(echo $ERR | wc -w)"
-    info "  PBS: R=${RUN_B}B+${RUN_E}E | idle=${IDLE_B}B+${IDLE_E}E (${IDLE_E_OTHER} non-hardest)"
+    info "  PBS: R=${RUN_L}L+${RUN_E}E | idle=${IDLE_L}L+${IDLE_E}E"
 
     local EXCLUDE="$DONE $ERR $PBS_LIST"
 
-    # 1. Cancel excess non-hardest extended idle (if > TARGET)
-    if [ "$IDLE_E_OTHER" -gt "$TARGET_IDLE_EXTENDED" ]; then
+    # 0. Cancel stale jobs: queued jobs for already completed/errored SGs
+    cancel_stale_jobs "$DONE $ERR"
+
+    # 1. Cancel excess non-hardest idle long jobs (if > TARGET)
+    if [ "$IDLE_L" -gt "$TARGET_IDLE_LONG" ]; then
         cleanup_excess
         sleep 2
         parse_pbs
@@ -174,42 +241,31 @@ do_monitor() {
         EXCLUDE="$EXCLUDE $sg"
     done
 
-    # 3. Fill bigmem queue
-    local need=$((TARGET_IDLE_BIGMEM - IDLE_B))
+    # 3. Fill long queue (all non-hardest SGs go here)
+    local need=$((TARGET_IDLE_LONG - IDLE_L))
     while [ "$need" -gt 0 ]; do
         local sg
         sg=$(next_sg "$EXCLUDE") || true
         [ -z "$sg" ] && break
-        submit "$sg" "bigmem"
+        submit "$sg" "long"
         EXCLUDE="$EXCLUDE $sg"
         ((need--))
     done
 
-    # 4. Fill extended queue (non-hardest, drip-feed)
-    need=$((TARGET_IDLE_EXTENDED - IDLE_E_OTHER))
-    while [ "$need" -gt 0 ]; do
-        local sg
-        sg=$(next_sg "$EXCLUDE") || true
-        [ -z "$sg" ] && break
-        submit "$sg" "extended"
-        EXCLUDE="$EXCLUDE $sg"
-        ((need--))
-    done
-
-    # 5. Resubmit expired/interrupted jobs
+    # 4. Resubmit expired/interrupted jobs (only walltime kills, NOT bug crashes)
+    #    Use long for non-hardest (14 days is enough for most SGs)
     if ls "$CKPT_DIR"/sg*.ws >/dev/null 2>&1; then
         for ws in "$CKPT_DIR"/sg*.ws; do
             local sg
             sg=$(basename "$ws" .ws | sed 's/^sg//')
             contains "$sg" $DONE $EXCLUDE $SKIP $ERR && continue
-            # HARDEST: always resubmit to extended (should already be there)
             contains "$sg" $HARDEST && continue
-            info "  EXPIRED SG#$sg (has checkpoint, not running)"
-            if [ $((RUN_B + IDLE_B)) -lt 6 ]; then
-                submit "$sg" "bigmem"
-            else
-                submit "$sg" "extended"
+            if sg_crashed "$sg"; then
+                info "  SKIP SG#$sg — crashed (bug), will not resubmit"
+                continue
             fi
+            info "  EXPIRED SG#$sg (has checkpoint, not running) -> long"
+            submit "$sg" "long"
             EXCLUDE="$EXCLUDE $sg"
         done
     fi
@@ -246,7 +302,7 @@ do_status() {
     echo "Completed ($n_done): ${DONE:-none}"
     echo "Errored   ($n_err): ${ERR:-none}"
     echo ""
-    echo "PBS: Running ${RUN_B}B+${RUN_E}E | Idle ${IDLE_B}B+${IDLE_E}E (${IDLE_E_OTHER} non-hardest ext)"
+    echo "PBS: Running ${RUN_L}L+${RUN_E}E | Idle ${IDLE_L}L+${IDLE_E}E"
     echo ""
     echo "HARDEST (210/219/228) - PROTECTED:"
     for sg in $HARDEST; do

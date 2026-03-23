@@ -247,3 +247,6 @@ Assertion check "top layer is not a cocycle" explained:
   when Majorana cochains n21/n22 are non-zero. This bug is masked when CF≠0 because
   PurifySpecSeqClass breaks at p=3 (CF) without ever validating p=4 (Bosonic).
   Same root cause as C3v/C4v s12 assertion errors.
+
+Latest debug note:
+  ~/3Dstacking/translation_notes.md

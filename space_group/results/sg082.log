@@ -1,0 +1,237 @@
+=== SptSet Space Group #82 (bigmem node) ===
+Host: n04.local
+Date: Mon Mar  9 05:26:56 HKT 2026
+Fresh start.
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set BROWSER_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/software/gap-4.13.1/pkg/\
+SptSet/ failed
+============================================================
+SptSet Checkpoint Driver
+  Space group: #82
+  Mode: ez
+  Checkpoint file: /home/user/xyren/checkpoints/sg82.ws
+  Parallel: JOBS=24 THRESHOLD=10 PHASE2=true
+  Group structure: true
+============================================================
+Building resolution for SG #82...
+  Resolution built in 2244 ms
+  Dimensions: 1 4 7 8 8 8 8 
+Spectral sequence created.
+
+FRESH START — beginning computation.
+
+Phase A: Classification (14 pages)
+------------------------------------------------------------
+Syntax warning: Unbound global variable in /home/user/xyren/software/gap-4.13.\
+1/pkg/SptSet/jobs/checkpoint_driver.g:137
+                  j_ -> Erpq_!.relations[j_][j_]), "\n");;
+                        ^^^^^
+[1/14] Computing E^{1,3}_2 (p+ip:)...
+  E^{1,3}_2 = <ZL-Module with torsions [ 2, 0 ]>
+  Generators: 2, torsion: [ 2, 0 ]
+  Time: 13 ms  (elapsed: 2s)
+  Checkpoint saved (step 1/14).
+
+[2/14] Computing E^{1,3}_3 (p+ip:)...
+    d2^{1,3}_2: 2 gens (target_dim=8) done [parallel, 24 workers, 454 ms]
+    [checkpoint #1]
+  E^{1,3}_3 = <ZL-Module with torsions [ 2, 0 ]>
+  Generators: 2, torsion: [ 2, 0 ]
+  Time: 3115 ms  (elapsed: 7s)
+  Checkpoint saved (step 2/14).
+
+[3/14] Computing E^{1,3}_4 (p+ip:)...
+    d2^{2,2}_2: 7 gens (target_dim=8) done [parallel, 24 workers, 4800 ms]
+    [checkpoint #2]
+    d2^{1,3}_3: 2 gens (target_dim=8) done [parallel, 24 workers, 21258 ms]
+    [checkpoint #3]
+  E^{1,3}_4 = <ZL-Module with torsions [ 2, 0 ]>
+  Generators: 2, torsion: [ 2, 0 ]
+  Time: 31485 ms  (elapsed: 41s)
+  Checkpoint saved (step 3/14).
+
+[4/14] Computing E^{1,3}_5 (p+ip:)...
+    d2^{3,1}_2: 8 gens (target_dim=8) done [parallel, 24 workers, 225966 ms]
+    [checkpoint #4]
+    d2^{2,2}_3: 7 gens (target_dim=8) done [parallel, 24 workers, 3488199 ms]
+    [checkpoint #5]
+    d2^{1,3}_4: 2 gens (target_dim=8) done [parallel, 24 workers, 53303846 ms]
+    [checkpoint #6]
+  E^{1,3}_5 = <ZL-Module with torsions [ 2, 0 ]>
+  Generators: 2, torsion: [ 2, 0 ]
+  Time: 57026038 ms  (elapsed: 57071s)
+  Checkpoint saved (step 4/14).
+
+[5/14] Computing E^{2,2}_2 (Majorana:)...
+  E^{2,2}_2 = <ZL-Module with torsions [ 2, 2, 2 ]>
+  Generators: 3, torsion: [ 2, 2, 2 ]
+  Time: 5 ms  (elapsed: 57074s)
+  Checkpoint saved (step 5/14).
+
+[6/14] Computing E^{2,2}_3 (Majorana:)...
+  E^{2,2}_3 = <ZL-Module with torsions [ 2 ]>
+  Generators: 1, torsion: [ 2 ]
+  Time: 5 ms  (elapsed: 57077s)
+  Checkpoint saved (step 6/14).
+
+[7/14] Computing E^{2,2}_4 (Majorana:)...
+  E^{2,2}_4 = <ZL-Module with torsions [ 2 ]>
+  Generators: 1, torsion: [ 2 ]
+  Time: 7 ms  (elapsed: 57079s)
+  Checkpoint saved (step 7/14).
+
+[8/14] Computing E^{3,1}_2 (Complex fermion:)...
+  E^{3,1}_2 = <ZL-Module with torsions [ 2, 2, 2, 2 ]>
+  Generators: 4, torsion: [ 2, 2, 2, 2 ]
+  Time: 7 ms  (elapsed: 57082s)
+  Checkpoint saved (step 8/14).
+
+[9/14] Computing E^{3,1}_3 (Complex fermion:)...
+    d^{1,2}_2: 4 gens (target_dim=4) done [parallel, 24 workers, 168 ms]
+    [checkpoint #7]
+  E^{3,1}_3 = <ZL-Module with torsions [ 2, 2, 2, 2 ]>
+  Generators: 4, torsion: [ 2, 2, 2, 2 ]
+  Time: 2811 ms  (elapsed: 57088s)
+  Checkpoint saved (step 9/14).
+
+[10/14] Computing E^{3,1}_4 (Complex fermion:)...
+  E^{3,1}_4 = <ZL-Module with torsions [ 2, 2, 2, 2 ]>
+  Generators: 4, torsion: [ 2, 2, 2, 2 ]
+  Time: 2 ms  (elapsed: 57090s)
+  Checkpoint saved (step 10/14).
+
+[11/14] Computing E^{4,0}_2 (Bosonic:)...
+  E^{4,0}_2 = <ZL-Module with torsions [ 2, 2, 4, 4 ]>
+  Generators: 4, torsion: [ 2, 2, 4, 4 ]
+  Time: 28 ms  (elapsed: 57093s)
+  Checkpoint saved (step 11/14).
+
+[12/14] Computing E^{4,0}_3 (Bosonic:)...
+    d^{2,1}_2: 7 gens (target_dim=4) done [parallel, 24 workers, 15367 ms]
+    [checkpoint #8]
+  E^{4,0}_3 = <ZL-Module with torsions [ 4, 4 ]>
+  Generators: 2, torsion: [ 4, 4 ]
+  Time: 18401 ms  (elapsed: 57114s)
+  Checkpoint saved (step 12/14).
+
+[13/14] Computing E^{4,0}_4 (Bosonic:)...
+    d2^{1,2}_2: 4 gens (target_dim=8) done [parallel, 24 workers, 169 ms]
+    [checkpoint #9]
+    d^{1,2}_3: 4 gens (target_dim=2) done [parallel, 24 workers, 146200 ms]
+    [checkpoint #10]
+  E^{4,0}_4 = <ZL-Module with torsions [ 4, 4 ]>
+  Generators: 2, torsion: [ 4, 4 ]
+  Time: 151655 ms  (elapsed: 57268s)
+  Checkpoint saved (step 13/14).
+
+[14/14] Computing E^{4,0}_5 (Bosonic:)...
+  E^{4,0}_5 = <ZL-Module with torsions [ 4, 4 ]>
+  Generators: 2, torsion: [ 4, 4 ]
+  Time: 2 ms  (elapsed: 57273s)
+  Checkpoint saved (step 14/14).
+
+============================================================
+Phase A COMPLETE: Classification done.
+============================================================
+
+Phase B: Computing group structure...
+------------------------------------------------------------
+  Parallel config: JOBS=24 THRESHOLD=10 PHASE2=true
+  Result(deg=4): 4 layers, pRange=[ 1, 2, 3, 4 ]
+  Step1: layer 1/4 (p=1, q=3)...
+    ComponentEx(1,3): 2 generators
+    ComponentEx(1,3) class 1/2...
+      class 1 done [106613412 ms]
+    [checkpoint #11]
+    ComponentEx(1,3) class 2/2...
+=== SptSet Space Group #82 ===
+Host: n07.local
+Date: Sun Mar 15 22:19:21 HKT 2026
+Resuming from checkpoint...
+============================================================
+RESUMED from checkpoint at step 14
+  Space group: #82
+  Checkpoint file: /home/user/xyren/checkpoints/sg82.ws
+  Parallel: JOBS=24 THRESHOLD=10 PHASE2=true
+============================================================
+
+Phase A: Classification (14 pages)
+------------------------------------------------------------
+============================================================
+Phase A COMPLETE: Classification done.
+============================================================
+
+Phase B: Computing group structure...
+------------------------------------------------------------
+  Parallel config: JOBS=24 THRESHOLD=10 PHASE2=true
+  Result(deg=4): 4 layers, pRange=[ 1, 2, 3, 4 ]
+  Step1: layer 1/4 (p=1, q=3)...
+    ComponentEx(1,3): resuming from class 2/2
+    ComponentEx(1,3) class 2/2...
+      class 2 done [106950522 ms]
+    [checkpoint #11]
+  Step1: layer 1 done: 2 generators, torsion=[ 2, 0 ] [106953487 ms]
+    [checkpoint #12]
+  Step1: layer 2/4 (p=2, q=2)...
+    ComponentEx(2,2): 1 generators
+    ComponentEx(2,2) class 1/1...
+      class 1 done [6665325 ms]
+    [checkpoint #13]
+  Step1: layer 2 done: 1 generators, torsion=[ 2 ] [6668326 ms]
+    [checkpoint #14]
+  Step1: layer 3/4 (p=3, q=1)...
+    ComponentEx(3,1): 4 generators
+    ComponentEx(3,1) class 1/4...
+      class 1 done [105778 ms]
+    [checkpoint #15]
+    ComponentEx(3,1) class 2/4...
+      class 2 done [106084 ms]
+    [checkpoint #16]
+    ComponentEx(3,1) class 3/4...
+      class 3 done [106059 ms]
+    [checkpoint #17]
+    ComponentEx(3,1) class 4/4...
+      class 4 done [106005 ms]
+    [checkpoint #18]
+  Step1: layer 3 done: 4 generators, torsion=[ 2, 2, 2, 2 ] [438070 ms]
+    [checkpoint #19]
+  Step1: layer 4/4 (p=4, q=0)...
+    ComponentEx(4,0): 2 generators
+    ComponentEx(4,0) class 1/2...
+      class 1 done [26 ms]
+    [checkpoint #20]
+    ComponentEx(4,0) class 2/2...
+      class 2 done [26 ms]
+    [checkpoint #21]
+  Step1: layer 4 done: 2 generators, torsion=[ 4, 4 ] [5876 ms]
+    [checkpoint #22]
+  Step1 done: totalGens=9, nGens=[ 2, 1, 4, 2 ]
+  Step3: extension computation, 7 tasks across 3 layers [parallel, 24 workers]
+    ext layer 1 (p=1): 2 gens done [parallel, 24 workers, 49012320 ms]
+    [checkpoint #23]
+    ext layer 2 (p=2) gen 1/1 (torsion=2)...
+      gen 1 done [3354815 ms]
+    [checkpoint #24]
+    ext layer 3 (p=3): 4 gens done [parallel, 24 workers, 939551 ms]

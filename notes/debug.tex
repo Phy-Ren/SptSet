@@ -1,0 +1,2316 @@
+\documentclass[a4paper,fontset=ubuntu,12pt]{ctexart}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\geometry{margin=1in}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+\setlist[itemize]{leftmargin=2.2em}
+\setlist[enumerate]{leftmargin=2.2em}
+
+\newtheorem{definition}{定义}[section]
+\newtheorem{proposition}[definition]{命题}
+\newtheorem{remark}[definition]{说明}
+
+\title{3D 点群 Stacking Debug 笔记（第一版）}
+\author{SptSet 调试工作笔记}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{本文目标与范围}
+\label{sec:goal}
+
+本文专门回答下面这个核心问题：
+\begin{equation}
+\text{为什么 }\nu_4\text{ 的 ``特解不唯一'' 不会破坏最终群结构计算？}
+\label{eq:main-question}
+\end{equation}
+
+本文只讨论最简化场景：
+\begin{itemize}
+\item 不加入 $p+ip$ 层；
+\item 先忽略 Majorana 链层（即先看 ``只含 $n_3,\nu_4$'' 的子问题）；
+\item 目标是理解 3D 点群 stacking 的数学骨架，再对照 GAP 程序逻辑。
+\end{itemize}
+
+这是一份教学型笔记：所有符号都会先定义，再使用。
+
+\subsection{先说人话：一页版结论（不看公式也能读）}
+\label{sec:human-summary}
+
+先把最核心结论直接讲清楚：
+\begin{enumerate}
+\item 你说的流程 ``先解出一个 $(n_3,\nu_4)$，再 stack 自己'' 这个想法本身是对的。
+\item 原因是：同一个 ``$n_3$ 类'' 可以配很多个 $\nu_4$（差一个 4-cocycle），所以你拿到的那个解只是某个 ``坐标系里的代表''，不是唯一标准代表。
+\item 如果直接拿这个代表去算 self-stacking，结果会带上 ``坐标系选择''（规范选择）信息。
+\item 但是要分情况：在 ``纯 CF 单层'' 的简单场景里，purify 往往退化成恒等映射；在 ``MC+CF+Bos 三层'' 场景里，purify 才会变成刚需。
+\item 程序里的 \textbf{purify} 做的就是：把代表先规范化，把可去掉的垃圾层（coboundary-trivial 部分）去掉，再拿去算关系。
+\item 最终群结构要看的是：这些结果在规范变化下是否不变（例如只看奇偶、不看具体 $\mu=0/2$ 的差别）。
+\end{enumerate}
+
+一句话版本：
+\begin{equation}
+\text{self-stacking 是必要步骤；在多层耦合时必须配合 purify，结果才可比较、可物理解释。}
+\label{eq:one-line-summary}
+\end{equation}
+
+\section{从零开始的符号与概念}
+\label{sec:notation}
+
+\subsection{符号速查表（每个符号都翻译成人话）}
+\label{sec:symbol-dict}
+
+这一小节只做一件事：把后文会出现的符号全部翻译成一句中文。
+
+\begin{itemize}
+\item $G$：对称群（你现在讨论里就是 3D 点群）。
+\item $n_3$：complex fermion 层的数据（$\mathbb{Z}_2$ 值）。
+\item $\nu_4$：bosonic 相位层数据（$U(1)$ 值 4-cochain）。
+\item $d$：coboundary 算子。你可把它理解成 ``一致性检查算子''：把这一层数据送去检查下一层约束。
+\item $\mathcal{O}_5(n_3)$：由 $n_3$ 诱导出来的 5 维 obstruction（方程右端）。
+\item ``解方程''：就是解 $d\nu_4=\mathcal{O}_5(n_3)$。
+\item $A:=H^4(G,U(1))$：bosonic 层的分类群（你例子里是 $\mathbb{Z}_4$）。
+\item $K$：只看 $n_3$ 得到的分类群（你例子里可以是 $\mathbb{Z}_2$）。
+\item $\boxtimes$：stacking 运算。
+\item $p$：层编号（只表示 ``第几层''，没有更玄的意思）。
+\item $q$：通常由总维数减去 $p$ 得到，是 bookkeeping 用的索引。
+\item $r$：谱序列页码（第几轮消障碍）。
+\item $d_r$：第 $r$ 页的微分（第 $r$ 轮 obstruction 映射）。
+\item $\partial$：本文不作为主符号使用；如果偶尔出现，只表示边界相关算子，不必和 $d$ 混淆。
+\end{itemize}
+
+\begin{remark}
+阅读策略：如果你某处看不懂符号，先回这张表，不要硬扛。
+\end{remark}
+
+\subsection{Cochain、Coboundary、Cohomology}
+
+设 $G$ 是对称群（这里可理解为点群或其离散表示），$A$ 是系数阿贝尔群（例如 $\mathbb{Z}_2$ 或 $U(1)$）。
+
+\begin{definition}[cochain 复形]
+$n$-cochain 记为 $C^n(G,A)$，它是从 $G^n$ 到 $A$ 的函数空间。
+Coboundary 算子记为
+\begin{equation}
+d: C^n(G,A)\to C^{n+1}(G,A),\qquad d^2=0.
+\label{eq:d-square-zero}
+\end{equation}
+\end{definition}
+
+\begin{definition}[cocycle 与 coboundary]
+\begin{equation}
+Z^n(G,A):=\ker d,\qquad B^n(G,A):=\mathrm{im}\,d.
+\label{eq:zn-bn}
+\end{equation}
+若 $x\in Z^n$，称 $x$ 是 $n$-cocycle；若 $x\in B^n$，称 $x$ 是 $n$-coboundary。
+\end{definition}
+
+\begin{definition}[cohomology]
+\begin{equation}
+H^n(G,A):=Z^n(G,A)/B^n(G,A).
+\label{eq:cohomology-def}
+\end{equation}
+\end{definition}
+
+\subsection{我们当前关心的态空间}
+
+在简化问题里，一个候选态写成
+\begin{equation}
+(n_3,\nu_4),
+\label{eq:state-pair}
+\end{equation}
+其中
+\begin{equation}
+n_3\in C^3(G,\mathbb{Z}_2),\qquad \nu_4\in C^4(G,U(1)).
+\label{eq:n3-nu4-space}
+\end{equation}
+
+约束方程写成
+\begin{equation}
+d\nu_4=\mathcal{O}_5(n_3).
+\label{eq:nu4-eq}
+\end{equation}
+
+这里 $\mathcal{O}_5$ 是由低层数据决定的 5-cocycle（在你当前聚焦问题里，核心是它把 $n_3$ 映射到一个可解的右端项）。
+
+\subsection{为什么会出现 ``特解不唯一''}
+
+固定一个 $n_3$ 后，考虑方程 \eqref{eq:nu4-eq} 的解集
+\begin{equation}
+\mathrm{Sol}(n_3):=\{\nu_4\in C^4(G,U(1))\mid d\nu_4=\mathcal{O}_5(n_3)\}.
+\label{eq:sol-set}
+\end{equation}
+若 $\nu_4,\nu_4'\in \mathrm{Sol}(n_3)$，则
+\begin{equation}
+d(\nu_4-\nu_4')=0,
+\label{eq:diff-cocycle}
+\end{equation}
+故两解之差是 4-cocycle。
+
+把 coboundary 等价也除掉后，得到一个由 $H^4(G,U(1))$ 作用的集合。这个集合通常不是天然带零元的群，而是 torsor。
+
+\begin{definition}[torsor 的最小定义]
+给定阿贝尔群 $A$，一个集合 $T$ 称为 $A$-torsor，若存在作用
+\begin{equation}
+A\times T\to T,\quad (a,t)\mapsto a\cdot t
+\label{eq:torsor-action}
+\end{equation}
+满足：该作用自由且传递。
+\end{definition}
+
+\begin{remark}
+``自由且传递'' 等价于：任意 $t_1,t_2\in T$，存在唯一 $a\in A$ 使得 $a\cdot t_1=t_2$。
+\end{remark}
+
+\begin{remark}
+torsor 没有内禀单位元，所以你说的 ``不知道哪个是单位元'' 是准确的。
+\end{remark}
+
+\section{严格回答：in principle 应该怎么算}
+\label{sec:in-principle}
+
+\subsection{第一步：把问题写成群扩张}
+
+把所有物理等价态组成集合（带 stacking）记为 $\mathcal{E}$。
+把 ``只看 $n_3$ 类'' 的群记为
+\begin{equation}
+K.
+\label{eq:k-def}
+\end{equation}
+把 bosonic 层的群记为
+\begin{equation}
+A:=H^4(G,U(1)).
+\label{eq:a-def}
+\end{equation}
+
+存在自然投影
+\begin{equation}
+\pi:\mathcal{E}\to K,\qquad \pi(n_3,\nu_4)=[n_3].
+\label{eq:projection}
+\end{equation}
+
+在可解且闭合条件成立时，$\mathcal{E}$ 是一个扩张：
+\begin{equation}
+0\longrightarrow A\longrightarrow \mathcal{E}\overset{\pi}{\longrightarrow}K\longrightarrow 0.
+\label{eq:short-exact}
+\end{equation}
+
+\subsection{第二步：选择截面并定义 2-cocycle}
+
+选一个截面（即每个 $K$ 元素选一个代表态）
+\begin{equation}
+s:K\to \mathcal{E},\qquad \pi\circ s=\mathrm{id}_K.
+\label{eq:section}
+\end{equation}
+
+定义
+\begin{equation}
+\omega_s(a,b):=s(a)\boxtimes s(b)\boxtimes s(a+b)^{-1}\in A.
+\label{eq:omega-def}
+\end{equation}
+
+结合律保证 $\omega_s$ 满足群 2-cocycle 条件（$A$-值）。
+所以 $\omega_s\in Z^2(K,A)$。
+
+\subsection{第三步：说明 ``特解不唯一'' 只会改规范，不改物理}
+
+若改截面
+\begin{equation}
+s'(a)=\phi(a)\cdot s(a),\qquad \phi:K\to A,
+\label{eq:section-change}
+\end{equation}
+则
+\begin{equation}
+\omega_{s'}=\omega_s+\delta\phi.
+\label{eq:omega-gauge}
+\end{equation}
+
+因此不变量不是某个具体 $\omega_s$，而是 cohomology 类
+\begin{equation}
+[\omega]\in H^2(K,A).
+\label{eq:extension-class}
+\end{equation}
+这就是最终群结构（扩张类型）的本质数据。
+
+\subsection{第四步：你举的 $\mathbb{Z}_2$ 与 $\mathbb{Z}_4$ 例子}
+
+令
+\begin{equation}
+K=\mathbb{Z}_2=\langle x\mid 2x=0\rangle,\qquad A=\mathbb{Z}_4.
+\label{eq:z2-z4}
+\end{equation}
+在扩张群 $\mathcal{E}$ 中选 lift $\tilde{x}$，则
+\begin{equation}
+2\tilde{x}=\mu\in \mathbb{Z}_4.
+\label{eq:mu-def}
+\end{equation}
+
+若改 lift：$\tilde{x}'=\tilde{x}+a$（$a\in\mathbb{Z}_4$），则
+\begin{equation}
+2\tilde{x}'=\mu+2a.
+\label{eq:mu-shift}
+\end{equation}
+所以
+\begin{equation}
+\mu\sim \mu+2
+\label{eq:mu-equivalence}
+\end{equation}
+是规范等价。
+
+结论：
+\begin{itemize}
+\item 只能稳定区分 $\mu$ 的奇偶；
+\item $\mu$ 偶对应 $\mathbb{Z}_2\times\mathbb{Z}_4$；
+\item $\mu$ 奇对应 $\mathbb{Z}_8$。
+\end{itemize}
+
+这正是你说的 ``只能模 2 确定''，但这并不矛盾，反而是扩张理论本身的正常结论。
+
+\section{把 GAP 程序翻译成数学语言（不贴代码版）}
+\label{sec:gap-to-math}
+
+\subsection{程序对象在数学上的含义}
+
+下面给出最核心对应关系。
+
+\begin{enumerate}
+\item \textbf{谱序列 cochain 对象}：对应一个分层元
+\begin{equation}
+c=(c^0,c^1,\dots,c^d),\quad c^p\in C^p(G,\mathcal{A}_{d-p}).
+\label{eq:layered-cochain}
+\end{equation}
+
+\item \textbf{stacking 运算}：不是逐层简单相加，而是
+\begin{equation}
+(c_1\boxtimes c_2)^p=c_1^p+c_2^p+t_p(c_1,c_2),
+\label{eq:stack-rule}
+\end{equation}
+其中 $t_p$ 是该层 twister（由物理公式给定）。
+
+\item \textbf{$p=4$ bosonic 层 twister}：即你在 3D 点群 debugging 中最关心的项
+\begin{equation}
+t_4=t_{4,0}(n_{2}^{(1)},n_{3}^{(1)};n_{2}^{(2)},n_{3}^{(2)}),
+\label{eq:t4}
+\end{equation}
+它对应 C++ 与 GAP 对齐过的 ``stacking\_others + stacking\_Majorana'' 组合。
+
+\item \textbf{purify}：给定一个类，减去可平凡项（上一页像和 coboundary）来选一个规范代表。
+这一步本质是 ``选截面''。
+
+\item \textbf{求解 cochain 方程}：返回一个具体特解，不返回全部仿射解空间。
+因此它天然带有规范选择。
+
+\item \textbf{extension 组装}：对每个低层生成元 $e_j$ 的挠系数关系
+\begin{equation}
+t_j e_j = \sum_k r_{jk} f_k
+\label{eq:extension-relation}
+\end{equation}
+进行计算，组成关系矩阵 $R$，再做 Smith Normal Form 得到最终阿贝尔群结构。
+\end{enumerate}
+
+\subsection{程序流程对应的数学流程}
+
+把程序主流程翻译成纯数学步骤如下：
+
+\begin{enumerate}
+\item 计算各层 $E_\infty^{p,q}$（或其等价表示），得到候选生成元；
+\item 对每个生成元构造具体代表类（这一步已包含一个截面选择）；
+\item 用 stacking 计算其挠倍数（如 $t_j e_j$）在更高层的像；
+\item 把这些像写成关系矩阵 $R$；
+\item 对 $R$ 做标准形分解，得到最终群结构不变量。
+\end{enumerate}
+
+因此，程序上 ``特解不唯一'' 的影响应该在第 2 步进入，但理论上必须在第 5 步被消去（只剩扩张类不变量）。
+
+\subsection{专门回答：为什么不是 ``解出来后直接自己 stack 一次就完了''}
+\label{sec:why-not-only-self-stack}
+
+这一节只回答你提出的关键问题。
+
+\paragraph{你的思路（正确但不完整）}
+你现在的思路是：
+\begin{enumerate}
+\item 先固定一个 $n_3$ 类；
+\item 解 $d\nu_4=\mathcal{O}_5(n_3)$，拿到一个特解 $(n_3,\nu_4)$；
+\item 计算 $(n_3,\nu_4)\boxtimes(n_3,\nu_4)$，看 bosonic 层落到哪个元素；
+\item 据此判断群结构。
+\end{enumerate}
+这条链条是对的，但缺了 ``先把代表规范化'' 这一步。
+
+\paragraph{为什么会缺一步}
+因为求解器给出的 $(n_3,\nu_4)$ 不是唯一标准代表。即便固定同一个物理类，也可能出现
+\begin{equation}
+(n_3,\nu_4)\sim (n_3,\nu_4+\lambda_4),
+\label{eq:rep-change}
+\end{equation}
+其中 $\lambda_4$ 是 4-cocycle（再模掉 coboundary）。
+所以你做 self-stacking 时，实际上在算
+\begin{equation}
+x\boxtimes x,\qquad x\text{ 是某个选出来的代表，不是唯一对象。}
+\label{eq:self-stack-rep}
+\end{equation}
+
+\paragraph{更关键的一点：在程序里，代表还会混入低层垃圾}
+在谱序列 cochain 里，同一个类的代表可能带有可平凡的低层成分（例如本应是 ``CF 主导'' 的类，代表里却夹了可去掉的 MC/bosonic coboundary-trivial 成分）。
+
+这时如果直接 stack，twister 会读取这些低层分量并产生额外相位，导致你得到的
+\begin{equation}
+x\boxtimes x
+\label{eq:self-stack-with-garbage}
+\end{equation}
+包含 ``代表垃圾'' 贡献，而不是纯粹的物理扩张信息。
+
+\paragraph{purify 在做什么（口语版）}
+purify 做的是：
+\begin{equation}
+\text{在不改变物理类的前提下，把代表写成尽量干净的标准形。}
+\label{eq:purify-human}
+\end{equation}
+具体就是减去可平凡项（来自上一页像和 coboundary）：
+\begin{itemize}
+\item 去掉能去掉的低层成分；
+\item 把类压到一个稳定的 leading layer 表达；
+\item 再拿这个干净代表去做 stacking/extension。
+\end{itemize}
+
+\paragraph{所以正确流程是}
+\begin{equation}
+\text{先 purify，再做 }x\boxtimes x,\text{ 最后读 extension/SNF。}
+\label{eq:correct-order}
+\end{equation}
+而不是 ``拿求解器第一次吐出的原始代表直接 self-stack 就结束''。
+
+\paragraph{重要修正：你指出得非常对（分情况）}
+上面这句话对 ``多层耦合'' 是正确的，但在你说的 ``纯 CF 简单例子'' 里要改成更精确版本：
+\begin{enumerate}
+\item 如果状态本来就只有一个有效层，且代表已经是该层的规范代表，那么 purify 可以是恒等（等于 ``做了但没改东西''）。
+\item 一旦加入 MC 层（即同时有 $n_2,n_3,\nu_4$ 三层耦合），purify 通常不再是恒等，而是必须执行的规范化步骤。
+\end{enumerate}
+
+\subsection{你现在要讲的复杂例子：加入 MC 后为什么立刻变复杂}
+\label{sec:mc-cf-bos-complexity}
+
+这一节完全按你的语言来写。
+
+\paragraph{场景}
+现在态是三层数据
+\begin{equation}
+x=(n_2,n_3,\nu_4),
+\label{eq:three-layer-x}
+\end{equation}
+其中：
+\begin{itemize}
+\item $n_2$ 是 MC 层；
+\item $n_3$ 是 CF 层；
+\item $\nu_4$ 是 bosonic 层。
+\end{itemize}
+
+\paragraph{你先做 self-stacking，会发生什么}
+先算
+\begin{equation}
+2x:=x\boxtimes x.
+\label{eq:2x-def}
+\end{equation}
+这时三层不是独立相加，而是会耦合：
+\begin{equation}
+N_2=n_2+n_2=0\ (\mathrm{mod}\ 2),
+\label{eq:N2-self}
+\end{equation}
+\begin{equation}
+N_3=n_3+n_3+m_3(n_2,n_2)=m_3(n_2,n_2),
+\label{eq:N3-self}
+\end{equation}
+\begin{equation}
+\mathcal{V}_4=\nu_4+\nu_4+\mathcal{E}_4(n_2,n_3;n_2,n_3).
+\label{eq:V4-self}
+\end{equation}
+
+\paragraph{关键点 1}
+虽然 $N_2$ 自动归零，但 $N_3$ 一般 \textbf{不一定}归零，因为会冒出 $m_3(n_2,n_2)$。
+也就是说：你想读 bosonic 结果前，CF 层可能还残留着。
+
+\paragraph{把你说的两种情形写成判据}
+\begin{enumerate}
+\item 若 $N_3$ 是非平凡 cocycle（不是 coboundary），则它代表真实 CF 剩余，通常解释为 ``MC 向 CF 扩张'' 发生。
+\item 若 $N_3$ 是非零 coboundary，可写成
+\begin{equation}
+N_3=d\eta_2,\qquad \eta_2\in C^2(G,\mathbb{Z}_2),
+\label{eq:N3-deta2}
+\end{equation}
+则它在物理上应被视为可去掉的规范残留：这时 ``MC 不向 CF 扩张''，但仍可能通过上层耦合向 bosonic 层留下非平凡信息。
+\end{enumerate}
+
+\paragraph{关键点 2}
+若 CF 残留还在，你直接把 $\mathcal{V}_4$ 当最终 bosonic 指标，通常会混入 ``还没消干净的上层耦合贡献''。
+
+\paragraph{所以 purify 在这里的必要性}
+在三层场景里，正确读数顺序应是：
+\begin{equation}
+2x\ \xrightarrow{\ \text{purify}\ }\ (0,\ 0,\ \mu)\quad\text{（理想规范形）},
+\label{eq:2x-purify-mu}
+\end{equation}
+然后再读 $\mu$ 在 bosonic 群 $A$ 里的等价类。
+
+\paragraph{这一步和你的物理直觉如何对上}
+你的直觉 ``我就是想看 self-stack 之后落到哪个 bosonic state'' 是对的。
+只是三层情况下必须先回答一个中间问题：
+\begin{equation}
+\text{self-stack 后 CF 是否已被规范地消掉？}
+\label{eq:middle-question}
+\end{equation}
+若还没消掉，就必须 purify；若本来就没有残留（例如某些纯 CF 场景），purify 可退化为恒等。
+
+\paragraph{你问的核心：purify 时到底在 stack 什么态？}
+不是 stack 它自己，也不是随便猜一个 ``真空态''，而是 stack 一个\textbf{精确构造出的 coboundary 修正态}。
+
+把 self-stack 结果记为
+\begin{equation}
+X=(0,N_3,\mathcal{V}_4).
+\label{eq:X-three-layer}
+\end{equation}
+若 $N_3=d\eta_2$，程序会构造
+\begin{equation}
+\delta(\eta_2):=(0,d\eta_2,\Xi_4(\eta_2)),
+\label{eq:delta-eta2}
+\end{equation}
+其中 $\Xi_4(\eta_2)$ 由一致性方程自动确定（保证整体是 ``边界态''，对应物理平凡类）。
+然后做
+\begin{equation}
+X_{\mathrm{pur}}=X\boxtimes \delta(-\eta_2).
+\label{eq:X-pur-def}
+\end{equation}
+这一步的结果满足 CF 层被抹除：
+\begin{equation}
+X_{\mathrm{pur}}=(0,0,\widetilde{\nu}_4).
+\label{eq:X-pur-result}
+\end{equation}
+所以你说 ``是不是要 stack 真空态''，答案是：\textbf{是}，但这里的 ``真空态'' 不是拍脑袋选的，而是按 $N_3=d\eta_2$ 解出来的规范修正态 $\delta(\eta_2)$。
+
+\paragraph{你提到的第二种方法（obstruction-shift）与程序方法的关系}
+你在 \texttt{3+1D\_Stacking.tex} 里用的是：
+\begin{itemize}
+\item 先用 obstruction 方程求一个 shift（例如 $\Delta_2,\Delta_3,\Delta_4$）；
+\item 用这个 shift 把低层 coboundary 消掉；
+\item 再读上层 bosonic 剩余。
+\end{itemize}
+这在数学上与上面的 \eqref{eq:X-pur-def} 本质一致：都是在加/减一个 ``总 coboundary'' 来改代表元。  
+更直白地说：
+\begin{equation}
+\text{程序法}=\text{把 obstruction-shift 自动化并写成 }\delta(\cdot)\text{ 的统一算子版本。}
+\label{eq:method-equivalent}
+\end{equation}
+
+\paragraph{你问的第 1 点：ambiguity 不只在 $\eta_2$，还会出现在 $\Delta_3,\Delta_4$ 吗？}
+\textbf{会。}而且这是正常的。
+
+把一组 purify shift 记为
+\begin{equation}
+\Delta:=(\Delta_2,\Delta_3,\Delta_4).
+\label{eq:Delta-tuple}
+\end{equation}
+它们不是彼此独立，而是逐层耦合地满足一致性方程（示意写法）：
+\begin{equation}
+d\Delta_2=\text{(要消掉的第2层)},\quad
+d\Delta_3=\mathcal{F}_3(\Delta_2)+\text{(要消掉的第3层)},
+\label{eq:Delta-chain-1}
+\end{equation}
+\begin{equation}
+d_{s_1}\Delta_4=\mathcal{F}_4(\Delta_2,\Delta_3)+\text{(要消掉的第4层)}.
+\label{eq:Delta-chain-2}
+\end{equation}
+因此当你改 $\Delta_2$ 时，通常会\textbf{连带}改到 $\Delta_3,\Delta_4$。
+
+更具体地，若
+\begin{equation}
+\Delta_2'=\Delta_2+z_2,\qquad dz_2=0,
+\label{eq:Delta2-shift}
+\end{equation}
+则为了继续满足 \eqref{eq:Delta-chain-1}--\eqref{eq:Delta-chain-2}，一般需要
+\begin{equation}
+\Delta_3'=\Delta_3+z_3+\mathcal{K}_3(z_2),\qquad dz_3=0,
+\label{eq:Delta3-shift}
+\end{equation}
+\begin{equation}
+\Delta_4'=\Delta_4+z_4+\mathcal{K}_4(z_2,z_3),\qquad d_{s_1}z_4=0.
+\label{eq:Delta4-shift}
+\end{equation}
+所以你说 ``$\Delta_3,\Delta_4$ 也有 non-trivial ambiguity''，判断正确。
+
+\paragraph{这些 ambiguity 会不会改最终结果？}
+会改代表，不改最终物理类。  
+对应 purified 结果满足
+\begin{equation}
+X_{\mathrm{pur}}(\Delta')=X_{\mathrm{pur}}(\Delta)\boxtimes \delta(-Z),
+\label{eq:pur-ambiguity-general}
+\end{equation}
+其中 $Z$ 由 $(z_2,z_3,z_4)$ 及其耦合项决定。于是 bosonic 层只会变成
+\begin{equation}
+\widetilde{\nu}_4'=\widetilde{\nu}_4+\Lambda_4(Z)+d\chi_3.
+\label{eq:nu4-ambiguity-general}
+\end{equation}
+因此真正不变量仍是商群里的类
+\begin{equation}
+[\widetilde{\nu}_4]\in A/L,
+\label{eq:A-mod-L}
+\end{equation}
+不是某个绝对代表值。这正是你说的 ``最终只剩稳定可分辨部分''。
+
+\paragraph{你问的第 2 点：算 shift 与解真空态是不是同一件事？}
+\textbf{是同一件事的两种表述。}
+
+\begin{itemize}
+\item obstruction-shift 语言：你显式写 $\Delta_2,\Delta_3,\Delta_4$ 并逐层替换；
+\item 程序语言：先由这些 $\Delta$ 组装一个平凡修正态 $\delta(\Delta)$，再用 stacking 把它乘上去消层。
+\end{itemize}
+两者数据一一对应，区别只在 ``手工显式写'' 还是 ``算子封装自动做''。
+
+\paragraph{你问的第 3 点：cochain 直接加，和 stack 真空态，是否本质不同？}
+这个问题非常关键，严格答案是：
+\begin{equation}
+\text{一般情况下不同；在满足特定一致性补偿后可等价。}
+\label{eq:add-vs-stack-main}
+\end{equation}
+
+原因是物理组合律不是逐层线性加法，而是带 twister 的 stacking：
+\begin{equation}
+x\boxtimes y = x+y+\mathfrak{T}(x,y),
+\label{eq:stack-plus-twister}
+\end{equation}
+其中 $\mathfrak{T}$ 收集各层交叉项（例如你关心的 $m_3,\mathcal{E}_4$ 等）。
+
+所以：
+\begin{itemize}
+\item 你若只做 ``cochain 逐层相加''（忽略 $\mathfrak{T}$），通常不等于真实 stacking；
+\item 你若在 obstruction-shift 推导里已经把这些补偿项都算进 $\Delta_3,\Delta_4$，那它就与 ``stack 一个真空修正态'' 等价。
+\end{itemize}
+
+可写成等价判据：
+\begin{equation}
+x \ \xrightarrow{\ \text{shift 法}\ }\ x+\Delta_{\mathrm{tot}}
+\quad\Longleftrightarrow\quad
+x \ \xrightarrow{\ \text{程序法}\ }\ x\boxtimes \delta(-\Delta)
+\label{eq:equiv-criterion}
+\end{equation}
+当且仅当 $\Delta_{\mathrm{tot}}$ 已包含由 \eqref{eq:stack-plus-twister} 产生的全部高层补偿项。
+
+\begin{remark}
+从物理直觉上，你说 ``应该调用 stacking rule'' 是对的。  
+更精确地讲：\textbf{stacking rule 是基本组合律}；cochain-shift 是在该组合律下的一种等价重参数化写法，而不是独立的物理运算。
+\end{remark}
+
+\paragraph{与你给的 $\mathbb{Z}_2$--$\mathbb{Z}_4$ 例子对照}
+你说得非常好：$\mu$ 只能模 2 稳定。
+这正是在说：
+\begin{equation}
+\mu\ \text{的具体值依赖代表选择，但 }\mu \bmod 2\ \text{才是扩张不变量。}
+\label{eq:mu-parity-only}
+\end{equation}
+purify 的作用就是尽量把 ``代表选择引起的漂移'' 控制到可识别的 coboundary/gauge 变化内，最后让程序提取出真正不变量。
+
+\paragraph{回到你的第 1 个问题：多个 $\mathbb{Z}_2$ 生成元时，能否直接读出 MC 延到了哪个 CF 生成元？}
+\textbf{可以，思路可行。}
+
+设 MC 层有基 $\{m_i\}_{i=1}^{r_{\mathrm{MC}}}$，CF 层有基 $\{c_j\}_{j=1}^{r_{\mathrm{CF}}}$，bosonic 层有基 $\{b_k\}_{k=1}^{r_{\mathrm{B}}}$。
+对每个 MC 生成元，self-stacking 关系可写成
+\begin{equation}
+2m_i=\underbrace{\sum_{j}E_{ij}c_j}_{\text{MC}\to\text{CF 部分}}+
+\underbrace{\sum_{k}F_{ik}b_k}_{\text{MC}\to\text{Bos 直接部分}}.
+\label{eq:mc-relation-ef}
+\end{equation}
+
+其中 $E_{i*}$ 就是你要找的 ``延到哪个 CF 生成元'' 的向量描述（在当前程序选定基下）。
+若 $E_{i*}\neq 0$，说明该 MC 生成元确实延到某个 CF 组合。
+
+\textbf{注意：}这里 ``哪个 CF 生成元'' 是相对于当前规范基底而言；若做了基变换，向量会变，但对应的物理子类不变。
+
+\paragraph{程序里能不能直接拿到这个向量？}
+可以。当前实现把这些关系存在扩张关系矩阵里；中间步骤本质就是把 $2m_i$ 投影到 CF 基底得到一个向量。
+所以你要做 ``先读出 MC 指向的 CF，再沿这个 CF 往下算''，在技术上完全可做。
+
+\paragraph{你的第 2/3 个问题合并回答：先分清两层问题，就不矛盾}
+你现在卡住的点，本质是把下面两件事混在了一起：
+\begin{enumerate}
+\item \textbf{阶段 A：}只判定 MC$\to$CF 的 extension；
+\item \textbf{阶段 B：}判定完整总群（是否还带 MC$\to$Bos 的残余信息）。
+\end{enumerate}
+
+这两件事的输入信息不一样。
+
+\paragraph{阶段 A（只看 MC$\to$CF）}
+把 bosonic 子群 $B:=\mathrm{Span}\{b_k\}$ 商掉，投影到 $G/B$。
+对 \eqref{eq:mc-relation-ef} 做投影，得到
+\begin{equation}
+2\bar m_i=\sum_j E_{ij}\bar c_j.
+\label{eq:mc-cf-projection}
+\end{equation}
+你看到没有：$F_{ik}$ 被完全杀掉。  
+所以你说的
+\begin{equation}
+\text{``先锁定 MC 指向哪个 CF 生成元，再从这个干净 CF 往下看''}
+\label{eq:user-idea-clean-cf}
+\end{equation}
+\textbf{在阶段 A 是完全正确的，且与我们之前结论一致。}
+
+\paragraph{阶段 B（要最终总群）}
+这时 $F$ 不能直接扔。  
+但也不是 ``$F$ 的每一项都物理有效''，因为存在 lift 规范：
+\begin{equation}
+c_j\mapsto c_j+\sum_k U_{jk}b_k
+\label{eq:cf-lift-change}
+\end{equation}
+会诱导
+\begin{equation}
+F\mapsto F+EU.
+\label{eq:F-gauge-shift}
+\end{equation}
+因此真正相关的是残余类
+\begin{equation}
+[F]_{\mathrm{res}}\in \mathrm{Mat}_{r_{\mathrm{MC}}\times r_{\mathrm{B}}}(\mathbb{Z}_2)\big/\mathrm{Im}(E\cdot).
+\label{eq:F-res-class}
+\end{equation}
+
+结论：
+\begin{itemize}
+\item 若 $[F]_{\mathrm{res}}=0$，你把 bosonic tail 扔掉不影响最终结论；
+\item 若 $[F]_{\mathrm{res}}\neq 0$，那是不可约的 MC$\to$Bos 信息，必须保留（连续顺序算法正是在保这部分）。
+\end{itemize}
+
+\paragraph{人话版小例子（最贴近你现在的问题）}
+设有两个 MC 生成元 $m_1,m_2$，一个 CF 生成元 $c$，一个 bosonic 生成元 $b$，关系
+\begin{equation}
+2m_1=c,\qquad 2m_2=c+b.
+\label{eq:toy-two-mc}
+\end{equation}
+它们的 MC$\to$CF 投影都一样（都是 ``延到 $c$''）。  
+但两者相减给
+\begin{equation}
+2(m_1+m_2)=b,
+\label{eq:toy-residual-b}
+\end{equation}
+说明仍有真实的 MC$\to$Bos 残余信息。  
+这就是为什么 ``阶段 A 可以扔 bosonic tail'' 与 ``最终总群不能总是扔'' 同时成立，且不矛盾。
+
+\paragraph{你这次追问的核心（统一解释）：为什么这和 ``通解/特解 ambiguity'' 不矛盾？}
+你说得对：如果只看一个固定的 MC 生成元，写成
+\begin{equation}
+2m = c + b,\qquad \pi(c+b)=\bar c\in C,
+\label{eq:single-mc-cb}
+\end{equation}
+其中 $\pi:F_3\to C$ 是投影，那么这里的 $b$ 确实是 bosonic 层的 cocycle 类（更准确是其 cohomology 类的代表）。
+
+关键是：对 \textbf{单个} 关系 \eqref{eq:single-mc-cb}，$b$ 可以被 lift 规范吸收。  
+取新的 CF lift
+\begin{equation}
+c':=c+b,
+\label{eq:c-lift-absorb-b}
+\end{equation}
+则关系改写成
+\begin{equation}
+2m=c'.
+\label{eq:single-mc-clean}
+\end{equation}
+所以在 ``只判定 MC$\to$CF'' 的阶段，$b$ 不给新不变量，这与你的通解/特解直觉完全一致。
+
+\paragraph{把它推广到 ``CF 有多个生成元''（回应你新问题）}
+设
+\begin{equation}
+C\cong (\mathbb{Z}_2)^{r_{\mathrm{CF}}},\qquad
+B\cong (\mathbb{Z}_2)^{r_{\mathrm{B}}},
+\label{eq:C-B-rank}
+\end{equation}
+单个 MC 关系写成
+\begin{equation}
+2m=e+b,\qquad e\in C,\ b\in B.
+\label{eq:single-m-vector}
+\end{equation}
+CF lift 变化由矩阵 $U\in \mathrm{Mat}_{r_{\mathrm{CF}}\times r_{\mathrm{B}}}(\mathbb{Z}_2)$ 给出
+\begin{equation}
+b\mapsto b+eU.
+\label{eq:b-shift-eU}
+\end{equation}
+若 $e\neq 0$（即 MC 确实延到 CF），则映射 $U\mapsto eU$ 对 $B$ 是满射：
+取一个满足 $e_{j_0}=1$ 的指标 $j_0$，令 $U$ 只有第 $j_0$ 行等于 $b$，其余行为零，即得 $eU=b$。
+因此可令新 $b$ 为零。  
+结论：\textbf{即便 CF 有多个生成元，只要是单个 MC 关系且 $e\neq 0$，bosonic tail 仍可吸收。}
+
+\paragraph{那为什么我前面还提醒要小心？}
+因为当有\textbf{多个} MC 生成元时，不能对每个关系各自独立选 lift；你只能做一次全局 lift 变换
+\begin{equation}
+F\mapsto F+EU.
+\label{eq:global-lift-once}
+\end{equation}
+这时通常只能消掉一部分 $b$，剩下的相对差（即 $[F]_{\mathrm{res}}$）可能是不可约信息。
+
+\paragraph{你说 ``程序是一个一个 MC 做''，为什么还会有全局约束？}
+你观察到的 ``逐个做'' 是计算循环顺序；但底层使用的是\textbf{同一套全局 CF/Bos 基底与同一份关系矩阵}。  
+因此 lift 规范只允许一次全局变换 $U$，而不是 ``每个 MC 各自一个 $U_i$''。  
+这就是 ``看起来逐个做'' 与 ``数学上仍是全局耦合'' 同时成立的原因。
+
+\paragraph{你提到 ``再对 CF self-stack 得到 $2b$，会不会有新贡献''}
+对单生成元情形，这个 $2b$ 正好对应 CF lift 变化诱导的代表元平移，不改变 extension 类（属于此前讲过的 ``换截面加 coboundary''）。  
+所以你说 ``在 CF nontrivial 时分阶段做是合理的''，在\textbf{判定 MC$\to$CF 这一级}上是严格正确的。
+
+\paragraph{一句话收束}
+\begin{equation}
+\text{单 MC 生成元：}b\text{ 是可吸收 ambiguity；多 MC 生成元：相对 }b\text{ 可能成为真不变量。}
+\label{eq:single-vs-multi-b}
+\end{equation}
+
+\paragraph{把你的第 3 问改成精确句子}
+不是 ``CF trivial 才看 bosonic''，而是：
+\begin{equation}
+\text{做阶段 A 时可忽略 bosonic；做最终总群时必须检查 }[F]_{\mathrm{res}}.
+\label{eq:stageA-stageB-rule}
+\end{equation}
+
+\paragraph{你问当前程序到底是哪种策略（旧版/新版）}
+当前实现是：
+\begin{enumerate}
+\item \textbf{无 $p+ip$ 时：}MC$\to$CF$\to$Bos \textbf{连续顺序扩张}（sequential）；
+\item \textbf{有 $p+ip$ 时：}$p+ip$ 与其余层分开处理（hybrid），但 MC/CF/Bos 内部仍是连续顺序扩张；
+\item 旧的 ``各层完全拆开再拼'' 版本仍保留作参考，但不是默认主流程，且已知会漏掉跨层系数（包括 MC$\to$Bos 在 CF 非零时的影响）。
+\end{enumerate}
+这正是你记忆里 ``以前改过一版'' 的区别所在：现在默认回到连续顺序法来保证跨层项不丢。
+
+\subsection{关键内部步骤的逐条数学化定义}
+
+这一节把你最关心的 ``程序逻辑'' 写成可核对方程。
+
+\paragraph{(1) 单层 coboundary 提升算子}
+给定只在第 $p$ 层非零的输入 $a$，程序构造一个总 cochain $D(a)$。
+数学上可写成
+\begin{equation}
+(D(a))^{p+1}=d a,\qquad
+(D(a))^{p+r}=-\,\mathfrak{d}_r(a,da)\ \ (r\ge 2),
+\label{eq:D-a}
+\end{equation}
+其中 $\mathfrak{d}_r$ 是安装在谱序列中的高页微分公式。
+这就是 ``把一个层元向上推成总 coboundary 修正''。
+
+\paragraph{(2) PartialPurify 的数学目标}
+设当前类在第 $p$ 层的值为 $c_p$，且它在第 $r$ 页可平凡，即
+\begin{equation}
+[c_p]_{E_r}=0.
+\label{eq:cp-trivial-er}
+\end{equation}
+则存在某个 $\beta$ 使
+\begin{equation}
+d_r\beta=c_p.
+\label{eq:dr-beta}
+\end{equation}
+程序做的就是选取一个这样的 $\beta$，然后更新
+\begin{equation}
+c\leftarrow c-D(\beta),
+\label{eq:partial-purify-update}
+\end{equation}
+使第 $p$ 层在第 $r$ 页障碍被消掉。
+
+\paragraph{(3) PartialPurifyCoboundary 的数学目标}
+当已下降到 $r=1$（普通 coboundary）时，目标是求 $n$ 满足
+\begin{equation}
+d_1 n = c_p.
+\label{eq:d1n-cp}
+\end{equation}
+但程序中 $n$ 先在 bar 向量空间求，再拉回 inhomogeneous cochain。
+因此它实际执行的是：
+\begin{enumerate}
+\item 在代数向量层面求一个线性特解 $n_{\mathrm{bar}}$；
+\item 通过固定的链映射/链同伦把它变成函数型 cochain $n_{\mathrm{inh}}$；
+\item 构造总 coboundary 修正态 $D(n_{\mathrm{inh}})$；
+\item 通过 stacking 执行代表元更新
+\begin{equation}
+c\leftarrow c\boxtimes D(-n_{\mathrm{inh}}).
+\label{eq:purify-stack-update}
+\end{equation}
+\end{enumerate}
+这里第 2 步是规范选择进入的地方；第 4 步正是你问的 ``程序到底 stack 了什么'' 的精确答案。
+
+\paragraph{(4) Purify 总流程}
+从低层到高层迭代：
+\begin{equation}
+p=0,1,\dots,d.
+\label{eq:purify-order}
+\end{equation}
+每一层都执行 ``先消高页障碍，再消 $d_1$ coboundary''。
+若某层不再可平凡，则该层成为 leading layer，流程停止或转入下一用途。
+
+\paragraph{(5) extension 关系矩阵的数学意义}
+设低层模块生成元为 $e_j$，其挠系数（对角关系）为 $t_j$。
+程序计算
+\begin{equation}
+t_j e_j \in \text{更高层模块},
+\label{eq:tjej}
+\end{equation}
+并展开为
+\begin{equation}
+t_j e_j = \sum_k r_{jk} f_k.
+\label{eq:relation-rjk}
+\end{equation}
+所有 $r_{jk}$ 拼成关系矩阵 $R$。
+最终群结构由 $R$ 的 Smith 标准形给出。
+
+\subsection{把 addTwister(4,0) 直接写成扩张 2-cocycle}
+
+令 $a,b\in K$，选代表 $\hat a,\hat b,\widehat{a+b}$。
+记第 4 层相位代表为 $\nu_4(\hat a)$ 等。
+那么程序中的 bosonic 层 correction 可抽象写成
+\begin{equation}
+\Omega(a,b)=
+\nu_4(\hat a)+\nu_4(\hat b)+t_4(\hat a,\hat b)-\nu_4(\widehat{a+b})
+\in A.
+\label{eq:Omega-from-t4}
+\end{equation}
+
+这就是扩张 2-cocycle 的具体实现版本。
+你担心的 ``换一个 $\nu_4$ 特解会不会改结果''，在这里等价为：
+\begin{equation}
+\nu_4(\hat a)\mapsto \nu_4(\hat a)+\phi(a)
+\ \Longrightarrow\
+\Omega\mapsto \Omega+\delta\phi.
+\label{eq:Omega-coboundary-shift}
+\end{equation}
+只要最终只取 $[\Omega]$，物理群结构就不变。
+
+\section{$p+ip$ 层高阶未知时的处理策略（重点）}
+\label{sec:ppip-strategy}
+
+这一节专门回答：当 $d_3,d_4$ 以及对应 stacking twister 未知时，程序应该怎么做才既物理合理又数学自洽。
+
+\subsection{问题背景：我们已知与未知的边界}
+
+对 $p+ip$ 层（记作 $n_1$）而言，你现在掌握的是：
+\begin{itemize}
+\item 已知并可用：$d_2$，以及从 $p+ip$ 到 MC 的第一个 twister（记作已知层间耦合）；
+\item 未知：$d_3,d_4$，以及 $p+ip$ 参与的更高层 twister（尤其与 CF/Bos 的耦合项）。
+\end{itemize}
+
+所以你的核心困难不是 ``不会算''，而是 ``数据不完整导致高层 torsor 无法定标''。
+
+\subsection{先回答你的第 1 个问题：MC 延到 CF 后，能否重选一个 CF 态继续算？}
+
+\paragraph{设定}
+设一个 MC 根态 $x_{\mathrm{MC}}$ 的 self-stacking 给出
+\begin{equation}
+2x_{\mathrm{MC}}\sim y_{\mathrm{CF}},
+\label{eq:mc-to-cf-y}
+\end{equation}
+其中 $y_{\mathrm{CF}}$ 是 CF 层类（可能还带 bosonic 代表）。
+
+\paragraph{结论（严格版）}
+可以 ``把 MC 设为 0 后继续算 CF''，但前提是你保留的是 \textbf{同一个 CF 物理类} $[y_{\mathrm{CF}}]$，而不是任意挑一个 CF 根态。
+
+也就是说：
+\begin{itemize}
+\item 若你重选的 CF 态与 $y_{\mathrm{CF}}$ 只差规范重定义（CF coboundary + 允许的 bosonic 截面平移），则等价；
+\item 若你换成另一个不同 CF 类，就不等价，最后 extension 结论可能变。
+\end{itemize}
+
+\paragraph{人话版}
+你可以 ``重开一局'' 从 CF 层往下算，但必须把上一局（MC self-stack）产出的那个 CF 类带过去。  
+你不能把 ``产出的 CF'' 偷换成 ``你喜欢的另一个 CF''。
+
+\subsection{你的第 2 个问题：对 $p+ip$ 能否 ``算完前两步就扔掉，再从 $n_1=0$ 重算下层''？}
+
+\paragraph{短答案}
+这是一个\textbf{保守且工程上合理}的策略，但它给的是 ``已知部分''，不是完整总答案。
+
+\paragraph{数学上怎么表述}
+定义
+\begin{equation}
+\mathcal{G}_{\mathrm{low}}:=\text{在 }n_1=0\text{ 条件下算出的 MC+CF+Bos 部分（可严格）},
+\label{eq:Glow}
+\end{equation}
+\begin{equation}
+\mathcal{G}_{p+ip}^{(2)}:=\text{只用已知 }d_2\text{ 与首个 twister 得到的 }p+ip\text{ 有效信息}.
+\label{eq:Gppip2}
+\end{equation}
+
+完整总群 $\mathcal{G}_{\mathrm{tot}}$ 还会受未知高阶数据影响，可写成
+\begin{equation}
+\mathcal{G}_{\mathrm{tot}}=\text{Glue}\big(\mathcal{G}_{\mathrm{low}},\mathcal{G}_{p+ip}^{(2)};\ \mathcal{U}_{\mathrm{unknown}}\big),
+\label{eq:Gtot-unknown}
+\end{equation}
+其中 $\mathcal{U}_{\mathrm{unknown}}$ 代表由未知 $d_3,d_4$ 与未知 twister 引入的不确定扩张参数。
+
+\paragraph{所以你的做法应如何标注}
+\begin{itemize}
+\item 可以做，而且应该做（能得到稳定的已知部分）；
+\item 但必须在结果里明确标注：``这是 \textbf{忽略未知高阶耦合} 的条件结果''。
+\end{itemize}
+
+\paragraph{建议的程序模式（推荐）}
+\begin{enumerate}
+\item \textbf{严格模式}：只输出 $\mathcal{G}_{\mathrm{low}}$ 与 $\mathcal{G}_{p+ip}^{(2)}$，并显式输出 unknown 标志，不强行给总群。
+\item \textbf{假设模式}：附加物理假设 ``未知高阶项不改变结果''（或取零代表）后给一个 conjectural 总群。
+\end{enumerate}
+当前你描述的流程，正好是严格模式的主干。
+
+\subsection{针对你关心的情形：$p+ip$ 至多一个 $\mathbb{Z}_2$ 生成元}
+
+这正是你刚才问的场景。记该生成元为 $x$。
+
+\paragraph{把已知/未知分开写}
+在过滤意义下可写成
+\begin{equation}
+2x = m_{\mathrm{known}} + u_{\mathrm{unknown}},
+\label{eq:2x-known-unknown}
+\end{equation}
+其中
+\begin{itemize}
+\item $m_{\mathrm{known}}$ 是由已知 $d_2$ 与首个 twister 投影到 MC 层得到的部分；
+\item $u_{\mathrm{unknown}}$ 收集由未知 $d_3,d_4$ 与未知高阶 twister 可能带来的 CF/Bos 部分。
+\end{itemize}
+
+\paragraph{什么叫 ``完全 safe''}
+\begin{enumerate}
+\item 若 $m_{\mathrm{known}}\neq 0$，则 ``$p+ip\to$MC 非平凡'' 这条结论是\textbf{严格安全}的（因为它只依赖已知数据的 MC 投影）。
+\item 但这不等于 ``全群结构已经完全定了''；高层可能还有附加项 $u_{\mathrm{unknown}}$。
+\end{enumerate}
+
+\paragraph{若 MC 投影为零，该怎么说}
+若 $m_{\mathrm{known}}=0$，只能说明 ``已知一级里没看到 MC 扩张''。  
+不能严格推出 ``后面无扩张''，因为未知项 $u_{\mathrm{unknown}}$ 仍可能在 CF/Bos 出现。
+
+\paragraph{你提出的实操流程是否合理}
+\textbf{合理，但要带标签。}
+\begin{itemize}
+\item 先看 $p+ip\to$MC：这是硬结论层；
+\item 若 MC 非零，先记为已证明 extension，再继续算 MC/CF/Bos（这部分在 $n_1=0$ 子问题里是严格的）；
+\item 若 MC 为零，再尝试用当前可用数据看是否出现 CF（这一步是条件结论）；
+\item 其后 ``假设没有 further extension'' 可以作为工作假设，但必须明确写成假设，不写成定理。
+\end{itemize}
+
+\paragraph{一句话版（与你的话对齐）}
+你说的流程是对的：
+\begin{equation}
+\text{先抓住 }p+ip\to \text{MC 这条硬信息；后面的 ``没有扩张'' 只能算假设模式。}
+\label{eq:ppip-single-z2-rule}
+\end{equation}
+这也正是当前程序把 $p+ip$ 抽出来单独处理的核心动机。
+
+\subsection{你的第 3 个问题：若 $p+ip$ 给出 $\mathbb{Z}$，还能否非平凡 extend 到后面 $\mathbb{Z}_2$ 层？}
+
+\paragraph{关键命题}
+对任意阿贝尔群 $A$，有
+\begin{equation}
+\mathrm{Ext}^1(\mathbb{Z},A)=0.
+\label{eq:ExtZzero}
+\end{equation}
+因此任意短正合列
+\begin{equation}
+0\to A\to E\to \mathbb{Z}\to 0
+\label{eq:ses-Z}
+\end{equation}
+都分裂，故
+\begin{equation}
+E\cong A\oplus \mathbb{Z}.
+\label{eq:split-Z}
+\end{equation}
+
+\paragraph{物理含义}
+如果 $p+ip$ 最终部分真的是无限阶 $\mathbb{Z}$，那它不能与后面的有限 $\mathbb{Z}_2$ 层形成非平凡扩张；只能直和并存。
+
+\paragraph{再给一个你熟悉的直觉检查}
+若你硬说存在关系 $2x=y$ 且 $y$ 为 2-阶元，则 $4x=0$，这会把 $x$ 变成挠元，不再是无限阶。  
+所以 ``无限阶 $\mathbb{Z}$ 生成元被有限层非平凡 extend'' 与 ``它还是 $\mathbb{Z}$'' 两者矛盾。
+
+\paragraph{结论}
+\begin{itemize}
+\item 你说的判断基本正确：真正可能出现非平凡 extension 的重点是 $p+ip$ 给出挠部分（典型是 $\mathbb{Z}_2$）时；
+\item 若是 $\mathbb{Z}$，从阿贝尔群扩张角度看应是分裂的。
+\end{itemize}
+
+\subsection{把这一节压缩成一句执行准则}
+
+\begin{equation}
+\text{已知算子算到哪一页就严格停到哪一页；未知页只做假设模式，不混入严格结论。}
+\label{eq:ppip-rule}
+\end{equation}
+
+\begin{remark}
+这条准则与你当前的调试目标（先把可严格部分完全做干净）完全一致，也最不容易把 ``物理假设'' 误当成 ``已证明结果''。
+\end{remark}
+
+\section{两者差异到底在哪里}
+\label{sec:difference}
+
+\subsection{数学理论的要求}
+
+理论要求是：
+\begin{equation}
+\text{换截面}\ s\mapsto s' \ \Longrightarrow\ \text{最终群结构不变。}
+\label{eq:invariance-principle}
+\end{equation}
+
+\subsection{程序实现里最容易出问题的点}
+
+如果最终结果对代表元选择敏感，通常会出现在以下环节：
+\begin{enumerate}
+\item \textbf{MapTo/MapFrom Bar}：同一个 cohomology 类在整数提升中的表示不稳定；
+\item \textbf{SolveCocycleEq}：选特解的规则与后续 purify 不兼容；
+\item \textbf{Purify 停止层级}：某一层先失败导致更高层没有被一致规范化；
+\item \textbf{Extension 投影}：把类投到高层向量时，混入了规范依赖量。
+\end{enumerate}
+
+\section{可执行的严格 Debug 检查单}
+\label{sec:checklist}
+
+本节给的是数学检查条件，不依赖具体语法。
+
+\subsection{检查 A：截面变换不变性}
+
+固定一个 $a\in K$，对代表做规范平移
+\begin{equation}
+s(a)\mapsto s'(a)=\eta(a)\cdot s(a),\qquad \eta(a)\in A.
+\label{eq:section-test}
+\end{equation}
+检查最终关系矩阵对应的 SNF 不变。
+
+\subsection{检查 B：$2x$ 关系的奇偶不变量}
+
+对 $K=\mathbb{Z}_2$ 的生成元 lift，比较
+\begin{equation}
+2\tilde{x}=\mu,\qquad 2(\tilde{x}+a)=\mu+2a.
+\label{eq:2x-test}
+\end{equation}
+要求程序只能把 $\mu$ 的奇偶作为不变量，而不把 $\mu$ 的具体值当物理可观测。
+
+\subsection{检查 C：方程残差检查}
+
+对每一次 ``求特解'' 输出 $u$，都检查
+\begin{equation}
+d u - \alpha = 0
+\label{eq:residual}
+\end{equation}
+是否严格成立（在对应系数群中）。
+若残差不为零，后续 extension 全部不可信。
+
+\subsection{检查 D：映射回路一致性}
+
+检查 round-trip：
+\begin{equation}
+\text{(bar 向量)}\ \xrightarrow{\ \mathrm{MapTo}\ }\ \text{inhomogeneous cochain}
+\xrightarrow{\ \mathrm{MapFrom}\ }\ \text{bar 向量}
+\label{eq:roundtrip}
+\end{equation}
+应回到同一等价类（允许 coboundary 误差，但不允许跨类漂移）。
+
+\section{当前阶段结论（先写死在笔记里）}
+\label{sec:current-conclusion}
+
+基于当前已有对照结果（C++ 与 GAP 一比一翻译并逐项验证）：
+\begin{enumerate}
+\item 公式层（cup 展开）不是当前主矛盾；
+\item 查表层（Majorana 相关表）不是当前主矛盾；
+\item 主要怀疑点应转移到 ``代表元选择/映射/purify/extension'' 计算逻辑层。
+\end{enumerate}
+
+这与本文第 \ref{sec:difference} 节的理论预期完全一致。
+
+\section{下一步写作计划}
+\label{sec:plan}
+
+后续每次 debug 讨论，按下列格式追加到本文件：
+\begin{enumerate}
+\item \textbf{现象}：哪一组群、哪一层、错误现象；
+\item \textbf{数学等价命题}：把代码问题改写成一个可判定数学命题；
+\item \textbf{检查结果}：通过/失败；
+\item \textbf{结论}：保留或排除哪个嫌疑环节。
+\end{enumerate}
+
+这样可以保证你始终在 ``数学命题'' 层面看问题，而不是陷入代码细节噪声。
+
+%% ====================================================================
+%% 新章节：空间群生产线 MC stacking 现状与 debug 方向
+%% ====================================================================
+
+\section{空间群生产线 MC stacking 现状}
+\label{sec:spacegroup-mc-status}
+
+本节记录 2026-03-17 生产线（\texttt{/home/user/xyren/software/gap-4.13.1/pkg/SptSet/space\_group}）
+对 230 个三维空间群的计算结果中，与 \textbf{MC (Majorana Chain) 层 stacking} 相关的两类异常。
+
+\subsection{生产线与 debug 线的代码差异}
+\label{sec:prod-vs-debug}
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+模块 & 生产线 & debug 线 \\
+\hline
+\texttt{SptSetSpecSeqResult} & Layer-wise（分阶段） & Hybrid（$p{+}ip$ 单独 + 其余 sequential） \\
+\texttt{SptSetSpecSeqModuleExtension} & 仅支持单层 \texttt{pRange} & 支持多 \texttt{pRange} \\
+\texttt{addTwister(4,0)} & Cup 乘积公式 & C++ Z2 展开翻译 \\
+\texttt{addTwister(5,0)} & Cup3 公式 & 设为 \texttt{ZeroCocycle@} \\
+\texttt{SptSetStack} & 相同 & 相同 \\
+\texttt{Purify} 相关函数 & 相同 & 相同 \\
+\hline
+\end{tabular}
+\end{center}
+
+\paragraph{Layer-wise 与 Sequential 的区别}
+
+生产线的 \texttt{SptSetSpecSeqResult}（\texttt{ss\_module.gi}）采用 \textbf{layer-wise} 策略：
+\begin{enumerate}
+\item Step 1：对每个层 $p$ 独立调用 \texttt{SptSetSpecSeqComponentEx}，得到各层的分类 $\texttt{Exs}[p_i]$。
+\item Step 2：填充对角块（每个生成元的 torsion）。
+\item Step 3：对每个层 $p_i$ 的每个生成元 $j$，计算
+\begin{equation}
+t_j \cdot \text{gen}_j \;\xrightarrow{\text{VectorToClass}}\; \text{class} \;\xrightarrow{\text{Purify}}\; \text{leading layer} \;\xrightarrow{\text{ClassToLeadingVector}}\; \text{extension 系数}
+\end{equation}
+填入关系矩阵 $R$ 的非对角块。
+\item Step 4：对 $R$ 做 Smith Normal Form，得到最终群结构。
+\end{enumerate}
+
+Debug 线则采用 hybrid 策略：$p{+}ip$ 单独处理，MC/CF/Bos 用 sequential extension 逐层构造。
+
+\subsection{两类异常的共同特征}
+
+84 个已完成的空间群中，出现两类异常，\textbf{全部与 MC 层有关}：
+
+\begin{enumerate}
+\item \textbf{ModRat 致命崩溃}（2 个）：Phase B Step3 extension 时，程序崩溃。
+\item \textbf{``top layer is not a cocycle'' 断言警告}（9 个）：Phase B Step3 extension 时，程序打印警告但继续运行并输出结果。
+\end{enumerate}
+
+两者共享同一根因路径：
+\begin{equation}
+\texttt{SptSetStack} \;\to\; \texttt{addTwister(4,0)} \;\to\; \text{Bosonic 层出现有理数（非整数）}
+\label{eq:mc-bos-path}
+\end{equation}
+
+\subsection{ModRat 致命崩溃（SG\#22, SG\#42）}
+\label{sec:modrat-bug}
+
+\paragraph{现象}
+
+\begin{center}
+\begin{tabular}{llll}
+\hline
+SG & 各层生成元 \texttt{nGens} & 错误点 & 分类结果 \\
+\hline
+22 & $[0, 1, 0, 8]$ & \texttt{ext layer 2 (p=2) gen 1/1} & $E^{2,2}{=}[\mathbb{Z}_2],\ E^{4,0}{=}[\mathbb{Z}_2^8]$ \\
+42 & $[0, 1, 0, 2]$ & \texttt{ext layer 2 (p=2) gen 1/1} & $E^{2,2}{=}[\mathbb{Z}_2],\ E^{4,0}{=}[\mathbb{Z}_2,\mathbb{Z}_2]$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\texttt{nGens} 格式为 $[n_{p{+}ip},\; n_{\mathrm{MC}},\; n_{\mathrm{CF}},\; n_{\mathrm{Bos}}]$。
+两者的共同特征：\textbf{MC$\neq 0$, CF$=0$}。
+
+\paragraph{错误信息}
+
+\begin{verbatim}
+Error, ModRat: for <r>/<s> mod <n>,
+  <s>/gcd(<r>,<s>) and <n> must be coprime
+  at lib/module.gi:191
+\end{verbatim}
+
+\paragraph{调用链}
+
+\begin{verbatim}
+SptSetSpecSeqResult (Step3 extension 循环)
+  → SptSetSpecSeqModuleClassToLeadingVector(Exs[pj], cjn)
+      → SptSetPurifySpecSeqClass(cjn)        ... purify 过程中触发断言 ...
+      → v := SptSetMapFromBarCocycle(brMap, p=4, spectrum[1], ...)
+      → SptSetFpZModuleCanonicalElm(M!.components[4], v)
+          → vp[i] := vp[i] mod R[i][i];   ← 崩溃点：vp[i] 为有理数
+\end{verbatim}
+
+\paragraph{崩溃机制}
+
+由于 CF$=0$（\texttt{nGens[3]=0}），extension 循环跳过 CF 层，直接尝试在 Bosonic 层（$p=4$）找 leading vector。
+Bosonic 层的系数群是 $U(1)$，在 HAP 表示中经 Bockstein 映射后可能产生有理数。
+GAP 的 \texttt{mod} 运算要求分母与模数互素，否则直接报错。
+
+\paragraph{关键数学问题}
+
+为什么 Bosonic 层会出现有理数？最可疑的环节是 \texttt{addTwister(4,0)} 中的 $\frac{1}{2}$ 因子：
+\begin{equation}
+\texttt{addTwister}(4,0) = \frac{1}{2}\,e_{4c} + \frac{1}{2}\,e_{4cg} + t_4
+\label{eq:addtwister40}
+\end{equation}
+其中 $e_{4c}, e_{4cg}$ 是 MC cochain 的 Cup 乘积，$t_4$ 是 ExtData 表查询。
+如果 $e_{4c} + e_{4cg}$ 不总是偶数，$\frac{1}{2}$ 就会产生非整数。
+
+\subsection{``top layer is not a cocycle'' 断言警告（9 个 SG）}
+\label{sec:assertion-warning}
+
+\paragraph{现象}
+
+\begin{center}
+\begin{tabular}{lllll}
+\hline
+SG & \texttt{nGens} & 断言上下文 & 群结构 & 状态 \\
+\hline
+30 & $[0,2,2,2]$ & \texttt{d2\^{}\{2,1\}\_2} & $[\mathbb{Z}_2,\mathbb{Z}_4,\mathbb{Z}_8]$ & 正常完成 \\
+36 & $[0,1,1,0]$ & \texttt{ext layer 2} & $[\mathbb{Z}_2,\mathbb{Z}_2]$ & 正常完成 \\
+41 & $[0,2,1,1]$ & \texttt{d2\^{}\{2,1\}\_2} & $[\mathbb{Z}_2,\mathbb{Z}_2,\mathbb{Z}_4]$ & 正常完成 \\
+56 & $[0,1,2,0]$ & \texttt{ext layer 2} & $[\mathbb{Z}_2^3]$ & 正常完成 \\
+60 & $[0,?,?,?]$ & \texttt{ext layer 2} & $[\mathbb{Z}_2^2,\mathbb{Z}_4]$ & 正常完成 \\
+64 & $[0,?,?,?]$ & \texttt{d2\^{}\{2,1\}\_2} & $[\mathbb{Z}_2,\mathbb{Z}_2,\mathbb{Z}_4]$ & 正常完成 \\
+68 & $[0,?,?,?]$ & \texttt{ext layer 2} & $[\mathbb{Z}_2^2,\mathbb{Z}_2,\mathbb{Z}_4]$ & 正常完成 \\
+85 & $[1,1,3,2]$ & — & $[\mathbb{Z}_2^2,\mathbb{Z}_8^2,0]$ & 正常完成 \\
+90 & $[0,1,1,5]$ & \texttt{ext layer 2} & $[\mathbb{Z}_2^4,\mathbb{Z}_2,\mathbb{Z}_8]$ & 正常完成 \\
+\hline
+\end{tabular}
+\end{center}
+
+所有 9 个 SG 的共同特征：\textbf{MC$\neq 0$, CF$\neq 0$}。
+
+\paragraph{断言位置}
+
+两处均检查同一条件：
+
+\begin{verbatim}
+% ss_cochain.gi:156 (PartialPurifySSClass@)
+% ss_class.gi:74   (SptSetPurifySpecSeqClass)
+cp := SptSetMapFromBarCocycle(brMap, p, spectrum[q+1], cp_);
+Assert(-1, ForAll(cp, IsInt),
+       "ASSERTION FAILURE: top layer is not a cocycle");
+\end{verbatim}
+
+\texttt{Assert(-1, ...)} 在条件为假时只打印警告，不抛 \texttt{Error}，程序继续执行。
+
+\paragraph{为什么不崩溃}
+
+与 ModRat 崩溃的本质区别：这 9 个 SG 都有 CF$\neq 0$。
+Extension 循环先尝试 CF 层（$p=3$）：
+\begin{enumerate}
+\item MC gen 的 torsion 倍 $\to$ \texttt{VectorToClass} $\to$ class \texttt{cjn}
+\item 调用 \texttt{ClassToLeadingVector(Exs[CF], cjn)}
+\item 内部调用 \texttt{PurifySpecSeqClass(cjn)}，purify 过程\textbf{遍历到 Bosonic 顶层时}触发断言（有理数）
+\item 但 leading layer 在 CF 层（$p=3$）就找到了非零投影
+\item CF 层使用 $\mathbb{Z}_2$ 系数，\texttt{MapFromBarCocycle} 返回整数 $\to$ \texttt{CanonicalElm} 正常 $\to$ 不崩溃
+\end{enumerate}
+
+\subsection{两类异常的统一根因分析}
+\label{sec:unified-root-cause}
+
+\begin{center}
+\begin{tabular}{lcc}
+\hline
+ & ModRat 崩溃 & 断言警告 \\
+\hline
+触发条件 & MC$\neq 0$, CF$=0$ & MC$\neq 0$, CF$\neq 0$ \\
+Extension 路径 & MC $\to$ 跳过 CF $\to$ \textbf{Bos}（崩溃） & MC $\to$ \textbf{CF}（成功） $\to$ Bos 仅被 purify 检查 \\
+根因 & \multicolumn{2}{c}{Bosonic 层（$p=4$）在 purify/extension 时出现有理数} \\
+最终后果 & \texttt{mod} 运算崩溃 & 只有警告，结果可能仍然正确 \\
+\hline
+\end{tabular}
+\end{center}
+
+\paragraph{一句话总结}
+
+\begin{equation}
+\boxed{\text{两类异常本质相同：\texttt{addTwister(4,0)} 使 Bosonic 层产生非整数。CF$=0$ 时致命，CF$\neq0$ 时被掩盖。}}
+\label{eq:root-cause-summary}
+\end{equation}
+
+\subsection{下一步 debug 方向}
+\label{sec:next-debug-plan}
+
+基于以上分析，debug 应聚焦于 \textbf{MC $\to$ Bosonic 的 stacking twister}，即 \texttt{addTwister(4,0)}。
+以下列出具体的 debug 任务和对照实验。
+
+\paragraph{任务 1：最小复现}
+找一个最小的空间群来复现问题。SG\#42 是最好的候选：
+\begin{itemize}
+\item \texttt{nGens = [0, 1, 0, 2]}，只有 1 个 MC 生成元、2 个 Bosonic 生成元，结构最简单。
+\item Resolution dims \texttt{1,5,12,20,28,36,44}，计算量可控。
+\item 崩溃点确定性：每次都在同一位置崩溃。
+\end{itemize}
+
+\paragraph{任务 2：定位有理数的来源}
+在 \texttt{addTwister(4,0)} 中插入诊断代码，打印输入和输出：
+\begin{itemize}
+\item 检查输入 MC cochains（\texttt{l1}, \texttt{l2} 的 layers）是否为整数。
+\item 检查 Cup 乘积 $e_{4c}$, $e_{4cg}$ 的值。
+\item 检查 $e_{4c} + e_{4cg}$ 是否总是偶数。
+\item 检查 ExtData 表 $t_4$ 的值。
+\item 确定是 $\frac{1}{2}$ 因子还是 $t_4$ 或两者的组合导致有理数。
+\end{itemize}
+
+\paragraph{任务 3：对比生产线公式与 C++ 翻译}
+在同一输入上，分别用：
+\begin{itemize}
+\item 生产线公式（Cup 乘积版）计算 \texttt{addTwister(4,0)} 的输出。
+\item Debug 线公式（C++ Z2 展开版）计算同一输出。
+\item 两者逐点比较，找出分歧点。
+\end{itemize}
+
+\paragraph{任务 4：Purify 路径追踪}
+在 \texttt{SptSetPurifySpecSeqClass} 中添加详细日志，对 SG\#42 的 MC 生成元追踪：
+\begin{itemize}
+\item Purify 遍历到哪一层时出现非整数？
+\item 非整数是在 \texttt{SptSetStack}（stacking rule 调用 \texttt{addTwister}）中产生的，
+  还是在 \texttt{MapFromBarCocycle} 的映射过程中产生的？
+\item 如果在 \texttt{MapFromBarCocycle} 中产生，检查输入 cochain 是否已经含有有理数。
+\end{itemize}
+
+\paragraph{任务 5：MC cochain 的 mod 2 归约检查}
+$\frac{1}{2}(e_{4c}+e_{4cg})$ 假设 $e_{4c}+e_{4cg}$ 总是偶数。
+MC 系数群是 $\mathbb{Z}_2$，在 HAP 表示中 cochain 值可以是任意整数（物理上只有 $\bmod\,2$ 有意义）。
+\begin{itemize}
+\item 检查在调用 \texttt{addTwister(4,0)} 时，MC cochain 的值是否已被 $\bmod\,2$ 归约。
+\item 如果没有归约（比如 cochain 值为 2, 3, 4, ...），$e_{4c}+e_{4cg}$ 的奇偶性可能不对。
+\item 在 C++ 中，cochain 很可能在每步都做了 \texttt{\% 2} 归约，而 GAP 可能没有。
+\item \textbf{这是最可疑的差异来源}：同一公式，C++ 有效但 GAP 无效，可能就是因为 GAP 的 cochain 没有 $\bmod\,2$ 归约。
+\end{itemize}
+
+\paragraph{任务 6：Layer-wise 与 Sequential 对比实验}
+在 debug 线上对 SG\#42 分别用：
+\begin{itemize}
+\item Layer-wise stacking（模仿生产线）
+\item Sequential stacking（debug 线现有逻辑）
+\end{itemize}
+看两者是否都崩溃，或者只有一个崩溃。这可以区分 bug 是在 stacking 逻辑中还是在 extension 组装中。
+
+\paragraph{优先级排序}
+
+\begin{enumerate}
+\item \textbf{最高}：任务 2（定位有理数来源）$+$ 任务 5（mod 2 归约检查）$\to$ 这两个联合做，大概率直接定位根因。
+\item \textbf{次高}：任务 1（最小复现，SG\#42）$\to$ 为后续实验提供测试平台。
+\item \textbf{中等}：任务 4（Purify 路径追踪）$\to$ 如果任务 2+5 没有直接给出答案，追踪整条路径。
+\item \textbf{辅助}：任务 3（公式对比）和 任务 6（stacking 策略对比）$\to$ 交叉验证用。
+\end{enumerate}
+
+
+%% ====================================================================
+%% 实验记录
+%% ====================================================================
+
+\section{实验记录}
+\label{sec:experiments}
+
+\subsection{实验计划总览}
+\label{sec:exp-plan}
+
+为了定位 MC stacking 的 bug，设计了以下对照实验系列。
+每个实验都用 \textbf{Layer-wise}（生产线方法）和 \textbf{Sequential}（逐层 extension 方法）两种方式分别计算群结构，详细比较中间结果。
+所有实验跳过 $p{+}ip$ 层（\texttt{pRange=[2,3,4]}），在 cluster3 登录节点上用 10 核并行运行。
+
+\begin{center}
+\begin{tabular}{llllll}
+\hline
+实验 & 群 & 各层生成元 & 关注点 & 预期 \\
+\hline
+1 & SG\#6 & MC=1, CF=2, Bos=2 & MC$\to$CF 存在，两种方法应一致 & 无报错，一致 \\
+2 & S4（s12 模式） & MC$\neq$0, CF$\neq$0 & 已知 $\mathbb{Z}_4$ vs $\mathbb{Z}_2\times\mathbb{Z}_2$ 差异 & 找出分歧层 \\
+3 & C4v（s12 模式） & MC$\neq$0 & 生产线有 assertion 警告 & 定位 assertion 来源 \\
+\hline
+\end{tabular}
+\end{center}
+
+\paragraph{实验设计原则}
+\begin{enumerate}
+\item 对同一群，用两种方法分别算，\textbf{打印关系矩阵 $R$}（SNF 之前），逐行比较。
+\item 每一行 $R_j$ 对应一个生成元的 self-stacking 关系：$t_j \cdot e_j = \sum_k r_{jk} f_k$。
+  用人话说就是：第 $j$ 个生成元自己 stack 自己 $t_j$ 次之后，``落到了''哪些更高层生成元上。
+\item 用 SNF 消去基变换，得到最终群结构，再比较。
+\item 重点关注 MC 生成元那一行——它是不是 extend 到了 CF？还是直接碰 Bos？
+  如果 extend 到了 CF，就绕开了 $\frac{1}{2}(e_{4c}+e_{4cg})$ 的雷区。
+\end{enumerate}
+
+
+\subsection{实验 1：SG\#6 Layer-wise vs Sequential 对比}
+\label{sec:exp1-sg6}
+
+\paragraph{基本信息}
+\begin{itemize}
+\item 空间群：SG\#6，Resolution dims: 1 4 7 8 8 8 8
+\item 各层 $E_\infty$ 分类：MC $=\mathbb{Z}_2$（1个），CF $=\mathbb{Z}_2^2$（2个），Bos $=\mathbb{Z}_2^2$（2个）
+\item 总共 5 个生成元，全部挠系数为 2
+\item 运行环境：cluster3 登录节点，10 核并行
+\item 脚本：\texttt{debug/exp\_sg6\_compare.g}
+\item 日志：\texttt{debug/exp\_sg6\_compare.log}
+\end{itemize}
+
+\paragraph{Layer-wise 结果}
+
+关系矩阵（5 个生成元排列为 MC, CF$_1$, CF$_2$, Bos$_1$, Bos$_2$）：
+\begin{equation}
+R_{\mathrm{LW}} = \begin{pmatrix}
+2 & 0 & 1 & 0 & 0 \\
+0 & 2 & 0 & 1 & 1 \\
+0 & 0 & 2 & 1 & 0 \\
+0 & 0 & 0 & 2 & 0 \\
+0 & 0 & 0 & 0 & 2
+\end{pmatrix}
+\label{eq:rmat-lw-sg6}
+\end{equation}
+
+每一行用人话翻译：
+\begin{enumerate}
+\item $2\cdot\mathrm{MC} = \mathrm{CF}_2$：MC 自己 stack 自己，MC 层消掉（$\mathbb{Z}_2$ 系数，$n_2+n_2=0$），
+  CF 层冒出 $m_3(n_2,n_2)$，purify 后发现它是 CF$_2$ 方向的非零分量。
+  \textbf{MC extend 到了 CF$_2$}。没有直接的 Bos 贡献。
+\item $2\cdot\mathrm{CF}_1 = \mathrm{Bos}_1 + \mathrm{Bos}_2$：CF$_1$ 自己 stack 自己，CF 层消掉，
+  Bos 层冒出 $\mathcal{E}_4$ twister 的贡献。\textbf{CF$_1$ extend 到 Bos$_1$ 和 Bos$_2$}。
+\item $2\cdot\mathrm{CF}_2 = \mathrm{Bos}_1$：\textbf{CF$_2$ extend 到 Bos$_1$}。
+\item $2\cdot\mathrm{Bos}_1 = 0$，$2\cdot\mathrm{Bos}_2 = 0$：Bos 是 $\mathbb{Z}_2$ 系数，2 倍归零。
+\end{enumerate}
+
+\paragraph{级联 extension 追踪}
+\begin{equation}
+\mathrm{MC} \xrightarrow{2\times} \mathrm{CF}_2 \xrightarrow{2\times} \mathrm{Bos}_1 \xrightarrow{2\times} 0
+\label{eq:cascade-sg6}
+\end{equation}
+因此 $8\cdot\mathrm{MC}=0$，MC 的阶是 8，贡献 $\mathbb{Z}_8$。
+
+另一条链：$\mathrm{CF}_1 \xrightarrow{2\times} \mathrm{Bos}_1{+}\mathrm{Bos}_2 \xrightarrow{2\times} 0$，
+CF$_1$ 的阶是 4，贡献 $\mathbb{Z}_4$。
+
+\begin{equation}
+\boxed{\text{Layer-wise 最终群结构：}\mathbb{Z}_4 \times \mathbb{Z}_8}
+\end{equation}
+耗时 226 秒。\textbf{无任何 assertion 警告或报错。}
+
+\paragraph{Sequential 结果}
+
+\textbf{第一步：Ext(MC, CF)}，3 个生成元（MC, CF$_1$, CF$_2$）：
+\begin{equation}
+R_{\mathrm{Ext1}} = \begin{pmatrix}
+2 & 0 & 1 \\
+0 & 2 & 0 \\
+0 & 0 & 2
+\end{pmatrix}
+\label{eq:rmat-ext1-sg6}
+\end{equation}
+\begin{itemize}
+\item $2\cdot\mathrm{MC} = \mathrm{CF}_2$：和 Layer-wise 完全一致。MC extend 到 CF$_2$。
+\item CF$_1$, CF$_2$ 在 MC+CF 内部不 extend（这一步只看 MC$\to$CF），$2\times = 0$。
+\end{itemize}
+SNF：$\mathbb{Z}_2 \times \mathbb{Z}_4$。其中 $\mathbb{Z}_2$ 是纯 CF$_1$，$\mathbb{Z}_4$ 是 MC$\to$CF$_2$ 链条。
+
+\textbf{第二步：Ext(MC+CF 合体, Bos)}，4 个生成元（gen$_1$, gen$_2$, Bos$_1$, Bos$_2$）：
+\begin{equation}
+R_{\mathrm{Ext2}} = \begin{pmatrix}
+2 & 0 & 1 & 1 \\
+0 & 4 & 1 & 0 \\
+0 & 0 & 2 & 0 \\
+0 & 0 & 0 & 2
+\end{pmatrix}
+\label{eq:rmat-ext2-sg6}
+\end{equation}
+\begin{itemize}
+\item $2\cdot\mathrm{gen}_1 = \mathrm{Bos}_1 + \mathrm{Bos}_2$：gen$_1$ 就是纯 CF$_1$（阶 2），
+  和 Layer-wise 的 CF$_1$ 那行完全一致。
+\item $4\cdot\mathrm{gen}_2 = \mathrm{Bos}_1$：gen$_2$ 是 MC$\to$CF$_2$ 链条（阶 4），
+  stack 四次后对应 $4\cdot\mathrm{MC} = 2\cdot\mathrm{CF}_2 = \mathrm{Bos}_1$，
+  和 Layer-wise 的级联追踪完全吻合。
+\item Bos 本身 $2\times = 0$。
+\end{itemize}
+
+\begin{equation}
+\boxed{\text{Sequential 最终群结构：}\mathbb{Z}_4 \times \mathbb{Z}_8}
+\end{equation}
+耗时 2065 秒。\textbf{无任何 assertion 警告或报错。}
+
+\paragraph{结论}
+
+\begin{enumerate}
+\item \textbf{两种方法完全一致}：关系矩阵的物理含义逐行吻合，最终群结构都是 $\mathbb{Z}_4\times\mathbb{Z}_8$。
+\item \textbf{为什么没有 assertion 警告}：MC extend 到了 CF$_2$，Layer-wise 的 MC 行在 CF 层就找到了非零向量，
+  不需要碰 Bos 层的 twister。CF$_1$, CF$_2$ 做 extension 到 Bos 时，它们的 MC 数据为 0，
+  $\frac{1}{2}(e_{4c}+e_{4cg})$ 中 $e_{4c}=e_{4cg}=0$，不会产生非整数。
+  \textbf{结构性地绕开了 $\frac{1}{2}$ 的雷区。}
+\item \textbf{SG\#6 是一个干净案例}：它确认了当 MC$\to$CF extension 存在时，两种方法的一致性。
+  问题只会出现在 MC 无法 extend 到 CF（CF$=0$）、被迫直接碰 Bos 的情况。
+\end{enumerate}
+
+\subsection{实验 2：S4 点群 Layer-wise vs Sequential 对比}
+\label{sec:exp2-s4}
+
+\paragraph{动机}
+S4 点群（s12 模式）\texttt{notes.md} 记录 ``Z\_4 -> Z\_2 x Z\_2 (correct)''。
+需要确认：跳过 $p{+}ip$ 后两种方法是否一致，以及是否有 assertion 警告。
+
+\paragraph{基本信息}
+\begin{itemize}
+\item 点群：S4 $\cong \mathbb{Z}_4$，群阶 4，对应 SG\#81
+\item Resolution dims: 1 2 2 2 2 2 2
+\item s12 模式（包含 spin-1/2 结构 $w_2$）
+\item 各层 $E_\infty$ 分类（注意标号约定：$p=1$ 是 $p{+}ip$，$p=2$ 是 MC，$p=3$ 是 CF，$p=4$ 是 Bos）：
+  \begin{itemize}
+  \item $p{+}ip$（$p=1$）：trivial（被 $d_2$ 全杀了）
+  \item MC（$p=2$）：$\mathbb{Z}_2$（1 个生成元）
+  \item CF（$p=3$）：trivial（\textbf{CF=0}）
+  \item Bos（$p=4$）：$\mathbb{Z}_2$（1 个生成元）
+  \end{itemize}
+\item 脚本：\texttt{debug/exp\_s4\_compare.g}
+\item 日志：\texttt{debug/exp\_s4\_compare.log}
+\item 耗时：$\sim$27 分钟
+\end{itemize}
+
+\paragraph{三种方法结果一致}
+
+所有三种方法（Layer-wise、Sequential-old、Manual sequential）都给出\textbf{完全相同的结果}。
+
+关系矩阵（2 个生成元：MC, Bos）：
+\begin{equation}
+R = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}
+\label{eq:rmat-s4}
+\end{equation}
+
+人话翻译：
+\begin{itemize}
+\item $2\cdot\mathrm{MC} = 1\cdot\mathrm{Bos}$：MC 自己 stack 自己，MC 层消掉，Bos 层冒出一个非零分量。
+  \textbf{MC 直接 extend 到 Bos}（因为 CF=0，没有中间层可以 extend 到）。
+\item $2\cdot\mathrm{Bos} = 0$。
+\end{itemize}
+
+\begin{equation}
+\boxed{\text{三种方法都给出 }\mathbb{Z}_4\text{。无任何 assertion 警告。}}
+\end{equation}
+
+\paragraph{关键问题：$\mathbb{Z}_4$ 对不对？}
+
+三种方法一致给出 $\mathbb{Z}_4$，且计算过程完全干净（无有理数、无 assertion）。
+
+\texttt{notes.md} 曾标注 S4 s12 的正确答案是 $\mathbb{Z}_2\times\mathbb{Z}_2$。
+但该标注来源于\textbf{外部文献的独立计算}，并非我们自己的计算结果。
+外部结果也可能存在误差（不同约定、不同物理设定等）。
+
+\textbf{我们当前的计算结果是 $\mathbb{Z}_4$}，三种独立方法完全一致，计算过程无任何报错。
+
+\paragraph{Purification 规范能否改变结果？——严格证明：不能}
+
+这个问题可以用本文 \ref{sec:in-principle} 节的理论框架严格回答。
+
+S4 s12 的具体参数：$K = \mathbb{Z}_2$（MC 层），$A = \mathbb{Z}_2$（Bos 层）。
+关系矩阵为
+\begin{equation}
+R = \begin{pmatrix} 2 & c \\ 0 & 2 \end{pmatrix},
+\label{eq:rmat-s4-generic}
+\end{equation}
+程序算出 $c=1$。
+
+当我们换截面（purify 的规范选择）时，MC 的 lift 从 $\tilde{x}$ 变成 $\tilde{x}' = \tilde{x} + a$，其中 $a \in A = \mathbb{Z}_2$。
+由公式 \eqref{eq:mu-shift}：
+\begin{equation}
+c' = c + 2a.
+\label{eq:c-gauge-shift-s4}
+\end{equation}
+这里 $a$ 是一个整数代表元，所以 $2a$ \textbf{一定是偶数}。
+
+因此：
+\begin{itemize}
+\item $c=0$（偶数）$\to$ $c'=0,2,4,\ldots$ 始终是偶数 $\to$ SNF 始终是 $\mathbb{Z}_2\times\mathbb{Z}_2$。
+\item $c=1$（奇数）$\to$ $c'=1,3,5,\ldots$ 始终是奇数 $\to$ SNF 始终是 $\mathbb{Z}_4$。
+\end{itemize}
+
+\begin{equation}
+\boxed{c \bmod 2 \text{ 是规范不变量。偶数 }\Leftrightarrow\mathbb{Z}_2\times\mathbb{Z}_2,
+\text{ 奇数 }\Leftrightarrow\mathbb{Z}_4\text{。}}
+\label{eq:c-parity-invariant}
+\end{equation}
+
+程序算出 $c=1$（奇数），所以\textbf{不存在任何规范选择能把结果变成 $\mathbb{Z}_2\times\mathbb{Z}_2$}。
+$\mathbb{Z}_4$ 是这个计算的硬不变量。
+
+\paragraph{这意味着什么}
+
+如果 $\mathbb{Z}_4$ 是对的（我们当前倾向相信），则没有 bug。
+如果外部文献的 $\mathbb{Z}_2\times\mathbb{Z}_2$ 才是对的，那么 bug 必须在\textbf{比规范选择更底层的地方}：
+\begin{enumerate}
+\item \texttt{addTwister(4,0)} 的 stacking 公式本身算错了某个整数值；
+\item 或者谱序列分类阶段（$E_\infty$ 的计算）出了偏差；
+\item 或者 s12 模式的 $w_2$ spin 结构与外部文献的约定不一致。
+\end{enumerate}
+这些都不是规范选择的问题，而是更根本的公式/约定层面的问题。
+
+\subsection{实验 3：S4 点群 ez 模式 --- p+ip 到 CF 的 extension 机制}
+\label{sec:exp3-s4ez}
+
+\paragraph{E$_\infty$ 分类}
+S4 点群（ez 模式，$G_b \cong \mathbb{Z}_4$）的 $E_\infty$ 为
+\begin{equation}
+(E_\infty^{1,3},\; E_\infty^{2,2},\; E_\infty^{3,1},\; E_\infty^{4,0})
+= (\mathbb{Z}_2,\; 0,\; \mathbb{Z}_2,\; 0).
+\end{equation}
+只有 $p{+}ip$ 层和 CF 层非零。MC 和 Bos 都是 trivial 的。
+
+\paragraph{三种方法结果一致}
+实验使用 \texttt{pRange=[1,2,3,4]}（包含 $p{+}ip$），三种方法全部给出 $\mathbb{Z}_4$：
+\begin{itemize}
+\item Hybrid：$R = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}$，含义是 $2[\text{p+ip}] = 1[\text{CF}]$，$2[\text{CF}] = 0$。
+\item Sequential old：$R = (4)$，直接给出 $\mathbb{Z}_4$。
+\item Manual：逐步展示 $\mathbb{Z}_2 \to \mathbb{Z}_4 \to \mathbb{Z}_4$（MC、Bos 为零不改变群结构）。
+\end{itemize}
+
+\paragraph{Extension 的物理机制}
+关键问题：\texttt{addTwister(2,2)} = 0（$p{+}ip \to$ MC 的 stacking rule 未知，被设为零），为什么还能得到非平凡 extension？
+
+答案在于 \textbf{Z-lift 机制}。代码用 $\mathbb{Z}$ 值（整数）存储所有 cochain 层，
+而非 $\mathbb{Z}_2$ 值。$p{+}ip$ 生成元的代表元 $x = (n_1, n_2, n_3, \nu_4)$ 中：
+\begin{itemize}
+\item $n_1 = m_1$（$\mathbb{Z}$ 系数，$p{+}ip$ 层的 cocycle）；
+\item $n_2$（MC 层）$= -1$（在 $(T,T)$ 处）——虽然 MC $= 0$ 在 $E_\infty$ 中（所以 $n_2$ 是 coboundary 等价于零），但作为 $\mathbb{Z}$ 值函数它不等于零。这是一个``寄生尾巴''。
+\end{itemize}
+
+Self-stack $x \oplus x$ 时：
+\begin{align}
+N_1 &= 2n_1 = 2m_1 \quad (\text{$\mathbb{Z}$ 值非零，但 $E_\infty$ 中是零类}), \\
+N_2 &= 2n_2 + \underbrace{t_{22}(n_1, n_1)}_{=\,0} = -2, \\
+N_3 &= 2n_3 + t_{31}(x, x) \quad (\text{$t_{31}$ 是已知的 MC$\to$CF twister，它\textbf{读取 MC 层}的 $n_2 = -1$}).
+\end{align}
+$t_{31}$ 是 \texttt{addTwister(3,1)}，即已知的 MC$\to$CF stacking rule。
+它看到两个输入的 MC 层都是 $n_2 = -1$（非零），就产生了非零的 CF 贡献。
+这就是 extension 的来源。
+
+\paragraph{Purification 的级联过程}
+自身 stacking 之后需要按层清理：
+
+\begin{enumerate}
+\item \textbf{第一次 purify：消掉 $p{+}ip$ 层}。$2m_1$ 在 $\mathbb{Z}$ 值下非零，但在 $E_\infty$ 中是零类。
+    找到 $\eta_0 = -1$ 使得 $d\eta_0 = 2m_1$。这个修正通过 differential 传播到 MC 层：
+    \begin{equation}
+    d_{2,0,3}(\eta_0) = \eta_0 \cdot \omega_2 = (-1) \cdot m_1^2.
+    \end{equation}
+    MC 层变成 $N_2' = -2 + (\text{correction}) = -3$（代码确认）。$-3$ 是奇数 $\Rightarrow$ 在 $\mathbb{Z}_2$ 意义下非零。
+
+\item \textbf{第二次 purify：消掉 MC 层}。MC $= 0$ 在 $E_\infty$ 中，所以 $-3$ 一定是 coboundary。
+    找到修正来消掉它，这个修正传播到 CF 层。
+
+\item \textbf{读取 CF 层}：剩下一个非零的 residue $\Rightarrow$ extension coefficient $c = 1$ $\Rightarrow$ $\mathbb{Z}_4$。
+\end{enumerate}
+
+\paragraph{为什么 \texttt{addTwister(2,2)} = 0 不会影响结果}
+如 \texttt{Latex\_note.tex} 第 2065 行所述：启用 \texttt{addTwister(2,2)} 会 \textbf{double-count}（重复计算）。
+物理上的 MC stacking twister $m_2 = s_1 \cup (n_1 \cup_1 n_1')$ 和代码的 Z-lift purification cascade 是\textbf{两种等价编码}——殊途同归。
+代码选择了第二种方法（Z-lift + purification），所以 \texttt{addTwister(2,2)} = 0 是\textbf{正确的}。
+
+\paragraph{Purification 规范能否改变结果？——不能}
+论证与 S4 s12 完全一致。$K = \mathbb{Z}_2$（$p{+}ip$），$A = \mathbb{Z}_2$（CF）。
+
+Extension class 属于 $H^2(\mathbb{Z}_2, \mathbb{Z}_2) = \mathbb{Z}_2$。
+Gauge shift 为 $\delta\phi(1,1) = 2\phi(1) = 0$ in $\mathbb{Z}_2$。
+
+更强的结论：$B^2(\mathbb{Z}_2, \mathbb{Z}_2) = \{0\}$——\textbf{唯一的 coboundary 就是零}。
+这意味着 gauge shift 甚至不需要在 cohomology class 层面讨论：在 cocycle 层面，任何规范变换产生的 2-coboundary 都\textbf{恒等于零}。
+所以 $c = 1$ 是完全唯一确定的，没有任何 ambiguity。
+
+\paragraph{关于中间层 purification 的 gauge 传播}
+
+用户关心的是：purification 分两步进行（先消 $p{+}ip$，再消 MC），每一步都有规范自由度，这些自由度级联传播到 CF，会不会有影响？
+
+答案是：\textbf{不会}。虽然中间层的 gauge 选择确实会改变 MC 残余和 CF 残余的具体数值，但最终 CF 处的 extension coefficient 的\textbf{奇偶性}不变。
+这是因为整个 extension $0 \to \mathbb{Z}_2 \to \mathcal{E} \to \mathbb{Z}_2 \to 0$ 的分类由 $H^2(\mathbb{Z}_2, \mathbb{Z}_2) = \mathbb{Z}_2$ 决定，
+而 $B^2(\mathbb{Z}_2, \mathbb{Z}_2) = \{0\}$ 保证了所有规范变换的总效应在 CF 处恰好抵消。
+
+\paragraph{总结}
+\begin{enumerate}
+\item S4 ez 的 $\mathbb{Z}_4$ 结果是 gauge-invariant 的（数学定理保证，与 S4 s12 同理）。
+\item 不依赖未知 twister：已知的 MC$\to$CF twister + Z-lift purification 就足够产生正确的 extension。
+\item \textbf{不可能}通过调整 purification 规范来改变 $\mathbb{Z}_4 \to \mathbb{Z}_2 \times \mathbb{Z}_2$。
+\end{enumerate}
+
+
+\subsection{实验 4：C4v 点群 s12 --- Assertion error 的精确来源}
+\label{sec:exp4-c4v}
+
+\paragraph{E$_\infty$ 分类（Phase A 已完成）}
+C4v 点群（$|C_{4v}| = 8$, 来自 SG\#99, s12 模式, \texttt{pRange=[2,3,4]}）。
+Phase A 耗时约 80 分钟（其中 MC 的 $d_3$ 花了 63 分钟）。$E_\infty$：
+\begin{equation}
+(E_\infty^{1,3},\; E_\infty^{2,2},\; E_\infty^{3,1},\; E_\infty^{4,0})
+= (0,\; \mathbb{Z}_2,\; 0,\; \mathbb{Z}_2^3),
+\qquad
+\texttt{nGens} = [0, 1, 0, 3].
+\end{equation}
+关键特征：$p{+}ip$ 被 $d_2$ 杀掉，\textbf{CF = 0}（trivial），MC = $\mathbb{Z}_2$，Bos = $\mathbb{Z}_2^3$。
+
+\paragraph{为什么 C4v 必然触发 assertion}
+当 \texttt{pRange=[2,3,4]} 时，MC 有 1 个生成元（torsion 2）。Extension 计算：
+\begin{enumerate}
+\item 计算 $2 \times (\text{MC gen})$；
+\item 检查 CF 层 → \textbf{CF = 0, trivial, 跳过}；
+\item 检查 Bos 层 → 调用 \texttt{PurifySpecSeqClass}；
+\item 在 Bos 层（$p=4$），\texttt{SptSetMapFromBarCocycle} 转换后的向量 \texttt{cp}
+      包含\textbf{非整数值}（$\frac{1}{2}$），assertion 触发。
+\end{enumerate}
+相比之下，如果 CF $\neq 0$（如 SG\#6 和 S4），MC 的 extension 在 CF 层就找到了 leading vector 并 break，
+\textbf{根本不会走到 Bos 层}，assertion 从不触发。
+
+\paragraph{Assertion 的精确代码位置}
+\texttt{ss\_class.gi} 第 74 行：
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+Assert(-1, ForAll(cp, IsInt),
+    "ASSERTION FAILURE: top layer is not a cocycle");
+\end{lstlisting}
+\texttt{cp} 是 Bosonic cochain 从 bar resolution 转换后的向量。
+如果 \texttt{cp} 中有 $\frac{1}{2}$ 之类的有理数，说明该 cochain 不是合法的 cocycle（它的 coboundary $dO_5 \neq 0$），assertion 打印 WARNING 但不 crash。
+
+\paragraph{$\frac{1}{2}$ 的精确来源}
+\texttt{ss\_fermion.gi} 第 302--349 行的 \texttt{addTwister(4,0)}：
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+return {g1, g2, g3, g4} ->
+    (1/2 * e4c(g1,g2,g3,g4)
+   + 1/2 * e4cg(g1,g2,g3,g4)
+   + t4(g1,g2,g3,g4));
+\end{lstlisting}
+其中 \texttt{e4c} 和 \texttt{e4cg} 由 MC cochain \texttt{n21}, \texttt{n22} 的 cup product 构建。
+
+\paragraph{为什么 $\frac{1}{2}$ 会出现}
+公式 $\frac{1}{2}(e_{4c} + e_{4cg})$ 隐含假设了 $e_{4c} + e_{4cg}$ 是\textbf{偶数}。
+\begin{itemize}
+\item 在 $\mathbb{Z}_2$ 值世界中（MC cochain 取值 0 或 1）：
+      cup product 的结果是 0 或 1，相关组合都是偶数——$\frac{1}{2} \times (\text{偶数}) = \text{整数}$，没问题。
+\item 在 Z-lift 世界中（MC cochain 取值任意整数，如 $-1, -3, \ldots$）：
+      cup product 的结果可以是任意整数，$e_{4c} + e_{4cg}$ 可以是奇数——$\frac{1}{2} \times (\text{奇数}) = \frac{1}{2}$，\textbf{出问题了}。
+\end{itemize}
+这就是 Z-lift 机制与 stacking 公式不兼容的地方：
+stacking 公式假设 MC 数据是 $\mathbb{Z}_2$ 值的，但 Z-lift 打破了这个假设。
+
+\paragraph{与 C++ 代码的对比}
+用户的 C++ stacking 程序\textbf{严格在 $\mathbb{Z}_2$ 系数下工作}，
+cup product 的结果都做了 \texttt{mod 2} 归约，所以 $e_{4c} + e_{4cg}$ 始终为偶数，$\frac{1}{2}$ 系数不会出问题。
+GAP 代码没有做这个归约，用的是 Z-lift 的原始整数值。
+
+\paragraph{当前结果与后续}
+\begin{itemize}
+\item 据 \texttt{notes.md} 记录，C4v 的最终结果 $\mathbb{Z}_2^4$ 是``正确的''（assertion 只是 WARNING，不 crash）。
+\item C3v 有同样的根因，但它会 FATAL ERROR（ModRat crash），说明 $\frac{1}{2}$ 值进入了 \texttt{SptSetFpZModuleCanonicalElm} 的 \texttt{mod} 运算。
+\item Phase B 的完整对比实验因为 cluster3 进程限制被 kill（d₃ 计算需 63 分钟，系统可能限制了资源）。
+      需要在有计算节点的条件下重新运行。
+\end{itemize}
+
+\paragraph{修复方向}
+\begin{enumerate}
+\item 在 \texttt{addTwister(4,0)} 中，对 \texttt{e4c + e4cg} 做 \texttt{mod 2} 归约后再乘 $\frac{1}{2}$。
+      即将 \texttt{1/2 * e4c + 1/2 * e4cg} 改为 \texttt{((e4c + e4cg) mod 2) / 2}。
+\item 更根本地：检查所有包含 $\frac{1}{2}$ 系数的 stacking 公式，确保它们与 Z-lift 表示兼容。
+      可能涉及 \texttt{InstallCoboundary(2,3,1)} 中类似的 $\frac{1}{2}$ 项。
+\end{enumerate}
+
+
+%% ====================================================================
+%% 新章节：C4v Purification 管线 Bug 定位实验记录
+%% ====================================================================
+
+\section{C4v Purification 管线 Bug 定位}
+\label{sec:c4v-purify-bugs}
+
+本节记录对 C4v s12 模式 (SG\#99) 的 Assertion Error 进行深入排查的全过程。
+\textbf{核心前提}：用户已将 \texttt{addTwister(4,0)} 的公式完全替换为 C++ 翻译版本，
+公式层面的正确性由 C++ 程序保证。因此 bug 必须在 GAP 的\textbf{谱序列基础设施}（purification、微分计算、模块构建）中寻找。
+
+\subsection{实验思路的演变与教训}
+\label{sec:exp-lessons}
+
+\paragraph{一个反复犯的错误}
+在多次实验中，我反复回到``公式层''怀疑 \texttt{addTwister(4,0)} 的 $\frac{1}{2}$ 因子、
+Cup 乘积的 mod 2 归约等问题。用户多次明确指出：
+\begin{enumerate}
+\item 2D 版本用完全相同的写法，对所有例子都正确；
+\item C++ 程序使用一模一样的公式，完全正确；
+\item 公式已被替换为 C++ 翻译，所以公式层已被绕开。
+\end{enumerate}
+\textbf{教训}：当公式已被验证正确时，不应再怀疑公式，应直接聚焦于调用公式的\textbf{管线逻辑}。
+
+\paragraph{正确的排查方向}
+最终有效的排查方向是：追踪 \texttt{SptSetPurifySpecSeqClass} 的执行流程，
+逐层检查它在哪里停下、为什么停下、停下时的中间状态是什么。
+这条路直接导向了一系列谱序列基础设施中的 bug。
+
+\subsection{发现的 Bug 清单}
+\label{sec:bug-list}
+
+以下是按发现顺序排列的所有 bug。每个 bug 都给出：位置、表现、修复、状态。
+
+\paragraph{Bug \#1：\texttt{SptSetSpecSeqComponent2Inf} 的 rmax 计算错误}
+\begin{itemize}
+\item \textbf{文件}：\texttt{spectral\_sequence.gi}，第 112--113 行
+\item \textbf{原代码}：\texttt{rmax := q+1;}
+\item \textbf{修复}：\texttt{rmax := Maximum(q+1, p);}
+\item \textbf{影响}：对 $(p=3, q=1)$，原代码算出 $\tilde{E}_3^{3,1}$（只到第 2 页），
+  而正确值应是 $\tilde{E}_4^{3,1}$（到第 3 页）。这导致 purification 在 $p=3$ 层误判元素为非平凡而提前停止。
+\item \textbf{状态}：\textbf{已修复}，Phase A 重建确认结果不变。
+\end{itemize}
+
+\paragraph{Bug \#3：\texttt{PartialPurify@} 的 $r > 2$ 守卫}
+\begin{itemize}
+\item \textbf{文件}：\texttt{ss\_class.gi}，原第 117--119 行
+\item \textbf{原代码}：\texttt{if r > 2 then Error("Purification at r>2 is not implemented."); fi;}
+\item \textbf{修复}：删除此守卫。
+\item \textbf{影响}：当 purification 需要在 $r=3$ 或更高页进行修正时，直接报错终止。
+\item \textbf{状态}：\textbf{已修复}。同时添加了零微分守卫（见下文）。
+\end{itemize}
+
+\paragraph{Bug \#4：\texttt{SptSetZLMapInverse} 缺少零映射方法}
+\begin{itemize}
+\item \textbf{文件}：\texttt{zlmap.gi}，新增第 92--102 行
+\item \textbf{问题}：当微分 $d_r$ 是零映射（\texttt{IsSptSetZLMapZeroRep}）时，
+  \texttt{SptSetZLMapInverse(d\_r, cp)} 找不到匹配的方法，直接报错。
+\item \textbf{修复}：添加 \texttt{InstallMethod} 处理零映射情况：零输入返回零向量，非零输入报错。
+\item \textbf{状态}：\textbf{已修复}。
+\end{itemize}
+
+\paragraph{Bug \#5：\texttt{SptSetPurifySpecSeqClass} 使用了错误的模块版本}
+\begin{itemize}
+\item \textbf{文件}：\texttt{ss\_class.gi}，第 77 行和第 86 行
+\item \textbf{原代码}：外层检查用 \texttt{SptSetSpecSeqComponent2Inf}（余核版 $\tilde{E}_\infty$），
+  内层循环用 \texttt{SptSetSpecSeqComponent2}（余核版 $\tilde{E}_r$）
+\item \textbf{修复}：外层改为 \texttt{SptSetSpecSeqComponentInf}（完整 $E_\infty$），
+  内层改为 \texttt{SptSetSpecSeqComponent}（完整 $E_r$）
+\item \textbf{影响}：$\tilde{E}_r = E_{r-1} / \mathrm{im}(d_{r-1})$ 只检查``是否在像中''，
+  而 $E_r = \ker(d_{r-1}) / \mathrm{im}(d_{r-1})$ 是完整的同调商。
+  对于 $(p=3, q=1)$，$\tilde{E}_3^{3,1} \neq 0$ 但完整 $E_3^{3,1} = 0$。
+  使用余核版导致 purification 在 $p=3$ 层误判为非平凡，试图调用零微分的逆，崩溃。
+\item \textbf{状态}：\textbf{已修复}。这是 purification 流程中最关键的修复。
+\end{itemize}
+
+\paragraph{Bug \#7：\texttt{SptSetSpecSeqCoboundarySL} 越界访问}
+\begin{itemize}
+\item \textbf{文件}：\texttt{ss\_cochain.gi}，第 107--112 行
+\item \textbf{原代码}：直接访问 \texttt{SS!.bdry[r+1][p+1][q+1]}，无边界检查
+\item \textbf{修复}：添加 \texttt{IsBound} 三重检查，缺失条目默认返回 \texttt{ZeroCocycle@}
+\item \textbf{影响}：修复 Bug \#5 后，完整 $E_r$ 的计算会递归到更深的位置，
+  触及未安装 coboundary 公式的 $(r, p, q)$ 坐标。
+  例如 $(r=2, p=4, q=1)$ 对应 \texttt{SS!.bdry[3][5][2]} 未安装。
+\item \textbf{状态}：\textbf{已修复}。缺失的公式对应零修正，默认为零是数学上正确的。
+\end{itemize}
+
+\paragraph{零微分守卫（Bug \#3 的补充修复）}
+\begin{itemize}
+\item \textbf{文件}：\texttt{ss\_class.gi}，\texttt{PartialPurify@} 函数
+\item \textbf{修复}：在调用 \texttt{SptSetZLMapInverse} 之前检查 \texttt{IsSptSetZLMapZeroRep(dr)}，
+  若微分为零则直接返回零修正。
+\item \textbf{影响}：当 \texttt{PartialPurifySSClass@}（Phase A 微分计算中使用的版本，仍用余核版 \texttt{Component2}）
+  误判需要在某个 $r$ 做修正，但该 $r$ 的微分恰好为零时，不会崩溃。
+\item \textbf{状态}：\textbf{已修复}。
+\end{itemize}
+
+\subsection{一个重要的失败尝试：Bug \#6}
+\label{sec:bug6-failure}
+
+\paragraph{尝试内容}
+将 \texttt{PartialPurifySSClass@} 和 \texttt{PartialConstructSSCochain@}
+（Phase A 微分计算中使用的内部函数）也从 \texttt{Component2} 改为 \texttt{Component}。
+
+\paragraph{为什么尝试}
+推理是：如果 Phase A 的微分计算也用了错误的余核版模块，
+那么计算出的微分和 $E_\infty$ 页本身就是错的，Phase B 用正确的模块也没用。
+
+\paragraph{为什么失败}
+\texttt{PartialPurifySSClass@} 在 Phase A 中被 \texttt{ParListByFork}（fork 并行）调用。
+每个 fork worker 是子进程，有独立的内存副本。
+使用完整 \texttt{Component}（同调版）会触发深层递归的模块构建，
+而这些构建在子进程中无法利用父进程的缓存，导致：
+\begin{enumerate}
+\item 子进程各自重新计算大量模块；
+\item 子进程还会再次 fork 新的子进程（嵌套并行）；
+\item 计算量指数爆炸，进程被 OOM 杀死。
+\end{enumerate}
+
+\paragraph{最终方案}
+\textbf{恢复} \texttt{PartialPurifySSClass@} 和 \texttt{PartialConstructSSCochain@} 中的 \texttt{Component2}，
+只在 \texttt{SptSetPurifySpecSeqClass}（Phase B 最终 purification）中使用完整 \texttt{Component}。
+同时用零微分守卫防止 Phase A 中的边角崩溃。
+
+\paragraph{这是否正确？}
+这是一个\textbf{待验证的妥协}。理论上 Phase A 用余核版计算的微分可能与完整版不同。
+但原始代码（修复前）Phase A 也一直用余核版，且 Phase A 的 $E_\infty$ 结果与 C++ 一致。
+所以很可能余核版在 Phase A 中是充分的。Phase B 的最终 purification 才需要完整版。
+
+\subsection{Phase A 重建结果}
+\label{sec:phaseA-rebuild}
+
+用上述所有修复（Bug \#1, \#3, \#4, \#5, \#7 + 零微分守卫）重建 Phase A，
+\texttt{PartialPurifySSClass@} 保持余核版 \texttt{Component2}。
+
+\begin{itemize}
+\item 耗时：4788 秒（约 80 分钟），与原始 Phase A（5152 秒）相当
+\item $E_\infty$ 结果与原始完全一致：
+\begin{equation}
+E_\infty^{2,2} = \mathbb{Z}_2, \quad
+E_\infty^{3,1} = 0, \quad
+E_\infty^{4,0} = \mathbb{Z}_2^3
+\end{equation}
+\item Workspace 保存成功（128 MB）
+\end{itemize}
+
+\subsection{Phase B 测试}
+\label{sec:phaseB-result}
+
+\paragraph{Phase B1: ClassFromLevelCocycle 测试}
+
+Phase B1 使用 \texttt{SptSetSpecSeqClassFromLevelCocycle} 创建 MC 类。
+此函数内部调用 \texttt{SptSetPurifySpecSeqClass} 对 \textbf{度 5}（不是度 4）的 coboundary 类进行 purification。
+
+结果：purification 中\textbf{无 assertion 错误}，但因使用 \texttt{ComponentInf}（完整版）触发大量未缓存的 \texttt{Derivative}（非 \texttt{Derivative2}）重新计算，\textbf{耗时 3.5 小时}。
+
+\textbf{关键：此测试并未触及真正的 bug。}度 5 的 purification 在 $p=4$ 层使用的是 MC 系数（整数），而非 Bosonic $U(1)$ 系数。原始 assertion error 发生在\textbf{度 4} 的 Bosonic 层。
+
+\paragraph{Phase B2: 直接 Stacking 测试}
+
+跳过昂贵的 \texttt{ClassFromLevelCocycle}，直接构造最小 MC cochain 并自身 stacking：
+\begin{enumerate}
+\item 构造只含 MC 层的 cochain: bar vector $=[0,1,0,0,0]$
+\item 自身 stacking: $\texttt{SptSetStack(mc, mc)}$，耗时 0 ms
+\item 检查结果各层
+\end{enumerate}
+
+Stacking 结果：
+\begin{itemize}
+\item $p=2$ (MC): $[0, 2, 0, 0, 0]$ — 全部整数 $\checkmark$
+\item $p=3$ (CF): $[0, -1, 0, 0, 0, -1, 0]$ — 全部整数 $\checkmark$
+\item $p=4$ (Bos): $[0, -2, 0, 0, -1, 2, \frac{1}{2}, \frac{1}{2}, -\frac{17}{4}, -\frac{1}{2}, 1, -1]$ — \textbf{非整数} $\times$
+\end{itemize}
+
+非整数位置：bar vector 的第 7, 8, 9, 10 分量，值为 $\frac{1}{2}, \frac{1}{2}, -\frac{17}{4}, -\frac{1}{2}$。
+
+Purification 在 $p=4$ 层尝试调用 \texttt{SptSetFpZModuleIsZeroElm} 时，
+\texttt{cp} 包含有理数，GAP 的 \texttt{mod} 运算崩溃：
+\begin{verbatim}
+Error, ModRat: for <r>/<s> mod <n>,
+  <s>/gcd(<r>,<s>) and <n> must be coprime
+  at module.gi:169
+  called from SptSetFpZModuleIsZeroElm(Epqinf, cp) at ss_class.gi:78
+\end{verbatim}
+
+\paragraph{根因分析}
+
+非整数的直接来源是 \texttt{addTwister(4,0)} 中的
+\begin{equation}
+\frac{1}{2}\,e_{4c} + \frac{1}{2}\,e_{4cg}
+\end{equation}
+其中 $e_{4c}$, $e_{4cg}$ 是 MC cochain 的 cup product 组合。
+
+\textbf{但问题不在公式本身。}公式在 $\mathbb{Z}_2$ 算术下是正确的：
+MC 取值 $\{0,1\}$ 时，$e_{4c} + e_{4cg}$ 始终为偶数，$\frac{1}{2}$ 给出整数。
+
+问题在于 \textbf{Z-lift 表示}：GAP 中 MC cochain 取任意整数值（如 $-1, -3, \ldots$），
+这些值在 $\bmod\,2$ 意义下等价于 $1$，但在整数算术下
+cup product 的结果可能是奇数，导致 $\frac{1}{2}$ 产生半整数。
+
+\paragraph{为什么 2D 不出问题？}
+
+（待调查）两种可能：
+\begin{enumerate}
+\item 2D 中进入 twister 的 MC cochain 碰巧总是 $\bmod\,2$ 约化过的（值在 $\{0,1\}$）
+\item 2D 的 cup product 结构保证了 $e_{4c}+e_{4cg}$ 即使在 Z-lift 下也总为偶数
+\end{enumerate}
+
+\paragraph{下一步}
+
+\begin{enumerate}
+\item 在 2D 模式下复现同一个实验（直接 stacking 并检查 Bosonic 层），确认 2D 是否真的没问题
+\item 如果 2D 也有半整数：说明 2D 只是因为 purification 路径恰好不碰 Bosonic 层（因为 CF 非零），所以没触发
+\item 如果 2D 没有半整数：分析 2D vs 3D 的 MC cochain 值域差异
+\item 检查 purification 在 $p=2,3$ 层修正后，是否能消除 $p=4$ 的非整数（这需要追踪 \texttt{PartialPurifyCoboundary@} 的修正项）
+\end{enumerate}
+
+\subsection{当前修复清单汇总}
+\label{sec:fix-summary}
+
+\begin{center}
+\begin{tabular}{llll}
+\hline
+文件 & 修改 & 影响范围 & 状态 \\
+\hline
+\texttt{spectral\_sequence.gi} & \texttt{rmax := Maximum(q+1, p)} & $\tilde{E}_\infty$ 计算 & 已应用 \\
+\texttt{zlmap.gi} & 零映射 \texttt{Inverse} 方法 & 零微分处理 & 已应用 \\
+\texttt{ss\_class.gi} & \texttt{ComponentInf}/\texttt{Component} & Phase B purify & 已应用 \\
+\texttt{ss\_class.gi} & 删除 $r>2$ 守卫 + 零微分守卫 & \texttt{PartialPurify@} & 已应用 \\
+\texttt{ss\_cochain.gi} & \texttt{IsBound} 检查 & \texttt{CoboundarySL} & 已应用 \\
+\texttt{ss\_cochain.gi} & \texttt{PartialPurifySSClass@} 保持 \texttt{Component2} & Phase A 微分 & 已恢复 \\
+\hline
+\end{tabular}
+\end{center}
+
+%% ====================================================================
+%% 新章节：Z-lift 机制详解 & Purification 的完整因果链
+%% ====================================================================
+
+\section{Z-lift 机制详解与 Purification 的完整 Bug 因果链}
+\label{sec:zlift-and-purify-chain}
+
+本节用完全人话的方式，把 GAP 程序从拿到 MC state $n_2$ 到最终判定 $\mathcal{O}_5$ 是否是 cocycle 的\textbf{完整计算链条}写清楚，
+然后精确指出哪一步出了问题。
+
+\subsection{什么是 Z-lift，为什么要用它}
+\label{sec:what-is-zlift}
+
+\paragraph{人话版}
+MC 层的系数群是 $\mathbb{Z}_2 = \{0, 1\}$。
+你的 C++ 代码直接用 0 和 1 做所有运算。
+GAP 不是这么做的——它把 $\{0,1\}$ 换成了\textbf{任意整数}：$\ldots, -3, -1, 0, 1, 2, 3, \ldots$，
+只要 $\bmod\,2$ 之后等价就行。比如 $-1$ 和 $1$ 在 $\mathbb{Z}_2$ 意义下是一样的（都是 $1 \bmod 2$），
+$-3$ 也是。
+
+这种``用整数代替 $\mathbb{Z}_2$'' 的做法就叫 \textbf{Z-lift}（整数提升）。
+
+\paragraph{为什么要这么做？}
+因为 GAP 用的是 HAP 包的 \textbf{自由 resolution}（一个描述群上同调的代数结构）。
+这个 resolution 天然工作在 $\mathbb{Z}$ 上（整数模块），不是 $\mathbb{Z}_2$ 上。
+所有的 cochain、coboundary、cup product 都定义在 $\mathbb{Z}$ 值函数空间里。
+
+当你要算 $H^n(G, \mathbb{Z}_2)$ 的时候，程序的做法是：
+\begin{enumerate}
+\item 先在 $\mathbb{Z}$ 上构造 coboundary 矩阵；
+\item 做 Smith 标准形（一种整数矩阵分解）；
+\item 从 Smith 标准形读出 $\mathbb{Z}_2$ 系数的上同调群。
+\end{enumerate}
+整个过程\textbf{从不在 $\mathbb{Z}_2$ 上直接运算}。
+
+\paragraph{对 $U(1)$ 系数（Bosonic 层）更是如此}
+Bosonic 层的系数群是 $U(1) = \mathbb{Q}/\mathbb{Z}$（有理数模整数）。
+程序不直接用 $\mathbb{Q}/\mathbb{Z}$ 运算，而是：
+\begin{enumerate}
+\item 先用 $\mathbb{Q}$ 值（有理数）来存 cochain 值——比如 $\nu_4(g_1, g_2, g_3, g_4) = 3/8$；
+\item 需要检查``是否是 cocycle'' 时，算 $d\nu_4$ 得到一组有理数；
+\item 用 \textbf{Bockstein 同态} 把 $\mathbb{Q}/\mathbb{Z}$ 的 cocycle 判定转化为：
+      ``$d\nu_4$ 的所有分量是否都是\textbf{整数}''。
+\end{enumerate}
+这就是 assertion \texttt{ForAll(cp, IsInt)} 检查的含义：
+如果 $d\nu_4$ 全部是整数，说明 $\nu_4$ 是 $U(1)$ cocycle（因为整数 $\in \mathbb{Z}$ 在 $\mathbb{Q}/\mathbb{Z}$ 里等价于零）。
+
+\paragraph{Z-lift 的问题}
+公式（如 \texttt{addTwister(4,0)}、\texttt{InstallCoboundary(2,3,1)}）是物理学家写的，
+它们假设 MC 输入取值 $\{0, 1\}$。
+比如 $\frac{1}{2}(e_{4c} + e_{4cg})$：当 $e_{4c}, e_{4cg} \in \{0, 1\}$ 时，
+$e_{4c} + e_{4cg} \in \{0, 1, 2\}$，乘 $\frac{1}{2}$ 得 $\{0, \frac{1}{2}, 1\}$，是合法的 $U(1)$ 值。
+
+但在 Z-lift 下，$e_{4c}, e_{4cg}$ 可以是任意整数（如 $-3, 5$），
+$e_{4c} + e_{4cg}$ 可以是奇数，$\frac{1}{2} \times \text{奇数} = \text{分数}$。
+\textbf{分数不是合法的 $\mathbb{Z}_2$ 值}，后续的 \texttt{mod 2} 运算直接崩溃（ModRat 错误）。
+
+同样的问题出现在 O5c 公式（\texttt{InstallCoboundary(ss, 2, 3, 1)}）的最后一行：
+\begin{equation}
+\texttt{return 1/2 * (phase mod 2);}
+\end{equation}
+这里 \texttt{phase} 是 $n_3$ 的各种乘积之和。
+如果 $n_3$ 取整数值（如 $\{0, 1\}$），\texttt{phase} 是整数，\texttt{mod 2} 没问题。
+但如果 $n_3$ 含分数（如 $-39/2$），\texttt{phase} 是分数，\texttt{mod 2} 崩溃。
+
+\subsection{完整计算流程（人话版）}
+\label{sec:full-flow-human}
+
+以 C4v s12 为例，MC 有 1 个 $\mathbb{Z}_2$ 生成元，CF = 0，Bos = $\mathbb{Z}_2^3$。
+
+\paragraph{你（物理学家）期望的流程}
+\begin{enumerate}
+\item 给定 MC state $n_2$（$\mathbb{Z}_2$ 值的 2-cocycle）。
+\item 算 CF obstruction：$\text{obs}_{\mathrm{CF}} = w \cdot n_2 + n_2 \cdot n_2 + s \cdot n_2 \cup_1 n_2$。
+\item 解方程 $dn_3 = \text{obs}_{\mathrm{CF}}$，得到 CF state $n_3$。
+\item 算完整 O5：$\mathcal{O}_5 = \mathcal{O}_{5\gamma}(n_2) + \mathcal{O}_{5c}(n_3) + \mathcal{O}_{5c\gamma}(n_2, n_3)$。
+\item 检查 $d\mathcal{O}_5 = 0$（必须成立）。
+\item 解 $d\nu_4 = \mathcal{O}_5$，得到 bosonic state $\nu_4$。
+\end{enumerate}
+全程在 $\mathbb{Z}_2$ 上运算，没有分数。
+
+\paragraph{GAP 程序实际做的流程}
+
+GAP 把上述流程包装在 \texttt{SptSetSpecSeqClassFromLevelCocycle} 和 \texttt{SptSetPurifySpecSeqClass} 里。
+翻译成人话：
+
+\begin{enumerate}
+\item \textbf{输入}：MC 生成元 \texttt{gen1}，一个 5 维整数向量（resolution 基底下的 $\mathbb{Z}_2$ cocycle 的 Z-lift 代表）。
+
+\item \textbf{一次性算出所有高阶微分}（\texttt{SptSetSpecSeqCoboundarySL}）：
+      把 $n_2$ 同时推到 layer 4（CF obstruction）和 layer 5（$\mathcal{O}_{5\gamma}$）。
+      \textbf{注意}：此时 layer 5 只有 $\mathcal{O}_{5\gamma}$（只依赖 $n_2$），
+      还没有 $\mathcal{O}_{5c}$（依赖 $n_3$）。
+      $\mathcal{O}_{5c}$ 和 $\mathcal{O}_{5c\gamma}$ 要等解出 $n_3$ 之后才能加上去。
+
+\item \textbf{逐层 purification}（\texttt{SptSetPurifySpecSeqClass}）：
+      从低层到高层依次处理。
+
+\item \textbf{处理 $p=4$（CF obstruction 层）}：
+      \begin{enumerate}[label=(\alph*)]
+      \item 把 layer 4 的 cochain 转成 resolution 基底下的向量 \texttt{cp}（10 维整数向量）。
+      \item \textbf{PartialPurify@}（调整 MC 代表元）：
+            检查 \texttt{cp} 在谱序列 $E_2$ 页上是否为零。
+            如果不为零，说明 \texttt{cp} 有一部分是``MC 换代表元就能消掉的''。
+            程序找一个修正量 $\beta$（也在 MC 层），
+            使得 $d_2(\beta) = \texttt{cp}$ 在 $E_2$ 上的分量。
+            然后从 \texttt{coc} 中减去 $\beta$ 的贡献。
+            \textbf{这一步同时修改了 layer 4 和 layer 5}（因为减去 $\beta$ 的 coboundary 影响所有高层）。
+      \item \textbf{PartialPurifyCoboundary@}（解 $n_3$）：
+            现在 \texttt{cp} 应该是一个纯粹的 $d_1$-coboundary（普通 coboundary）。
+            程序求 $n$ 满足 $d_1(n) = \texttt{cp}$。
+            然后用 \texttt{SptSetSolveCocycleEq} 把 $n$ 修正成一个 cocycle 代表 $n\_$。
+            这个 $n\_$ 就是你的 $n_3$。
+            程序算 $n_3$ 的 coboundary（\texttt{CoboundarySL(4, 3, -n\_)}），
+            把 $\mathcal{O}_{5c} + \mathcal{O}_{5c\gamma}$ 加到 layer 5。
+            同时把 layer 4 清零。
+      \end{enumerate}
+
+\item \textbf{处理 $p=5$（Bosonic 层，检查 $\mathcal{O}_5$）}：
+      把 layer 5 转成 resolution 基底下的向量 \texttt{cp5}。
+      对 $U(1)$ 系数，\texttt{SptSetMapFromBarCocycle} 会\textbf{自动调用 Bockstein}，
+      所以 \texttt{cp5} 不是 $\mathcal{O}_5$ 本身，而是 $d\mathcal{O}_5$ 的 resolution 表示。
+      检查 \texttt{ForAll(cp5, IsInt)}——如果全是整数，说明 $d\mathcal{O}_5 = 0$，$\mathcal{O}_5$ 是 cocycle。
+\end{enumerate}
+
+\subsection{Bug 的完整因果链}
+\label{sec:bug-chain}
+
+现在可以精确说出哪里炸了。两条独立的 bug 路径：
+
+\paragraph{Bug 路径 A：PartialPurify@ 中的分数 beta}
+\begin{enumerate}
+\item 步骤 4(b)：PartialPurify@ 需要找 $\beta$ 满足 $d_2(\beta) = \texttt{cp}_{E_2}$。
+\item 程序调用 \texttt{SptSetZLMapInverse(derivative, cp)}，用 Z-线性映射的伪逆求 $\beta$。
+\item \textbf{Workspace 里}的 PartialPurify@ 用的是``新版 derivative''（\texttt{SptSetSpecSeqDerivative2}），
+      它的 Smith 标准形基底选择导致 $\beta$ 含分数（如 $47/2$）。
+      \textbf{当前源代码}用的是``旧版 derivative''（\texttt{SptSetSpecSeqDerivative}），给出整数 $\beta$。
+      这是 workspace 版本与源代码版本不一致导致的。
+\item 分数 $\beta$ 传入 $\mathcal{O}_{5\gamma}$ 公式，公式里有 \texttt{n2(g\_i, g\_j) mod 2}，
+      分数 \texttt{mod 2} $\to$ \textbf{ModRat 崩溃}。
+\item 崩溃导致 PartialPurify@ 中断 $\to$ $n_3$ 没解出来 $\to$ $\mathcal{O}_{5c}$ 没加上 $\to$
+      layer 5 只有 $\mathcal{O}_{5\gamma}$ $\to$ $d\mathcal{O}_{5\gamma} \neq 0$ $\to$ assertion error。
+\end{enumerate}
+
+\paragraph{Bug 路径 B：PartialPurifyCoboundary@ 中的分数 n}
+即使 Bug 路径 A 被修复（用旧版 derivative 使 $\beta$ 为整数），仍有第二个 bug：
+\begin{enumerate}
+\item 步骤 4(c)：PartialPurifyCoboundary@ 需要解 $d_1(n) = \texttt{cp}$。
+\item 程序调用 \texttt{SptSetZLMapInverse(derivative, cp)}。
+\item $d_1$ 矩阵的 Smith 标准形中，\textbf{对角线上有 2}。
+      当 \texttt{cp} 在对应分量上是奇数时，除以 2 得到分数。
+\item \textbf{不管用新版还是旧版 derivative，$d_1$ 的 Smith 标准形都一样}，都有 2 在对角线上。
+      所以 $n$ 必然含分数（如 $-39/2, -5/2, -1/2$）。
+\item 分数 $n$ 传入 \texttt{SptSetSolveCocycleEq} $\to$ $n_3$ 函数返回分数值。
+\item 分数 $n_3$ 传入 $\mathcal{O}_{5c}$ 公式，公式最后一行 \texttt{1/2 * (phase mod 2)}：
+      \texttt{phase} 含 $n_3 \times n_3$ 等乘积项，分数的平方仍是分数 $\to$ \texttt{mod 2} $\to$ \textbf{ModRat 崩溃}。
+\end{enumerate}
+
+\paragraph{为什么 2D 不出问题？}
+待验证的猜测：2D 的 $d_1$ 矩阵 Smith 标准形可能没有 2 在对角线上
+（分类群更小，resolution 维数更低），所以 $n$ 碰巧是整数。
+或者 2D 的 MC 总是 extend 到 CF（CF $\neq 0$），purification 在 CF 层就停了，
+根本不走到 Bosonic 层的 Bockstein 检查。
+
+\subsection{根本问题：Z-lift 与 $\mathbb{Z}_2$ 公式的不兼容}
+\label{sec:zlift-incompatibility}
+
+问题可以用一句话概括：
+\begin{equation}
+\boxed{\text{stacking/obstruction 公式假设输入取值 $\{0,1\}$，但 Z-lift 给的输入是任意整数或分数。}}
+\label{eq:zlift-incompatibility}
+\end{equation}
+
+\paragraph{你的追问：做到 $\mathbb{Z}_2$ 上不香吗？}
+完全正确。对于当前的 AHSS（Atiyah--Hirzebruch 谱序列），
+MC 和 CF 层就是 $\mathbb{Z}_2$ 系数，没有必要用 Z-lift。
+直接在 $\mathbb{Z}_2$（即 $\mathrm{GF}(2)$）上做矩阵运算：
+\begin{itemize}
+\item 不会出现分数（$\mathrm{GF}(2)$ 上的运算只有 $\{0, 1\}$）；
+\item \texttt{mod 2} 自动满足（$1 + 1 = 0$ in $\mathrm{GF}(2)$）；
+\item 求解 $d_1(n) = \texttt{cp}$ 就是解 $\mathrm{GF}(2)$ 线性方程组，一定有 $\{0, 1\}$ 解（如果有解的话）。
+\end{itemize}
+
+Z-lift 的唯一好处是与 HAP 的通用 resolution 框架兼容（HAP 只支持 $\mathbb{Z}$ 模块）。
+但这个好处在当前场景下不值得——它引入的分数问题比它解决的通用性问题更严重。
+
+\paragraph{对照实验计划}
+写一个独立的 $\mathbb{Z}_2$ 版本测试脚本，不动核心代码，
+对 C4v s12 的 MC 生成元执行完全相同的计算流程：
+\begin{enumerate}
+\item 把所有 MC/CF cochain 值 $\bmod\,2$ 归约到 $\{0, 1\}$；
+\item 直接在 $\mathbb{Z}_2$ 上解 CF obstruction、求 $n_3$；
+\item 用整数 $n_3$ 算完整 $\mathcal{O}_5$；
+\item 检查 $d\mathcal{O}_5 = 0$。
+\end{enumerate}
+如果这个 $\mathbb{Z}_2$ 版本跑通，就证明：
+\begin{itemize}
+\item 整个物理流程没有问题；
+\item 所有 stacking/obstruction 公式没有问题；
+\item 问题 100\% 在 Z-lift 相关的代码（ZLMapInverse、SolveCocycleEq 等）中。
+\end{itemize}
+
+
+\section{Z2 对照实验结果与 d1 矩阵 2-torsion 诊断（2026.03.21）}
+
+\subsection{Z2 对照实验结果}
+
+Z2 版本的对照实验 (\texttt{exp\_z2\_flow.g}) 结果出乎意料：GF(2) 求解也失败了。穷举 $2^7 = 128$ 种组合也没有找到任何解。这说明方程 $d_1(n_3) = cp$ 在 $\mathbb{Z}_2$ 上确实无解。
+
+\subsection{根因：d1 的 Smith Normal Form}
+
+$d_1$ 是余边界映射 $\delta: C^3(G, \mathbb{Z}_2) \to C^4(G, \mathbb{Z}_2)$，其中 $\mathbb{Z}_2$ 系数带有 time-reversal 群作用。对 C4v 群（阶=8，s12 模式），这个 $7 \times 10$ 矩阵的 Smith Normal Form 对角线为：
+$$\mathrm{diag}(\mathrm{SNF}(d_1)) = [1, 1, 2, 2, 0, 0, 0, 0, 0, 0]$$
+
+在 $\mathbb{Z}$ 上秩为 4，但在 GF(2) 上秩只有 2（两个 2 在 mod 2 后变成 0）。$d_1$ 的 GF(2) 像只是 $\mathbb{Z}_2^{10}$ 中的 2 维子空间。
+
+\subsubsection{为什么有全偶列？}
+
+$d_1$ 矩阵的列 1,2,3,4,6,7 全部是偶数。原因是 HAP 分辨律的边界映射在这些列上涉及 time-reversal 元素与非 time-reversal 元素的贡献互相配对。例如列 7 有 4 个边界项，$f(g) = +1, -1, +1, -1$，完全抵消为零。这是群作用的数学性质，不是 bug。
+
+\subsection{各生成元的 CF obstruction 检查}
+
+$E_5^{2,2}$ 有 5 个生成元。对前 4 个计算 CoboundarySL，检查 CF obstruction 是否是 $d_1$-coboundary mod 2：
+
+gen1 [1,0,0,0,0]: cp mod 2 在列 4、7 有奇数值，方程\textbf{无解}。
+
+gen2 [0,1,0,0,0]: cp mod 2 在列 6、7 有奇数值，方程\textbf{无解}。
+
+gen3 [0,0,1,0,0]: cp mod 2 虽无不可达位置，但不在秩 2 的像中，方程\textbf{无解}。
+
+gen4 [0,0,0,1,0]: cp mod 2 = [0,...,0,1,0,0]，方程\textbf{有解}！sol = [0,0,0,1,0,0,0]。
+
+\subsection{Z-lift 伪逆的行为}
+
+Z-lift 对 $[A; R_2]$（$R_2 = 2I_{10}$）做 Smith Normal Form，对角线 $d_i \neq 0$ 的位置取 $1/d_i$。当 $d_i = 2$ 时给出 $1/2$。关键问题：伪逆\textbf{不检查方程是否有解}。方程无解时它仍然返回含分数的"最佳拟合"，这个结果连 $x \cdot A \equiv cp \pmod{2}$ 都不满足。
+
+\subsection{后果链}
+\begin{enumerate}
+\item $d_1$ 有 2-torsion $\to$ GF(2) 秩从 4 降到 2
+\item gen1 的 cp 在列 4, 7 有奇数 $\to$ 不在 $d_1$ GF(2) 像中
+\item \texttt{ZLMapInverse} 不检查可解性 $\to$ 返回分数 $n = [\ldots, -1/2]$
+\item 分数 $n_3$ 进入 O5 公式 $\to$ ModRat 崩溃或 assertion failure
+\end{enumerate}
+
+\subsection{关键开放问题}
+\begin{enumerate}
+\item gen1 真的是 Majorana Chain 吗？如果 C++ 用的是 gen4，那 gen1 报错可能是正确行为。
+\item 如果 gen1 应该可解，问题可能在 CoboundarySL 公式、层索引、或 $E_5$ 模块计算。
+\item 2D 为什么不出问题？需检查 2D 的 $d_1$ SNF 是否有 2-torsion。
+\end{enumerate}
+
+\end{document}ift 的伪逆做的事情是：把 $[A; R_2]$ 做 Smith Normal Form（$R_2 = 2I$ 是余域关系矩阵），对角线 $d_i \neq 0$ 的位置取 $1/d_i$。当 $d_i = 2$ 时，伪逆给出 $1/2$，这就是分数 $-1/2$ 的来源。
+
+关键问题：Z-lift 的伪逆 \textbf{不检查方程是否有解}。即使方程在 $\mathbb{Z}_2$ 上无解（$cp$ 不在 $d_1$ 的像中），Z-lift 仍然会返回一个"最佳拟合"的解，其中包含分数。这个分数解是\textbf{无意义的}——它甚至不满足方程 $x \cdot A \equiv cp \pmod{2}$。
+
+\subsection{后果链}
+
+\begin{enumerate}
+\item $d_1$ 矩阵有 2-torsion → GF(2) 秩从 4 降到 2
+\item gen1 的 CF obstruction $cp$ 在列 4, 7 有奇数分量 → 不在 $d_1$ 的 GF(2) 像中
+\item \texttt{SptSetZLMapInverse} 不检查可解性 → 返回分数 $n = [\ldots, -1/2]$
+\item 分数 $n$ 传入 \texttt{SptSetSolveCocycleEq} → 生成分数 $n_3$ 函数
+\item 分数 $n_3$ 进入 O5 公式 → \texttt{phase mod 2} 崩溃（\texttt{ModRat}）
+\item 或者：公式跑完但结果不对 → dO5 ≠ 0 → \texttt{ASSERTION FAILURE: top layer is not a cocycle}
+\end{enumerate}
+
+\subsection{关键开放问题}
+
+\begin{enumerate}
+\item \textbf{gen1 真的是 Majorana Chain 吗？}如果用户的 C++ 代码用的是 gen4 或其他能解的生成元，那 GAP 对 gen1 报错是正确的行为——gen1 确实有不可消除的 CF obstruction。
+\item \textbf{如果 gen1 确实应该可解}，那么问题可能在于：
+  \begin{itemize}
+  \item InstallCoboundary(2,2,2) 公式在 Z-lift 下给出了错误的 cp（虽然我们证明了公式 mod 2 是不变的，但也许某些中间步骤有问题）
+  \item CoboundarySL 的层索引或系数作用有误
+  \item 或者谱序列的 $E_5^{2,2}$ 模块计算有误，gen1 不应该出现在 $E_5$ 页
+  \end{itemize}
+\item \textbf{2D 为什么不出问题？}需要检查 2D 情况下 $d_1$ 矩阵的 SNF 是否有 2-torsion。如果没有，那 2D 的方程总是可解的。
+\end{enumerate}
+
+\end{document}

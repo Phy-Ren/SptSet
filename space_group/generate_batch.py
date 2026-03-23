@@ -3,8 +3,8 @@
 
 Usage:
     python3 generate_batch.py                    # default batch
-    python3 generate_batch.py 21 40              # SG#21-40, extended queue
-    python3 generate_batch.py 21 40 bigmem       # SG#21-40, bigmem queue
+    python3 generate_batch.py 21 40              # SG#21-40, long queue (default)
+    python3 generate_batch.py 21 40 extended     # SG#21-40, extended queue
 """
 
 import os
@@ -33,13 +33,11 @@ def gen_setup(n, jobs=24, threshold=10):
     ]
     return '\n'.join(lines) + '\n'
 
-def gen_pbs(n, queue="extended"):
+def gen_pbs(n, queue="long"):
     p = "%03d" % n
     if n in HARDEST:
         queue = "extended"
         tag = " (HARDEST)"
-    elif queue == "bigmem":
-        tag = " (bigmem node)"
     else:
         tag = ""
 
@@ -80,7 +78,7 @@ def gen_pbs(n, queue="extended"):
     ]
     return '\n'.join(lines) + '\n'
 
-def generate(sg_list, queue="extended"):
+def generate(sg_list, queue="long"):
     os.makedirs(os.path.join(BASE, "setup"), exist_ok=True)
     os.makedirs(os.path.join(BASE, "pbs"), exist_ok=True)
     os.makedirs(os.path.join(BASE, "results"), exist_ok=True)
@@ -107,7 +105,7 @@ if __name__ == "__main__":
     if len(sys.argv) >= 3:
         start = int(sys.argv[1])
         end = int(sys.argv[2])
-        q = sys.argv[3] if len(sys.argv) >= 4 else "extended"
+        q = sys.argv[3] if len(sys.argv) >= 4 else "long"
         generate(list(range(start, end + 1)), queue=q)
     else:
         batch1 = list(range(1, 21)) + [210, 219, 228]
