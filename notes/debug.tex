@@ -2285,32 +2285,351 @@ Z-lift 对 $[A; R_2]$（$R_2 = 2I_{10}$）做 Smith Normal Form，对角线 $d_i
 \item 2D 为什么不出问题？需检查 2D 的 $d_1$ SNF 是否有 2-torsion。
 \end{enumerate}
 
-\end{document}ift 的伪逆做的事情是：把 $[A; R_2]$ 做 Smith Normal Form（$R_2 = 2I$ 是余域关系矩阵），对角线 $d_i \neq 0$ 的位置取 $1/d_i$。当 $d_i = 2$ 时，伪逆给出 $1/2$，这就是分数 $-1/2$ 的来源。
 
-关键问题：Z-lift 的伪逆 \textbf{不检查方程是否有解}。即使方程在 $\mathbb{Z}_2$ 上无解（$cp$ 不在 $d_1$ 的像中），Z-lift 仍然会返回一个"最佳拟合"的解，其中包含分数。这个分数解是\textbf{无意义的}——它甚至不满足方程 $x \cdot A \equiv cp \pmod{2}$。
+\section{C3v (SG\#156) 问题分析与解决方案}
+\label{sec:c3v-analysis}
 
-\subsection{后果链}
+\subsection{C4v 成功确认}
 
+C4v s12（SG\#99，$|G|=8$）的完整诊断实验（\texttt{exp\_c4v\_full\_diag.g}）结果：
+\begin{itemize}
+\item Phase A（分类）：约 131 分钟完成
+\item Phase B（Extension）：约 752 分钟完成
+\item \textbf{分数警告总数：0}
+\item 最终结果：$\mathbb{Z}_2^4$
+\end{itemize}
+
+$E_\infty$ 页面：
+\begin{equation}
+(E_\infty^{1,3},\; E_\infty^{2,2},\; E_\infty^{3,1},\; E_\infty^{4,0})
+= (0,\; \mathbb{Z}_2,\; 0,\; \mathbb{Z}_2^3)
+\end{equation}
+
+\paragraph{为什么 C4v 没有问题？}
+C4v 的 $p{+}ip$ 层（$E_2^{1,3} = \mathbb{Z}_2$）被 $d_2$ 微分完全杀死（$E_3^{1,3} = 0$）。
+这意味着来自 $(1,3)$ 位置的更高阶微分（如 $d_3, d_4$）\textbf{从不被触发}。
+这些高阶微分正是对 C3v 造成问题的部分。
+
+\subsection{C3v 诊断实验经过}
+
+C3v s12（SG\#156，$|G|=6$）的完整诊断实验（\texttt{exp\_c3v\_full\_diag.g}）：
+
+\paragraph{Phase A}
+Phase A 完成，但出现 1 次分数警告：$d_4^{1,3}$（从 $(1,3)$ 到 $(5,0)$）的 Bockstein 输出包含分数。
+Bockstein 应输出整数（代表 $d\mathcal{O}_5 = 0$ 的检查），但在 C3v 的 O5 公式下输出了有理数。
+
+\paragraph{Phase B 崩溃}
+Phase B 在 Extension 阶段崩溃：
+\begin{verbatim}
+Error, GCD_INT: <b> must be an integer (not a rational)
+  at SptSetFpZModuleCanonicalForm
+\end{verbatim}
+
+\subsection{根因分析}
+\label{sec:c3v-root-cause}
+
+\paragraph{人话版}
+程序在做 Phase B 的 Extension 时，需要对一个度 5 的类做 purify（把代表元规范化）。
+Purify 从低层到高层逐层处理，到 $p=5$（Bosonic 层）时出了问题。
+
+\paragraph{技术细节}
+\texttt{SptSetPurifySpecSeqClass}（\texttt{ss\_class.gi}:51）有一个内层循环：
+
+\begin{verbatim}
+for p in [0..deg] do
+  ...
+  for r in [p, (p-1)..2] do          <-- 问题在这里
+    Erpq := SptSetSpecSeqComponent2(SS, r, p, q);
+    if not IsZeroElm(Erpq, cp) then
+      PartialPurify@(coc, p, r, cp);  <-- 只支持 r<=2
+    fi;
+  od;
+  ...
+od;
+\end{verbatim}
+
+内层循环尝试从 $r=p$ 降到 $r=2$。当 $p=5$ 时，循环尝试 $r=5, 4, 3, 2$。
+
+\textbf{问题 1}：\texttt{PartialPurify@} 只支持 $r \le 2$（第 117 行有 \texttt{if r > 2 then Error...}）。
+
+\textbf{问题 2}：检查 \texttt{SptSetSpecSeqComponent2(SS, r, p, q)} 本身会触发模块计算。
+当 $r=4$, $p=5$, $q=0$ 时，需要先算 $d_3$ 微分，进而触发 $d_4^{1,3}$（从 $(1,3)$ 到 $(5,0)$）。
+
+\textbf{问题 3}：C3v 的 $d_4^{1,3}$ 涉及 O5 公式的 Bockstein 同态。
+O5 公式在 C3v 的群作用下产生有理数（非整数），导致分数传播到 \texttt{SptSetFpZModuleCanonicalForm}，
+触发 \texttt{GCD\_INT} 崩溃。
+
+\paragraph{因果链}
 \begin{enumerate}
-\item $d_1$ 矩阵有 2-torsion → GF(2) 秩从 4 降到 2
-\item gen1 的 CF obstruction $cp$ 在列 4, 7 有奇数分量 → 不在 $d_1$ 的 GF(2) 像中
-\item \texttt{SptSetZLMapInverse} 不检查可解性 → 返回分数 $n = [\ldots, -1/2]$
-\item 分数 $n$ 传入 \texttt{SptSetSolveCocycleEq} → 生成分数 $n_3$ 函数
-\item 分数 $n_3$ 进入 O5 公式 → \texttt{phase mod 2} 崩溃（\texttt{ModRat}）
-\item 或者：公式跑完但结果不对 → dO5 ≠ 0 → \texttt{ASSERTION FAILURE: top layer is not a cocycle}
+\item Purify 循环到 $p=5$，内层循环从 $r=5$ 开始
+\item $r=4$ 时检查 $\tilde{E}_4^{5,0}$ $\to$ 触发 $d_3$ 计算 $\to$ 触发 $d_4^{1,3}$ 计算
+\item $d_4^{1,3}$ 涉及 O5 公式的 Bockstein $\to$ C3v 的 O5 产生分数
+\item 分数传入 module relations $\to$ \texttt{SptSetFpZModuleCanonicalForm} 崩溃
 \end{enumerate}
 
-\subsection{关键开放问题}
+\paragraph{C4v 为何不受影响？}
+C4v 的 $E_3^{1,3} = 0$（$p{+}ip$ 被 $d_2$ 杀死）。
+$d_4^{1,3}$ 的源模块为零，微分自动为零映射。
+Purify 循环在 $r=4,3$ 时检查的模块直接为零，不进入 \texttt{PartialPurify@}。
+
+\subsection{提出的解决方案}
+\label{sec:c3v-fix}
+
+\paragraph{方案}
+将 \texttt{SptSetPurifySpecSeqClass} 和 \texttt{PartialPurifySSClass@} 的内层循环限制为 $r \le 2$。
+
+\paragraph{为什么正确？}
+\begin{enumerate}
+\item \texttt{PartialPurify@} 本身只支持 $r=2$，$r > 2$ 的检查发现非零元素也无法处理
+\item EZ 版本的 $r_{\max}$ 已被 cap 在 4，但 Purify 循环未遵守此限制
+\item $r > 2$ 的 purification 在当前物理问题中不需要
+\item 避免触发不必要的高阶微分，防止 Bockstein 分数问题
+\end{enumerate}
+
+\paragraph{影响范围}
+\begin{itemize}
+\item 修改文件：\texttt{ss\_class.gi}（\texttt{SptSetPurifySpecSeqClass}）和
+      \texttt{ss\_cochain.gi}（\texttt{PartialPurifySSClass@}）
+\item 不影响 Phase A 分类结果
+\item 不影响 C4v 等 $p{+}ip$ 被 $d_2$ 杀死的群
+\item 影响 C3v 等 $p{+}ip$ 在 $d_2$ 后存活的群
+\end{itemize}
+
+\paragraph{当前状态}
+方案已确定，\textbf{尚未实施}。等待对其他空间群的验证实验完成后再统一修改。
+
+\section{Component vs Component2：两套微分系统}
+\label{sec:component-vs-component2}
+
+代码里有两套平行的 E-page 计算系统：
+
+\subsection{旧系统（Component / Derivative）}
+\begin{itemize}
+\item 函数：\texttt{SptSetSpecSeqComponent}, \texttt{SptSetSpecSeqDerivative},
+      \texttt{SptSetSpecSeqComponentInf}
+\item 来源：\texttt{group\_ext} 分支原始代码
+\item 生产线当前使用的就是这套
+\item 计算微分 $d_r$ 的方式：直接从 coboundary 公式构建映射矩阵
+\end{itemize}
+
+\subsection{新系统（Component2 / Derivative2）}
+\begin{itemize}
+\item 函数：\texttt{SptSetSpecSeqComponent2}, \texttt{SptSetSpecSeqDerivative2},
+      \texttt{SptSetSpecSeqComponent2Inf}
+\item 来源：后来添加（commit \texttt{7e546e2: added SSComponent2 and SSDerivative2}）
+\item \texttt{Derivative2} 使用 Bockstein 路径来计算微分
+\end{itemize}
+
+\subsection{关键区别}
+\begin{enumerate}
+\item \textbf{Bockstein 路径}：\texttt{Derivative2} 经过 Bockstein 同态来计算 $d_r$。
+      在某些群（如 C3v s12）下，Bockstein 会产生分数值，导致后续计算崩溃。
+      \texttt{Derivative}（旧系统）直接构建映射，不经过 Bockstein，不产生分数。
+\item \textbf{$r > 2$ 支持}：旧系统天然支持任意 $r$。
+      新系统在 $r > 2$ 时依赖 Bockstein 路径，会出问题（原代码有 \texttt{if r > 2 then Error} 保护）。
+\item \textbf{Purification 循环}：\texttt{SptSetPurifySpecSeqClass} 中的
+      \texttt{PartialPurify@} 需要调用 Derivative。
+      用旧系统时，$r > 2$ 可以正常工作（配合零映射提前返回）。
+      用新系统时，$r > 2$ 直接报错。
+\end{enumerate}
+
+\subsection{当前 debug 版本的选择}
+debug 版本已切换到\textbf{旧系统}（Component / Derivative），配合以下辅助改动：
+\begin{itemize}
+\item \texttt{spectral\_sequence.gi}：\texttt{rmax} 恢复为 \texttt{Maximum(q+1, p)}
+\item \texttt{ss\_class.gi}：用 \texttt{ComponentInf}/\texttt{Component}/\texttt{Derivative}
+      替换 \texttt{Component2Inf}/\texttt{Component2}/\texttt{Derivative2}；
+      去掉 $r > 2$ 的 Error，改为零映射时提前返回
+\item \texttt{ss\_cochain.gi}：加入 \texttt{IsBound} 边界检查，
+      防止高阶 $r$ 时访问未定义的 boundary
+\item \texttt{zlmap.gi}：为零映射添加 \texttt{SptSetZLMapInverse} 方法
+\end{itemize}
+
+\paragraph{待验证}
+这组改动是否能解决 C4v/C3v/SG\#30 等之前出现的 assertion failure 和 GCD\_INT 崩溃，
+需要用正确加载 debug 代码的实验来验证（之前的实验全部错误加载了生产线代码）。
+
+\section{SG\#30 EZ 诊断实验：首次完整成功}
+\label{sec:sg30-ez-success}
+
+这是 debug 分支上\textbf{第一个从头到尾无报错完成}的 3D 空间群实验。
+记录了完整的实验配置、结果和成功原因，供后续复现参考。
+
+\subsection{实验配置}
+
+\begin{itemize}
+\item \textbf{空间群}：SG\#30 (Pnc2)，EZ 模式（$w=0$，spinless）
+\item \textbf{脚本}：\texttt{debug/exp\_sg30\_ez\_diag.g}
+\item \textbf{代码路径}：debug 线 \texttt{/home/user/xyren/gap-debug/pkg/SptSet/}，
+      脚本开头有自动验证（检查 \texttt{GAPInfo.PackagesInfo.sptset} 路径含 \texttt{gap-debug}）
+\item \textbf{Resolution}：\texttt{Resolution3DSpaceGroup(fSG, 9)}，
+      度 0--8，维度 $1, 5, 12, 20, 28, 36, 44, 52, 60$
+\item \textbf{谱序列}：\texttt{FermionEZSPTSpecSeq(R, f)}，spectrum 含四层：
+      Bosonic ($U(1)$), CF ($\mathbb{Z}_2$), MC ($\mathbb{Z}_2$), $p{+}ip$ ($\mathbb{Z}$)
+\item \textbf{并行}：\texttt{SPTSET\_PARALLEL\_JOBS=10}，\texttt{SPTSET\_PHASE2\_ENABLED=true}
+\item \textbf{Checkpoint}：不加载，从头计算
+\end{itemize}
+
+\subsection{Resolution 深度的教训}
+
+之前用 \texttt{Resolution3DSpaceGroup(fSG, 7)}（度 0--6），
+在计算 $E^{1,3}_4$（$p{+}ip$ 层第 4 页）时崩溃：
+\begin{quote}
+\texttt{Error, List Element: <list>[8] must have an assigned value}\\
+\texttt{at resFiniteGroup.gi:180 --- PseudoBoundary[8] 不存在}
+\end{quote}
+
+原因链条：
+\begin{enumerate}
+\item $E^{1,3}_4$ 的递归计算需要 $\text{Derivative}(3,1,3)$
+\item $\text{Derivative}(3,1,3)$ 需要 $\text{Component}(3,4,1)$
+\item $\text{Component}(3,4,1)$ 递归到 $\text{Derivative}(2,4,1)$
+\item $\text{Derivative}(2,4,1)$ 需要 $\text{Component}(2,6,0)$
+\item $\text{Component}(2,6,0)$ 递归到 $\text{Derivative}(1,6,0)$
+\item $\text{Derivative}(1,6,0)$ 需要 $N = \text{Component}(1,7,0)$
+\item $\text{Component}(1,7,0) = \text{CochainModule}(\text{res}, 7, \text{spectrum}[1])$
+\item $\text{spectrum}[1]$ 是 $U(1)$（Bosonic），$U(1)$ 的 \texttt{CochainModule} 自动请求
+      $\text{deg}+1 = 8$
+\item Resolution 只到度 7 $\Rightarrow$ \texttt{PseudoBoundary[8]} 不存在 $\Rightarrow$ 崩溃
+\end{enumerate}
+
+\textbf{修复}：Resolution 深度从 7 增加到 9。
+一般规则：对于包含 $p{+}ip$ 层的计算，Resolution 深度需要比 $\text{rmax}$ 对应的
+最深递归多至少 2（因为 $U(1)$ 系数的 $\text{deg}+1$ 效应）。
+
+\subsection{零模提前退出的优化}
+
+$E^{1,3}_4 = 0$（$p{+}ip$ 在第 4 页被杀死）。按谱序列性质，
+$E^{p,q}_{r} = 0 \Rightarrow E^{p,q}_{r+1} = 0$，所以 $E^{1,3}_5$ 也一定是零。
+
+但代码不会自动跳过。\texttt{SptSetSpecSeqBuildDerivative} 在检查 $M$ 是否为零之前，
+会先计算 $N = \text{Component}(r, p{+}r, q{-}r{+}1)$——即使 $M$ 已经是零。
+对于 $E^{1,3}_5$，$N = \text{Component}(4, 5, 0)$ 涉及大量 Bosonic 层 coboundary 运算，
+导致进程卡住 \textbf{2+ 小时}无输出。
+
+\textbf{修复}：在实验脚本的 Phase A 循环中加入判断——
+如果 $E^{p,q}_r = 0$，立刻 \texttt{break} 跳过更高的 $r$。
+这一优化将 $p{+}ip$ 层从"卡死"变成几十秒完成。
+
+\subsection{Phase A 分类结果}
+
+\begin{center}
+\begin{tabular}{l|cccc|c}
+\hline
+层 & $E_2$ & $E_3$ & $E_4$ & $E_5$ & $E_\infty$ \\
+\hline
+$p{+}ip$ ($q=3$) & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $0$ & 跳过 & $0$ \\
+Majorana ($q=2$) & $\mathbb{Z}_2^4$ & $\mathbb{Z}_2^2$ & $\mathbb{Z}_2^2$ & --- & $\mathbb{Z}_2^2$ \\
+CF ($q=1$) & $\mathbb{Z}_2^4$ & $\mathbb{Z}_2^2$ & $\mathbb{Z}_2^2$ & --- & $\mathbb{Z}_2^2$ \\
+Bosonic ($q=0$) & $\mathbb{Z}_2^2$ & $\mathbb{Z}_2^2$ & $\mathbb{Z}_2^2$ & $\mathbb{Z}_2^2$ & $\mathbb{Z}_2^2$ \\
+\hline
+\end{tabular}
+\end{center}
+
+Phase A 耗时约 68 分钟，其中 $E^{2,2}_4$（MC 层 $d_3$）最重（约 60 分钟）。
+
+\subsection{Phase B 群结构}
+
+Phase B 调用 \texttt{SptSetSpecSeqResult(SS, 4, [1,2,3,4])} 计算模扩展，结果：
+\[
+\boxed{\mathbb{Z}_2 \times \mathbb{Z}_4 \times \mathbb{Z}_8}
+\]
+
+模扩展过程打印：
+\begin{verbatim}
+>> ModExt: layer [ 2 ] gen 1/2 torsion=2
+>> ModExt: layer [ 2 ] gen 2/2 torsion=2
+>> ModExt: layer [ 2, 3 ] gen 1/3 torsion=2
+>> ModExt: layer [ 2, 3 ] gen 2/3 torsion=2
+>> ModExt: layer [ 2, 3 ] gen 3/3 torsion=4
+\end{verbatim}
+
+Phase B 耗时约 11.6 小时（主要消耗在 \texttt{SptSetSpecSeqModuleExtension} 的
+\texttt{MapFromBarCocycle} 并行调用上，共 36 次并行调用）。
+
+\subsection{诊断结果：12 个 checkpoint 全部通过}
+
+以下 12 个关键检查点在 \texttt{lib/} 源码中激活，
+每个点在\textbf{应该是整数但可能出分数}的地方检查：
 
 \begin{enumerate}
-\item \textbf{gen1 真的是 Majorana Chain 吗？}如果用户的 C++ 代码用的是 gen4 或其他能解的生成元，那 GAP 对 gen1 报错是正确的行为——gen1 确实有不可消除的 CF obstruction。
-\item \textbf{如果 gen1 确实应该可解}，那么问题可能在于：
-  \begin{itemize}
-  \item InstallCoboundary(2,2,2) 公式在 Z-lift 下给出了错误的 cp（虽然我们证明了公式 mod 2 是不变的，但也许某些中间步骤有问题）
-  \item CoboundarySL 的层索引或系数作用有误
-  \item 或者谱序列的 $E_5^{2,2}$ 模块计算有误，gen1 不应该出现在 $E_5$ 页
-  \end{itemize}
-\item \textbf{2D 为什么不出问题？}需要检查 2D 情况下 $d_1$ 矩阵的 SNF 是否有 2-torsion。如果没有，那 2D 的方程总是可解的。
+\item \texttt{SptSetBockstein}：输出向量的整数性（仅在输入为整数时检查）
+\item \texttt{SptSetFpZModuleCanonicalForm}：\texttt{M!.relations} 矩阵元素
+\item \texttt{SptSetZLMapInverse}：逆映射结果向量
+\item \texttt{SptSetPurifySpecSeqClass}：\texttt{MapFromBarCocycle} 后的 \texttt{cp}
+\item \texttt{PartialPurify@}：\texttt{StackInplace} 后高层 cochain（跳过 $U(1)$ 层）
+\item \texttt{PartialPurifyCoboundary@}：同上
+\item \texttt{PartialPurifySSClass@}：\texttt{MapFromBarCocycle} 后的 \texttt{cp}
+\item \texttt{PartialConstructSSCochain@}：\texttt{dcp2} 的整数性
+\item \texttt{SptSetSpecSeqBuildDerivative}（串行路径）：\texttt{opr} 向量
+\item \texttt{SptSetSpecSeqBuildDerivative}（并行路径）：\texttt{lopr} 向量
+\item \texttt{SptSetSpecSeqModuleClassToLeadingVector}：\texttt{v} 向量
+\item \texttt{SptSetSpecSeqModuleExtension}：\texttt{vjnf} 向量
 \end{enumerate}
+
+\textbf{结果：0 次触发。} 整个计算流程中没有任何一步出现不该有的分数。
+
+\subsection{成功的根本原因}
+\label{sec:sg30-root-cause}
+
+\textbf{一句话：统一使用旧微分系统，彻底避开 Bockstein 路径。}
+
+之前的代码是"混搭"的：\texttt{SptSetSpecSeqBuildComponent}（旧系统）中，
+\texttt{phi} 参数用的是 \texttt{SptSetSpecSeqDerivative}（旧系统），
+但 \texttt{psi} 参数用的是 \texttt{SptSetSpecSeqDerivative2}（新系统）。
+
+新系统的 \texttt{Derivative2} 内部通过 Bockstein 同态来计算微分。
+Bockstein 对 $U(1)$ 系数（Bosonic 层）会把中间结果从整数变成分数。
+这些分数传染到 \texttt{HomologyModule} $\to$ \texttt{CanonicalForm} $\to$
+\texttt{SmithNormalFormIntegerMatTransforms}，最终触发 \texttt{GCD\_INT} 崩溃。
+
+\textbf{关键修复}（4 个文件，全部在 \texttt{lib/} 下）：
+
+\begin{enumerate}
+\item \texttt{ss\_vanilla.gi} 第 79 行——\textbf{最关键的一行}：
+\begin{verbatim}
+-      psi := SptSetSpecSeqDerivative2(ss, r-1, p, q);
++      psi := SptSetSpecSeqDerivative(ss, r-1, p, q);
+\end{verbatim}
+      将 \texttt{BuildComponent} 的 \texttt{psi} 从新系统切换到旧系统。
+
+\item \texttt{ss\_class.gi}：\texttt{PartialPurify@} 和 \texttt{PartialPurifyCoboundary@}
+      中所有 \texttt{Component2}/\texttt{Derivative2} 替换为
+      \texttt{Component}/\texttt{Derivative}。
+
+\item \texttt{ss\_cochain.gi}：\texttt{PartialPurifySSClass@} 和
+      \texttt{PartialConstructSSCochain@} 中做同样替换。
+
+\item \texttt{zlmap.gi}：为零映射添加 \texttt{SptSetZLMapInverse} 方法，
+      解决旧系统在 $r > 2$ 时遇到零映射没有逆映射方法的问题。
+\end{enumerate}
+
+切换后，整条计算链路：
+\[
+\text{coboundary 公式} \xrightarrow{\text{直接构建}} \text{映射矩阵}
+\xrightarrow{\text{HomologyModule}} \text{SNF} \xrightarrow{\text{CanonicalForm}} \text{结果}
+\]
+\textbf{全程不经过 Bockstein，不产生分数。}
+
+\subsection{GAP 输出缓冲的坑}
+
+实验过程中发现：当 GAP 的 stdout 重定向到文件时（\texttt{> log 2>\&1}），
+C 语言 stdio 使用全缓冲模式（通常 4--8 KB），导致 log 文件长时间不更新，
+误以为进程卡死。
+
+\textbf{解决方案}：启动 GAP 时加 \texttt{stdbuf -oL} 强制行缓冲：
+\begin{verbatim}
+stdbuf -oL gap -l "..." -r -q -b script.g > log 2>&1 &
+\end{verbatim}
+
+\subsection{待做}
+
+\begin{itemize}
+\item 用同样的 debug 代码重新测试 C4v s12（之前的成功实验用的不是最终版代码）
+\item 用同样的 debug 代码测试 C3v s12（之前因 $p{+}ip$ 层问题崩溃）
+\item 确认 SG\#30 的结果 $\mathbb{Z}_2 \times \mathbb{Z}_4 \times \mathbb{Z}_8$
+      是否与 C++ 程序 / 文献一致
+\item 如果多个群验证通过，将修复合并回生产线
+\end{itemize}
 
 \end{document}

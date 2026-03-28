@@ -130,6 +130,12 @@ InstallGlobalFunction
         fi;
 
         v := SptSetMapFromBarCocycle(ss!.brMap, p, ss!.spectrum[deg - p +1], cl!.cochain!.layers[p + 1]);
+        if not ForAll(v, IsInt) then
+          Print("!! DIAG ClassToLeadVec(deg=",deg,",p=",p,
+                "): v FRAC after MapFromBarCocycle, indices=",
+                Filtered([1..Length(v)], k->not IsInt(v[k])),
+                " vals=",Filtered(v, x->not IsInt(x)),"\n");
+        fi;
         return SptSetFpZModuleCanonicalElm(M!.components[p], v) * M!.vector_embedings[p];
     end);
 
@@ -158,7 +164,10 @@ InstallGlobalFunction
             fi;
 
             vp := SptSetMapFromBarCocycle(ss!.brMap, p, ss!.spectrum[deg - p +1], cl!.cochain!.layers[p + 1]);
-            #vnext := vp * M!.res_projections[p];
+            if not ForAll(vp, IsInt) then
+              Print("!! DIAG ClassToVec(deg=",deg,",p=",p,
+                    "): vp FRAC after MapFromBarCocycle\n");
+            fi;
             vnext := SptSetFpZModuleCanonicalElm(M!.components[p], vp) * M!.vector_embedings[p];
             v := v + vnext;
             if p = Last(pRange) then break; fi;
@@ -221,10 +230,17 @@ function(M1, M2)
             tj := M1!.relations[j, j];
             vjn := tj * M1!.generators[j];
             Rmat[j, j] := tj;
-            if tj <> 0 then # torsion-free generators have no extension.
+            if tj <> 0 then
+                Print("  >> ModExt: layer ",M1!.pRange," gen ",j,"/",r1,
+                      " torsion=",tj,"\n");
                 cjn := SptSetSpecSeqModuleVectorToClass(M1, vjn);
                 vjnf := SptSetSpecSeqModuleClassToLeadingVector(M2, cjn);
-                # Display(["vjnf", vjnf]);
+                if vjnf <> fail and not ForAll(vjnf, IsInt) then
+                  Print("!! DIAG ModExt: vjnf FRAC for gen ",j,"/",r1,
+                        " torsion=",tj," indices=",
+                        Filtered([1..Length(vjnf)], k->not IsInt(vjnf[k])),
+                        " vals=",Filtered(vjnf, x->not IsInt(x)),"\n");
+                fi;
                 Rmat[j]{[(r1+1)..r]} := vjnf;
             fi;
         od;

@@ -106,7 +106,12 @@ function(SS, deg, p, a)
   dalayers[(p+1)+1] := da;
   rmax := q + 1;
   for r in [2..rmax] do
-    dalayers[p + r +1] := NegativeInhomoCochain@(SS!.bdry[r+1][p+1][q+1](a, da));
+    if IsBound(SS!.bdry[r+1]) and IsBound(SS!.bdry[r+1][p+1])
+       and IsBound(SS!.bdry[r+1][p+1][q+1]) then
+      dalayers[p + r +1] := NegativeInhomoCochain@(SS!.bdry[r+1][p+1][q+1](a, da));
+    else
+      dalayers[p + r +1] := ZeroCocycle@;
+    fi;
   od;
   return SptSetSpecSeqCochain(SS, deg+1, dalayers);
 end);
@@ -153,15 +158,17 @@ function(cl, rf, pf)
     q := deg - p;
     cp_ := coc!.layers[p+1];
     cp := SptSetMapFromBarCocycle(brMap, p, SS!.spectrum[q+1], cp_);
-    Assert(-1, ForAll(cp, IsInt), "ASSERTION FAILURE: top layer is not a cocycle");
-    #if not ForAll(cp, IsInt) then Error("top layer is not a cocycle."); fi;
+    if not ForAll(cp, IsInt) then
+      Print("!! DIAG PartialPurifySSClass(deg=", deg, ",p=", p,
+            ",rf=", rf, "): top layer NOT integer, frac indices=",
+            Filtered([1..Length(cp)], i -> not IsInt(cp[i])),
+            " values=", Filtered(cp, x -> not IsInt(x)), "\n");
+    fi;
 
-    # Epqinf := SptSetSpecSeqComponent2Inf(SS, p, q);
-    # rf = -1 means infinite page.
     if rf > 0 then
-      Epqrf := SptSetSpecSeqComponent2(SS, rf, p, q);
+      Epqrf := SptSetSpecSeqComponent(SS, rf, p, q);
     else
-      Epqrf := SptSetSpecSeqComponent2Inf(SS, p, q);
+      Epqrf := SptSetSpecSeqComponentInf(SS, p, q);
     fi;
     if not SptSetFpZModuleIsZeroElm(Epqrf, cp) then
       break;
@@ -171,7 +178,7 @@ function(cl, rf, pf)
     #SptSetSpecSeqComponent2(SS, p+1, p, q), cp),
     #"Assertion: p+1 should be the highest page with trivialization");
     for r in [p,(p-1)..2] do
-      Erpq := SptSetSpecSeqComponent2(SS, r, p, q);
+      Erpq := SptSetSpecSeqComponent(SS, r, p, q);
       if not SptSetFpZModuleIsZeroElm(Erpq, cp) then
         bdry2 := PartialPurify@(coc, p, r, cp);
         SptSetStackInplace(bdry, bdry2);
@@ -216,9 +223,13 @@ InstallGlobalFunction(PartialConstructSSCochain@,
 
       dcp2_ := dc!.layers[p2+1 +1];
       dcp2 := SptSetMapFromBarCocycle(brMap, p2+1, SS!.spectrum[q2+1], dcp2_);
+      if not ForAll(dcp2, IsInt) then
+        Print("!! DIAG PartialConstruct(deg=",deg,",p=",p,
+              ",p2=",p2,"): dcp2 FRAC\n");
+      fi;
 
       for r2 in [(p2-p), (p2-p-1)..2] do
-        Erpq2 := SptSetSpecSeqComponent2(SS, r2, p2+1, q2);
+        Erpq2 := SptSetSpecSeqComponent(SS, r2, p2+1, q2);
         if not SptSetFpZModuleIsZeroElm(Erpq2, dcp2) then
           cp_prime := PartialPurify@(dc, p2+1, r2, dcp2);
           SptSetStackInplace(coc, cp_prime);

@@ -75,8 +75,7 @@ InstallMethod(SptSetSpecSeqBuildComponent,
         p, ss!.spectrum[q+1]);
     else
       phi := SptSetSpecSeqDerivative(ss, r-1, p-(r-1), q+(r-1)-1);
-#      psi := SptSetSpecSeqDerivative(ss, r-1, p, q);
-      psi := SptSetSpecSeqDerivative2(ss, r-1, p, q);
+      psi := SptSetSpecSeqDerivative(ss, r-1, p, q);
       return SptSetHomologyModule(phi, psi);
     fi;
   end);
@@ -152,6 +151,10 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
         lopr_ := NegativeInhomoCochain@(lcl!.cochain!.layers[p+r +1]);
         lopr := SptSetMapFromBarCocycle(ss!.brMap,
           p+r, ss!.spectrum[q-r+1 +1], lopr_);
+        if not ForAll(lopr, IsInt) then
+          Print("!! DIAG BuildDeriv(r=",r,",p=",p,",q=",q,
+                ",gen=",idx,"): opr FRAC [par]\n");
+        fi;
         return lopr * N!.projection;
       end, rec(NumberJobs := Minimum(m, saved_jobs)));
 
@@ -186,6 +189,12 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
           opr_ := NegativeInhomoCochain@(cl_dnp!.cochain!.layers[p+r +1]);
           opr := SptSetMapFromBarCocycle(ss!.brMap,
             p+r, ss!.spectrum[q-r+1 +1], opr_);
+          if not ForAll(opr, IsInt) then
+            Print("!! DIAG BuildDerivative(r=", r, ",p=", p, ",q=", q,
+                  ",gen=", i, "/", m, "): opr FRACTION, indices=",
+                  Filtered([1..Length(opr)], k -> not IsInt(opr[k])),
+                  " values=", Filtered(opr, x -> not IsInt(x)), "\n");
+          fi;
           fA[i] := opr * N!.projection;
           dt_gen := Int((NanosecondsSinceEpoch()-t_gen)/1000000);
           if SPTSET_CHECKPOINT_HOOK <> false then

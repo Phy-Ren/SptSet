@@ -87,7 +87,25 @@ InstallMethod(SptSetZLMapInverse,
   "computes the preimage of a linear map",
   [IsSptSetZLMapRep, IsRowVector],
   function(psi, v)
-    return v * SptSetZLMapInverseMat(psi);
+    local _result, _frac_idx;
+    _result := v * SptSetZLMapInverseMat(psi);
+    _frac_idx := Filtered([1..Length(_result)], i -> not IsInt(_result[i]));
+    if _frac_idx <> [] then
+      Print("!! DIAG ZLMapInverse: FRACTION at indices ",
+            _frac_idx, " values=", _result{_frac_idx}, "\n");
+    fi;
+    return _result;
+  end);
+InstallMethod(SptSetZLMapInverse,
+  "computes the preimage of a zero map",
+  [IsSptSetZLMapZeroRep, IsRowVector],
+  function(psi, v)
+    if ForAll(v, x -> x = 0) then
+      return ListWithIdenticalEntries(
+        SptSetNumberOfGenerators(psi!.domain), 0);
+    else
+      Error("SptSetZLMapInverse: non-zero vector has no preimage under zero map");
+    fi;
   end);
 
 InstallGlobalFunction(SptSetPseudoInverseSpecialMat,

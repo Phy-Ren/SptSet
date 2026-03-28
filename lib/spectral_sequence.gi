@@ -109,8 +109,7 @@ InstallMethod(SptSetSpecSeqComponent2Inf,
 [IsCategoryOfSptSetSpecSeq, IsInt, IsInt],
 function(ss, p, q)
   local rmax;
-  #rmax := Maximum(q+1, p);
-  rmax := q+1;
+  rmax := Maximum(q+1, p);
   return SptSetSpecSeqComponent2(ss, rmax+1, p, q);
 end);
 

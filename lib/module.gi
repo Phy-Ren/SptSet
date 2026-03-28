@@ -84,6 +84,12 @@ InstallMethod(SptSetFpZModuleCanonicalForm,
   function(M)
     local snf, V, D, n, i, diag, indices;
     if SptSetFpZModuleIsZero(M) then return; fi;
+    if not ForAll(Flat(M!.relations), IsInt) then
+      Print("!! DIAG CanonicalForm: FRACTION in M!.relations, dims=",
+            DimensionsMat(M!.relations),
+            " non-int values=",
+            Filtered(Flat(M!.relations), x -> not IsInt(x)), "\n");
+    fi;
     snf := SmithNormalFormIntegerMatTransforms(M!.relations);
     V := snf!.coltrans;
     D := snf!.normal;

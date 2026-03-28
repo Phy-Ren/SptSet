@@ -71,10 +71,14 @@ function(cl) # recursive version
     q := deg - p;
     cp_ := coc!.layers[p+1];
     cp := SptSetMapFromBarCocycle(brMap, p, SS!.spectrum[q+1], cp_);
-    Assert(-1, ForAll(cp, IsInt), "ASSERTION FAILURE: top layer is not a cocycle");
-    #if not ForAll(cp, IsInt) then Error("top layer is not a cocycle."); fi;
+    if not ForAll(cp, IsInt) then
+      Print("!! DIAG PurifyClass(deg=", deg, ",p=", p,
+            "): top layer NOT integer, frac indices=",
+            Filtered([1..Length(cp)], i -> not IsInt(cp[i])),
+            " values=", Filtered(cp, x -> not IsInt(x)), "\n");
+    fi;
 
-    Epqinf := SptSetSpecSeqComponent2Inf(SS, p, q);
+    Epqinf := SptSetSpecSeqComponentInf(SS, p, q);
     if not SptSetFpZModuleIsZeroElm(Epqinf, cp) then
       break;
     fi;
@@ -83,7 +87,7 @@ function(cl) # recursive version
     #SptSetSpecSeqComponent2(SS, p+1, p, q), cp),
     #"Assertion: p+1 should be the highest page with trivialization");
     for r in [p,(p-1)..2] do
-      Erpq := SptSetSpecSeqComponent2(SS, r, p, q);
+      Erpq := SptSetSpecSeqComponent(SS, r, p, q);
       if not SptSetFpZModuleIsZeroElm(Erpq, cp) then
         bdry2 := PartialPurify@(coc, p, r, cp);
         SptSetStackInplace(bdry, bdry2);
@@ -107,25 +111,37 @@ end);
 InstallGlobalFunction(PartialPurify@,
 function(coc, p, r, cp)
     local F, SS, deg, brMap, q,
-          dr, beta, beta_, bdry, dbeta;
+          dr, beta, beta_, bdry, dbeta, _pp, _chk;
     F := FamilyObj(coc);
     SS := F!.specSeq;
     deg := F!.degree;
     brMap := SS!.brMap;
     q := deg - p;
 
-    if r > 2 then
-      Error("Purification at r>2 is not implemented.");
+    dr := SptSetSpecSeqDerivative(SS, r, p-r, q+r-1);
+    if IsSptSetZLMapZeroRep(dr) then
+      return SptSetSpecSeqCochainZero(SS, deg-1);
     fi;
-
-    dr := SptSetSpecSeqDerivative2(SS, r, p-r, q+r-1);
     beta := SptSetZLMapInverse(dr, cp);
     beta_ := SptSetMapToBarCocycle(brMap, p-r, SS!.spectrum[q+r-1 +1], beta);
 
     dbeta := SptSetSpecSeqCoboundarySL(SS, deg-1, p-r, NegativeInhomoCochain@(beta_));
     dbeta!.layers[p-r+1+1] := ZeroCocycle@;
     SptSetStackInplace(coc, dbeta);
-    
+
+    for _pp in [(p+1)..deg] do
+      if coc!.layers[_pp+1] <> ZeroCocycle@ and
+         not IsSptSetCoeffU1Rep(SS!.spectrum[deg-_pp+1]) then
+        _chk := SptSetMapFromBarCocycle(brMap, _pp,
+          SS!.spectrum[deg-_pp+1], coc!.layers[_pp+1]);
+        if not ForAll(_chk, IsInt) then
+          Print("!! DIAG PartialPurify(deg=",deg,",p=",p,",r=",r,
+                "): after stack, layer ",_pp," FRAC\n");
+          break;
+        fi;
+      fi;
+    od;
+
     bdry := SptSetSpecSeqCochainZero(SS, deg-1);
     bdry!.layers[p-r+1] := NegativeInhomoCochain@(beta_);
     return bdry;
@@ -134,7 +150,7 @@ end);
 InstallGlobalFunction(PartialPurifyCoboundary@,
 function(coc, p, cp)
   local F, SS, deg, brMap, q,
-  cp_, n, n_, bdry, dnc;
+  cp_, n, n_, bdry, dnc, _pp, _chk;
   F := FamilyObj(coc);
   SS := F!.specSeq;
   deg := F!.degree;
@@ -144,7 +160,7 @@ function(coc, p, cp)
   bdry := SptSetSpecSeqCochainZero(SS, deg-1);
   cp_ := coc!.layers[p+1];
   # cp_ must be a trivial coboundary.
-  n := SptSetZLMapInverse(SptSetSpecSeqDerivative2(SS, 1, p-1, q), cp);
+  n := SptSetZLMapInverse(SptSetSpecSeqDerivative(SS, 1, p-1, q), cp);
   n_ := SptSetSolveCocycleEq(brMap, p, SS!.spectrum[q+1], cp_, n);
   # n_ := NegativeInhomoCochain@(n_);
   # bdry!.layers[p-1 +1] := n_;
@@ -155,6 +171,19 @@ function(coc, p, cp)
   dnc := SptSetSpecSeqCoboundarySL(SS, deg-1, p-1, NegativeInhomoCochain@(n_));
   SptSetStackInplace(coc, dnc);
   coc!.layers[p+1] := ZeroCocycle@;
+
+  for _pp in [(p+1)..deg] do
+    if coc!.layers[_pp+1] <> ZeroCocycle@ and
+       not IsSptSetCoeffU1Rep(SS!.spectrum[deg-_pp+1]) then
+      _chk := SptSetMapFromBarCocycle(brMap, _pp,
+        SS!.spectrum[deg-_pp+1], coc!.layers[_pp+1]);
+      if not ForAll(_chk, IsInt) then
+        Print("!! DIAG PurifyCobdry(deg=",deg,",p=",p,
+              "): after stack, layer ",_pp," FRAC\n");
+        break;
+      fi;
+    fi;
+  od;
 
   return bdry;
 end);
