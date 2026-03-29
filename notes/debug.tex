@@ -9,6 +9,7 @@
 \usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{enumitem}
+\usepackage[normalem]{ulem}
 \geometry{margin=1in}
 \hypersetup{
   colorlinks=true,
@@ -2625,11 +2626,121 @@ stdbuf -oL gap -l "..." -r -q -b script.g > log 2>&1 &
 \subsection{待做}
 
 \begin{itemize}
-\item 用同样的 debug 代码重新测试 C4v s12（之前的成功实验用的不是最终版代码）
+\item \sout{用同样的 debug 代码重新测试 C4v s12} ——已完成，见 \S\ref{sec:c4v-s12-success}
 \item 用同样的 debug 代码测试 C3v s12（之前因 $p{+}ip$ 层问题崩溃）
 \item 确认 SG\#30 的结果 $\mathbb{Z}_2 \times \mathbb{Z}_4 \times \mathbb{Z}_8$
       是否与 C++ 程序 / 文献一致
+\item 确认 C4v s12 的结果 $\mathbb{Z}_2^4$ 是否与 C++ 程序 / 文献一致
 \item 如果多个群验证通过，将修复合并回生产线
+\end{itemize}
+
+\section{C4v s12 诊断实验：第二个完整成功}
+\label{sec:c4v-s12-success}
+
+继 SG\#30 EZ 之后，C4v s12 是 debug 分支上\textbf{第二个从头到尾无报错完成}的实验。
+这次是有限点群 + s12 模式（$w_2 \neq 0$），与 SG\#30 EZ（无限空间群 + $w = 0$）
+形成互补验证。
+
+\subsection{实验配置}
+
+\begin{itemize}
+\item \textbf{群}：$C_{4v}$（来自 SG\#99 的点群），$|G| = 8$
+\item \textbf{模式}：s12（$w_2 \neq 0$），使用 \texttt{Spin12FactorForPointGroup}
+\item \textbf{脚本}：\texttt{debug/exp\_c4v\_s12\_diag.g}
+\item \textbf{Resolution}：\texttt{ResolutionFiniteGroup(PG, 9)}，
+      维度 $1, 3, 5, 7, 10, 12, 13, 15, 18$
+\item \textbf{谱序列}：\texttt{FermionSPTSpecSeq(R, f, w2)}
+\item \textbf{并行}：\texttt{SPTSET\_PARALLEL\_JOBS=10}
+\item \textbf{与 SG\#30 的区别}：
+      有限群（非空间群），s12（非 EZ），\texttt{ResolutionFiniteGroup}（非 \texttt{Resolution3DSpaceGroup}）
+\end{itemize}
+
+\subsection{Phase A 分类结果}
+
+\begin{center}
+\begin{tabular}{l|cccc|c}
+\hline
+层 & $E_2$ & $E_3$ & $E_4$ & $E_5$ & $E_\infty$ \\
+\hline
+$p{+}ip$ ($q=3$) & $\mathbb{Z}_2$ & $0$ & 跳过 & 跳过 & $0$ \\
+Majorana ($q=2$) & $\mathbb{Z}_2^3$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & --- & $\mathbb{Z}_2$ \\
+CF ($q=1$) & $\mathbb{Z}_2^4$ & $0$ & 跳过 & --- & $0$ \\
+Bosonic ($q=0$) & $\mathbb{Z}_2^3$ & $\mathbb{Z}_2^3$ & $\mathbb{Z}_2^3$ & $\mathbb{Z}_2^3$ & $\mathbb{Z}_2^3$ \\
+\hline
+\end{tabular}
+\end{center}
+
+注意：
+\begin{itemize}
+\item $p{+}ip$ 在 $d_2$ 就被杀死（$E^{1,3}_3 = 0$），
+      比 SG\#30（在 $d_3$ 被杀死）更早。
+      这意味着 $p{+}ip$ 层完全不参与后续计算。
+\item CF 也在 $E_3$ 被杀死。
+\item 只有 MC（$\mathbb{Z}_2$）和 Bosonic（$\mathbb{Z}_2^3$）存活到 $E_\infty$。
+\end{itemize}
+
+耗时：Phase A 约 2 小时，其中 $E^{2,2}_4$（MC 层 $d_3$）最重（约 90 分钟）。
+
+\subsection{Phase B 群结构}
+
+\[
+\boxed{\mathbb{Z}_2^4}
+\]
+
+模扩展过程只有一步非平凡：
+\begin{verbatim}
+>> ModExt: layer [ 2, 3 ] gen 1/1 torsion=2
+\end{verbatim}
+即 MC 层的 $\mathbb{Z}_2$ 与 Bosonic 层的 $\mathbb{Z}_2^3$ 做扩展，
+torsion 不变（仍为 2），所以最终是直积 $\mathbb{Z}_2 \times \mathbb{Z}_2^3 = \mathbb{Z}_2^4$。
+
+Phase B 耗时约 7 小时。总计约 9 小时。
+
+\subsection{诊断结果}
+
+\textbf{12 个 checkpoint 全部通过，0 次触发。}
+
+逐项验证：
+\begin{enumerate}
+\item 在 log 文件中搜索 \texttt{DIAG}, \texttt{FRAC}, \texttt{BUG}, \texttt{Error},
+      \texttt{ASSERTION}, \texttt{GCD\_INT}：\textbf{零匹配}
+\item 确认 12 个 checkpoint 的 Print 语句全部存在于 \texttt{lib/} 源码中（共 13 处）
+\item 确认每个 checkpoint 的触发条件是活代码（\texttt{if \_frac\_idx <> []}
+      / \texttt{if not ForAll(..., IsInt)}），没有被注释或 \texttt{if false} 绕过
+\item Phase B 通过 \texttt{CALL\_WITH\_CATCH} 包裹，
+      打印了 \texttt{Phase B COMPLETE}（而非 \texttt{CRASHED}）
+\end{enumerate}
+
+\subsection{两个成功实验的交叉验证}
+
+\begin{center}
+\begin{tabular}{l|cc}
+\hline
+& SG\#30 EZ & C4v s12 \\
+\hline
+群类型 & 无限空间群 & 有限点群 ($|G|=8$) \\
+模式 & EZ ($w=0$) & s12 ($w_2 \neq 0$) \\
+Resolution & \texttt{Resolution3DSpaceGroup} & \texttt{ResolutionFiniteGroup} \\
+$p{+}ip$ 命运 & $d_3$ 杀死 & $d_2$ 杀死 \\
+$E_\infty$ 非零层数 & 3 (MC+CF+Bos) & 2 (MC+Bos) \\
+群结构 & $\mathbb{Z}_2 \times \mathbb{Z}_4 \times \mathbb{Z}_8$ & $\mathbb{Z}_2^4$ \\
+诊断警告 & 0 & 0 \\
+Phase B & 成功 & 成功 \\
+\hline
+\end{tabular}
+\end{center}
+
+两个实验覆盖了不同的群类型、不同的 resolution 构建方式、不同的 $w_2$ 设置，
+且都\textbf{零报错通过}。这进一步确认：
+\textbf{统一使用旧微分系统（Component/Derivative）是正确的修复方向。}
+
+\subsection{待做}
+
+\begin{itemize}
+\item 测试 C3v s12（$p{+}ip$ 在 $d_2$ 后存活，
+      之前因 \texttt{GCD\_INT} 崩溃，是最困难的测试用例）
+\item 与 C++ 程序的结果对比
+\item 如果 C3v 也通过，考虑合并回生产线
 \end{itemize}
 
 \end{document}
