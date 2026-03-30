@@ -1,5 +1,10 @@
-# SG#30 (Pnc2) EZ full diagnostic — 遵守实验铁律
+# SG#22 (F222) EZ full diagnostic — 遵守实验铁律
 # 从头开始，不加载 checkpoint，走 debug 线 lib/ 源代码
+# 模板：SG#30 EZ 成功实验
+#
+# 背景：SG#22 在生产线上 Phase B 崩溃 5 次（ModRat 错误），
+# 崩溃点：ext layer 2 (p=2) gen 1/1 → SptSetFpZModuleCanonicalElm
+# 本质是 MapFromBarCocycle 返回分数，与 SG#30 的 ASSERTION FAILURE 同源
 
 LoadPackage("HAP");;
 LoadPackage("IO");;
@@ -8,7 +13,7 @@ LoadPackage("SptSet");;
 # ============ 铁律 1: 验证加载的是 debug 线 ============
 _sptset_path := GAPInfo.PackagesInfo.sptset[1].InstallationPath;;
 Print("================================================================\n");;
-Print("SG#30 (Pnc2) EZ diagnostic\n");;
+Print("SG#22 (F222) EZ diagnostic\n");;
 Print("  SptSet loaded from: ", _sptset_path, "\n");;
 if PositionSublist(_sptset_path, "gap-debug") = fail then
     Print("  FATAL: NOT loading debug version! Aborting.\n");;
@@ -26,7 +31,7 @@ Print("  Parallel: JOBS=", SPTSET_PARALLEL_JOBS,
       " PHASE2=", SPTSET_PHASE2_ENABLED, "\n");;
 
 # ============ 铁律 3: 诊断已加入 lib/ 源码 (12 checkpoints) ============
-Print("  Diagnostics (12 points):\n");;
+Print("  Diagnostics (12 points in lib/ source code):\n");;
 Print("    Bockstein, ZLMapInverse, CanonicalForm, PurifyClass,\n");;
 Print("    PartialPurify-stack, PurifyCobdry-stack, PartialPurifySSClass,\n");;
 Print("    PartialConstruct, BuildDeriv-par, BuildDeriv-seq,\n");;
@@ -38,9 +43,9 @@ Read(Concatenation(
     GAPInfo.PackagesInfo.sptset[1].InstallationPath,
     "/examples/res_space_group.g"));;
 
-Print("Building resolution for SG#30...\n");;
+Print("Building resolution for SG#22...\n");;
 _t := NanosecondsSinceEpoch();;
-SG := SpaceGroupBBNWZ(3, 30);;
+SG := SpaceGroupBBNWZ(3, 22);;
 fSG := IsomorphismPcpGroup(SG);;
 SG1 := Image(fSG);;
 R := Resolution3DSpaceGroup(fSG, 9);;
@@ -63,7 +68,6 @@ _LAYER_NAMES := ["Bosonic:", "Complex fermion:", "Majorana:", "p+ip:"];;
 Print("Phase A: Classification (with p+ip, zero-module early stop)\n");;
 Print("------------------------------------------------------------\n");;
 _tA := NanosecondsSinceEpoch();;
-_frac_warnings := 0;;
 _page_count := 0;;
 
 for _p in [1..4] do

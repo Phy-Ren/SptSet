@@ -21,6 +21,7 @@ Print("  OK: debug version confirmed.\n");;
 SPTSET_PARALLEL_JOBS := 10;;
 SPTSET_PARALLEL_THRESHOLD := 10;;
 SPTSET_PHASE2_ENABLED := true;;
+SPTSET_CHECKPOINT_HOOK := function() end;;
 Print("  Parallel: JOBS=", SPTSET_PARALLEL_JOBS,
       " THRESHOLD=", SPTSET_PARALLEL_THRESHOLD,
       " PHASE2=", SPTSET_PHASE2_ENABLED, "\n");;
