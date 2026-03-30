@@ -1,0 +1,151 @@
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set NEATO_PATH manually if needed.
+#I  HAP warning: Set DOT_PATH manually if needed.
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/gap-debug/pkg/SptSet/ fa\
+iled
+================================================================
+S4 s12 diagnostic
+  SptSet loaded from: /home/user/xyren/gap-debug/pkg/SptSet/
+  OK: debug version confirmed.
+  Parallel: JOBS=10 THRESHOLD=10 PHASE2=true
+  Diagnostics (12 points in lib/ source code):
+    Bockstein, ZLMapInverse, CanonicalForm, PurifyClass,
+    PartialPurify-stack, PurifyCobdry-stack, PartialPurifySSClass,
+    PartialConstruct, BuildDeriv-par, BuildDeriv-seq,
+    ClassToLeadVec, ModExt-vjnf
+================================================================
+
+Setting up S4 s12...
+  Resolution built in 1762 ms
+  |G| = 4
+  Dimensions: 1 2 2 2 2 2 2 2 2 
+
+  Spin12Factor created.
+  Spectral sequence (s12) created.
+
+Phase A: Classification (with p+ip, zero-module early stop)
+------------------------------------------------------------
+Syntax warning: Unbound global variable in exp_s4_s12_diag.g:91
+                    function(j) return _Erpq!.relations[j][j]; end), "\n\n");;
+                                       ^^^^^
+--- Layer p+ip: (p=1, q=3, rmax=5) ---
+[1] E^{1,3}_2... = <ZL-Module with torsions [ 2 ]>  (7 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[2] E^{1,3}_3...    d^{1,3}_2 gen 1/1 (target_dim=2)...
+      gen 1 done [664 ms]
+ = <ZL-Module []>  (675 ms)
+  -> ZERO, skipping higher r for (1,3)
+
+--- Layer Majorana: (p=2, q=2, rmax=4) ---
+[3] E^{2,2}_2... = <ZL-Module with torsions [ 2 ]>  (5 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[4] E^{2,2}_3...    d^{2,2}_2 gen 1/1 (target_dim=2)...
+      gen 1 done [645 ms]
+ = <ZL-Module with torsions [ 2 ]>  (657 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[5] E^{2,2}_4...    d^{3,1}_2: 2 gens (target_dim=1) done [parallel, 
+10 workers, 2371 ms]
+    d^{2,2}_3 gen 1/1 (target_dim=1)...
+    d^{4,1}_2 gen 1/1 (target_dim=1)...
+      gen 1 done [5 ms]
+      gen 1 done [114562 ms]
+ = <ZL-Module with torsions [ 2 ]>  (116948 ms)
+  Generators: 1, torsion: [ 2 ]
+
+--- Layer Complex fermion: (p=3, q=1, rmax=4) ---
+[6] E^{3,1}_2... = <ZL-Module with torsions [ 2 ]>  (1 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[7] E^{3,1}_3...    d^{1,2}_2: 2 gens (target_dim=1) done [parallel, 
+10 workers, 716 ms]
+ = <ZL-Module []>  (723 ms)
+  -> ZERO, skipping higher r for (3,1)
+
+--- Layer Bosonic: (p=4, q=0, rmax=5) ---
+[8] E^{4,0}_2... = <ZL-Module with torsions [ 2 ]>  (5 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[9] E^{4,0}_3...    d^{2,1}_2: 2 gens (target_dim=1) done [parallel, 
+10 workers, 740 ms]
+ = <ZL-Module with torsions [ 2 ]>  (746 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[10] E^{4,0}_4...    d^{1,2}_3: 2 gens (target_dim=1) done [parallel, 
+10 workers, 70764 ms]
+ = <ZL-Module with torsions [ 2 ]>  (70769 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[11] E^{4,0}_5... = <ZL-Module with torsions [ 2 ]>  (3 ms)
+  Generators: 1, torsion: [ 2 ]
+
+============================================================
+Phase A COMPLETE in 190549 ms
+============================================================
+
+Phase B: Computing group structure...
+  SptSetSpecSeqResult(ss, 4, [1,2,3,4]) — all layers
+------------------------------------------------------------
+Syntax warning: Unbound global variable in exp_s4_s12_diag.g:107
+    M := SptSetSpecSeqResult(ss, 4, [1,2,3,4]);;
+    ^
+Syntax warning: Unbound global variable in exp_s4_s12_diag.g:108
+    SptSetFpZModuleCanonicalForm(M);;
+                                 ^
+  Result(deg=4): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,3): 0 generators
+    p+ip: trivial [2 ms]
+    ComponentEx(2,2): 1 generators
+    ComponentEx(2,2) class 1/1...
+      class 1 done [227003 ms]
+    p=2: 1 generators [227006 ms]
+    ComponentEx(3,1): 0 generators
+    p=3: trivial [0 ms]
+    extension done [1 ms]
+    ComponentEx(4,0): 1 generators
+    ComponentEx(4,0) class 1/1...
+      class 1 done [2 ms]
+    p=4: 1 generators [4 ms]
+  >> ModExt: layer [ 2, 3 ] gen 1/1 torsion=2
+    extension done [433042 ms]
+
+============================================================
+Phase B COMPLETE in 660058 ms
+Group structure: <ZL-Module with torsions [ 4 ]>
+============================================================
+
+Classification layers (E_inf from cache):
+  p+ip: E^{1,3}_inf = <ZL-Module []>
+  Majorana: E^{2,2}_inf = <ZL-Module with torsions [ 2 ]>
+  Complex fermion: E^{3,1}_inf = <ZL-Module []>
+  Bosonic: E^{4,0}_inf = <ZL-Module with torsions [ 2 ]>
+
+Total time: Phase A=190549ms, Phase B=660058ms, Total=850607ms
+=== SptSet Parallel Stats ===
+Config: JOBS=10 THRESHOLD=10 PHASE2=true
+P1 (MapFromBarCocycle): 0 parallel calls (0ms), 13 sequential calls (775878ms)
+P2 (BuildDerivative): 4 calls (74591ms), max_m=2
+P2b (SpecSeqResult ext): 0 calls (0ms), max_ngens=0

@@ -2889,10 +2889,186 @@ Phase B & 成功 & 成功 & \textbf{首次成功} \\
 
 \begin{itemize}
 \item 测试 SG\#42 EZ（另一个 ModRat 崩溃群）
-\item 测试 C3v s12（$p{+}ip$ 存活的最困难用例）
+\item \sout{测试 C3v s12} ——已完成，见 \S\ref{sec:c3v-s12-failure}
 \item 测试 SG\#30/36/41 等 ASSERTION 警告群，确认修复后群结构正确
 \item 与 C++ 程序的结果对比
 \item 如果多群验证通过，将修复合并回生产线
+\end{itemize}
+
+\section{S4 s12/EZ 诊断实验：第四、第五个成功}
+\label{sec:s4-success}
+
+S4 点群（$|G|=4$，SG\#81）的 s12 和 EZ 两种模式均\textbf{零报错通过}。
+
+\subsection{S4 s12 结果}
+
+\begin{center}
+\begin{tabular}{l|cccc|c}
+\hline
+层 & $E_2$ & $E_3$ & $E_4$ & $E_5$ & $E_\infty$ \\
+\hline
+$p{+}ip$ & $\mathbb{Z}_2$ & $0$ & --- & --- & $0$ \\
+MC & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & --- & $\mathbb{Z}_2$ \\
+CF & $\mathbb{Z}_2$ & $0$ & --- & --- & $0$ \\
+Bosonic & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ \\
+\hline
+\end{tabular}
+\end{center}
+
+群结构 $\mathbb{Z}_4$。
+Phase B 进度：MC 的 1 个 generator 与 Bosonic 的 1 个 generator
+做模扩展（torsion=2），得到 $\mathbb{Z}_4$。
+总耗时约 14 分钟。
+
+\subsection{S4 EZ 结果}
+
+\begin{center}
+\begin{tabular}{l|cccc|c}
+\hline
+层 & $E_2$ & $E_3$ & $E_4$ & $E_5$ & $E_\infty$ \\
+\hline
+$p{+}ip$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ \\
+MC & $\mathbb{Z}_2$ & $0$ & --- & --- & $0$ \\
+CF & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & --- & $\mathbb{Z}_2$ \\
+Bosonic & $\mathbb{Z}_2$ & $0$ & --- & --- & $0$ \\
+\hline
+\end{tabular}
+\end{center}
+
+群结构 $\mathbb{Z}_4$。
+注意 EZ 模式下 $p{+}ip$ 存活到 $E_\infty$（与 s12 不同），
+MC 和 Bosonic 反而被杀死，CF 存活。
+$p{+}ip$ 到 CF 的 extension 给出 $\mathbb{Z}_4$。
+总耗时约 22 分钟。
+
+两个模式均\textbf{零诊断触发}。
+
+\section{C3v s12 诊断实验：崩溃——$p{+}ip$ 的 $d_4$ 微分产生分数}
+\label{sec:c3v-s12-failure}
+
+C3v s12 是 debug 分支上的\textbf{首个失败实验}，
+也是唯一一个 $p{+}ip$ 层存活到 $E_5$ 的测试用例。
+
+\subsection{实验配置}
+
+与 C4v s12 完全相同的模板：
+\begin{itemize}
+\item \textbf{群}：C3v（$|G|=6$，SG\#156），s12 模式
+\item \textbf{脚本}：\texttt{debug/exp\_c3v\_s12\_diag.g}
+\item \textbf{Resolution}：\texttt{ResolutionFiniteGroup(PG, 9)}，维度 $1,2,3,4,5,6,7,8,9$
+\end{itemize}
+
+\subsection{Phase A 分类结果}
+
+\begin{center}
+\begin{tabular}{l|cccc|c}
+\hline
+层 & $E_2$ & $E_3$ & $E_4$ & $E_5$ & $E_\infty$ \\
+\hline
+$p{+}ip$ ($q=3$) & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$
+      & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ \\
+MC ($q=2$) & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & --- & $\mathbb{Z}_2$ \\
+CF ($q=1$) & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & --- & $\mathbb{Z}_2$ \\
+Bosonic ($q=0$) & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$
+      & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ \\
+\hline
+\end{tabular}
+\end{center}
+
+关键特征：\textbf{$p{+}ip$ 一路存活到 $E_\infty = \mathbb{Z}_2$}。
+这是与之前所有成功实验的本质区别——
+C4v/S4 s12 的 $p{+}ip$ 在 $E_3$ 就被 $d_2$ 杀死，
+SG\#30/22 EZ 的 $p{+}ip$ 从 $E_2$ 就为零。
+
+Phase A 耗时约 1.8 小时，其中 $E^{1,3}_5$ 最重（约 1.6 小时）。
+
+\subsection{最早的错误：$d_4$ 微分出现分数}
+
+\textbf{Phase A 期间}就已经出现了第一个诊断触发（第 78 行）：
+\begin{verbatim}
+!! DIAG BuildDerivative(r=4,p=1,q=3,gen=1/1): opr FRACTION,
+   indices=[ 3, 5, 6 ] values=[ 1/2, 3/4, 3/4 ]
+\end{verbatim}
+
+这是什么意思？用人话说：
+
+\begin{enumerate}
+\item 谱序列的每一页 $E_r$ 有一个微分 $d_r$，
+      把 $(p,q)$ 处的东西射到 $(p+r, q-r+1)$。
+\item $d_4$ 从 $p{+}ip$ 在 $(1,3)$ 射到 $(1+4, 3-4+1) = (5, 0)$。
+      注意 $(5,0)$ 已经\textbf{超出物理上的四层}
+      （$p{+}ip$ 在 $p=1$，MC 在 $p=2$，CF 在 $p=3$，Bosonic 在 $p=4$）。
+\item 计算 $d_4$ 需要把 $p{+}ip$ 的 cocycle 一路 purify 上去，
+      解出它在 $p=2,3,4,5$ 各层的对应 cochain。
+      而解 $p=5$ 层需要用到 \texttt{addTwister} 公式——
+      这些公式编码了 $p{+}ip$ 层的 stacking 规则。
+\item \textbf{但是 $d_3$ 和 $d_4$ 涉及的 $p{+}ip$ 高阶 stacking 规则，
+      物理上我们确实不知道}（代码里被设成零或不完整），
+      所以算出来有 $\frac{1}{2}$、$\frac{3}{4}$ 这些分数。
+\end{enumerate}
+
+尽管如此，$E^{1,3}_5$ 的分类结果（$\mathbb{Z}_2$）本身可能是对的，
+因为 $d_4$ 的像为零（被 Smith 正规形约化掉了）。
+但这些分数已经污染了内部 cache。
+
+\subsection{Phase B 崩溃链}
+
+Phase B 在构建 $p{+}ip$ 的 class 时（\texttt{ComponentEx(1,3) class 1/1}），
+触发了连锁诊断：
+
+\begin{enumerate}
+\item \textbf{PurifyClass（第 139 行）}：purification 把 $p{+}ip$ 的 cocycle 展开到
+      $p=5$（Bosonic 以上）层，发现分数值 $[-\frac{1}{2}, -\frac{3}{4}, -\frac{3}{4}]$，
+      对应索引 $[3,5,6]$——与 Phase A 的 $d_4$ 错误完全对应。
+      这就是旧生产线上的 ``top layer is not a cocycle'' 错误。
+\item \textbf{ZLMapInverse（第 141 行）}：后续解逆映射也产生分数
+      $[-\frac{15}{4}, -\frac{11}{4}, -\frac{3}{4}]$，连锁反应。
+\item \textbf{最终崩溃（第 163 行）}：$p{+}ip$ 的 class 被分数污染后，
+      \texttt{ClassToLeadingVector} 返回了错误维度的向量
+      （长度 3 而不是 1），extension 矩阵赋值时维度不匹配崩溃：
+\begin{verbatim}
+Error, List Assignments: <rhss> must have the same length as <poss>
+  (lengths are 3 and 1)
+  Rmat[j]{[ r1 + 1 .. r ]} := vjnf
+\end{verbatim}
+\end{enumerate}
+
+\subsection{根因：物理限制，不是代码 bug}
+
+\begin{center}
+\begin{tabular}{l|cc}
+\hline
+实验 & $p{+}ip$ 命运 & 需要算 $d_4$ 吗？ \\
+\hline
+SG\#30 EZ & $E_2$ 就为零 & 不需要 \\
+SG\#22 EZ & $E_2$ 就为零 & 不需要 \\
+C4v s12 & $E_3 = 0$（$d_2$ 杀死） & 不需要 \\
+S4 s12 & $E_3 = 0$（$d_2$ 杀死） & 不需要 \\
+S4 EZ & 存活，但 $d_4$ 的目标层 trivial & 无害 \\
+\textbf{C3v s12} & \textbf{存活到 $E_5$} & \textbf{必须算 → 出错} \\
+\hline
+\end{tabular}
+\end{center}
+
+所有之前成功的实验，$p{+}ip$ 要么一开始就 trivial，
+要么在 $E_3$ 被 $d_2$ 杀死，$d_4$ 根本不会被调用。
+C3v s12 是少数 $p{+}ip$ 存活到高阶的困难用例，
+$d_4$ 计算需要我们\textbf{不知道的物理公式}（$p{+}ip$ 层的高阶 stacking 规则），
+因此产生分数。
+
+\textbf{这个问题与我们修复的 Component/Derivative 统一无关。}
+那个修复解决的是所有 $p{+}ip$ trivial 或早期被杀死的情况。
+C3v s12 的问题是更根本的：物理上缺少 $p{+}ip$ 的 $d_3/d_4$ stacking 规则。
+
+\subsection{待做}
+
+\begin{itemize}
+\item 对 C3v s12，考虑跳过 $p{+}ip$ 层只算 MC/CF/Bosonic
+      （\texttt{pRange=[2,3,4]}），
+      这应该能避开 $d_4$ 问题
+\item 补充 $p{+}ip$ 的高阶 stacking 公式（如果物理上已知）
+\item 继续测试更多群验证已有修复的稳健性
+\item 将修复合并回生产线
 \end{itemize}
 
 \end{document}
