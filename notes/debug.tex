@@ -3071,4 +3071,116 @@ C3v s12 的问题是更根本的：物理上缺少 $p{+}ip$ 的 $d_3/d_4$ stacki
 \item 将修复合并回生产线
 \end{itemize}
 
+\section{SG\#42 EZ 诊断实验：攻克第二个 ModRat 崩溃群}
+\label{sec:sg42-ez-success}
+
+SG\#42 (Fmm2) 是生产线上唯二 ModRat 崩溃群中的第二个（第一个 SG\#22 已在
+\S\ref{sec:sg22-ez-success} 中成功）。
+生产线上 Phase B 每次都在 \texttt{ext layer 2 (p=2)} 崩溃（ModRat 错误），
+本次是该群的\textbf{首次完整成功}。
+
+\subsection{实验配置}
+
+\begin{itemize}
+\item \textbf{群}：SG\#42 (Fmm2)
+\item \textbf{模式}：EZ（$w = 0$，spinless）
+\item \textbf{脚本}：\texttt{debug/exp\_sg42\_ez\_diag.g}
+\item \textbf{Resolution}：\texttt{Resolution3DSpaceGroup(fSG, 9)}，
+      维度 $1, 5, 12, 20, 28, 36, 44, 52, 60$（与 SG\#22 完全相同）
+\item \textbf{并行}：\texttt{SPTSET\_PARALLEL\_JOBS=10}
+\end{itemize}
+
+\subsection{Phase A 分类结果}
+
+\begin{center}
+\begin{tabular}{l|cccc|c}
+\hline
+层 & $E_2$ & $E_3$ & $E_4$ & $E_5$ & $E_\infty$ \\
+\hline
+$p{+}ip$ & $\mathbb{Z}_2$ & $0$ & 跳过 & 跳过 & $0$ \\
+MC & $\mathbb{Z}_2^7$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & --- & $\mathbb{Z}_2$ \\
+CF & $\mathbb{Z}_2^9$ & $0$ & 跳过 & --- & $0$ \\
+Bosonic & $\mathbb{Z}_2^6$ & $\mathbb{Z}_2^2$ & $\mathbb{Z}_2^2$ & $\mathbb{Z}_2^2$ & $\mathbb{Z}_2^2$ \\
+\hline
+\end{tabular}
+\end{center}
+
+$p{+}ip$ 在 $d_2$ 被杀死，CF 在 $E_3$ 被杀死。
+只有 MC（$\mathbb{Z}_2$）和 Bosonic（$\mathbb{Z}_2^2$）存活。
+Phase A 耗时约 4 小时，其中 $E^{2,2}_4$（MC 层 $d_3$）最重（约 3.7 小时）。
+
+\subsection{Phase B 群结构}
+
+\[
+\boxed{\mathbb{Z}_2^3}
+\]
+
+Phase B 详细进度：
+\begin{verbatim}
+  ComponentEx(2,2): 1 generators
+  ComponentEx(2,2) class 1/1... done [32544792 ms]   <-- 9 小时
+  ComponentEx(4,0): 2 generators
+  ComponentEx(4,0) class 1/2... done [232 ms]
+  ComponentEx(4,0) class 2/2... done [232 ms]
+  >> ModExt: layer [ 2, 3 ] gen 1/1 torsion=2       <-- 旧代码在这里崩溃！
+  extension done [33676320 ms]                        <-- 现在成功！
+\end{verbatim}
+
+MC 的 $\mathbb{Z}_2$ 与 Bosonic 的 $\mathbb{Z}_2^2$ 做扩展，
+torsion 不变（仍为 2），最终是直积 $\mathbb{Z}_2 \times \mathbb{Z}_2^2 = \mathbb{Z}_2^3$。
+
+Phase B 耗时约 18.4 小时（主要在 ComponentEx(2,2) class 1 和 extension 上）。
+总计约 22.3 小时。
+
+\subsection{诊断结果}
+
+\textbf{零诊断触发。}搜索 log 中 \texttt{!! DIAG}：零匹配。
+
+\subsection{两个 ModRat 崩溃群的对比}
+
+\begin{center}
+\begin{tabular}{l|cc}
+\hline
+& SG\#22 EZ & SG\#42 EZ \\
+\hline
+Resolution 维度 & $1,5,12,20,\ldots,60$ & $1,5,12,20,\ldots,60$ \\
+$p{+}ip$ & $E_2 = 0$ & $E_3 = 0$（$d_2$ 杀死） \\
+$E_\infty$ & MC=$\mathbb{Z}_2$, Bos=$\mathbb{Z}_2^8$
+           & MC=$\mathbb{Z}_2$, Bos=$\mathbb{Z}_2^2$ \\
+群结构 & $\mathbb{Z}_2^9$ & $\mathbb{Z}_2^3$ \\
+诊断警告 & 0 & 0 \\
+旧生产线 & ModRat $\times 5$ & ModRat $\times ?$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{至此，生产线上所有 ModRat 崩溃群（SG\#22 和 SG\#42）
+均已被 debug 版本成功攻克。}
+
+\subsection{全部实验总结}
+
+\begin{center}
+\begin{tabular}{l|cccc}
+\hline
+实验 & 类型 & 旧生产线 & debug 结果 & 诊断 \\
+\hline
+SG\#30 EZ & 空间群 & ASSERTION 警告 & $\mathbb{Z}_2 \times \mathbb{Z}_4 \times \mathbb{Z}_8$ & 0 \\
+C4v s12 & 点群 & ASSERTION 警告 & $\mathbb{Z}_2^4$ & 0 \\
+SG\#22 EZ & 空间群 & \textbf{ModRat 崩溃} & $\mathbb{Z}_2^9$ & 0 \\
+S4 s12 & 点群 & 正常 & $\mathbb{Z}_4$ & 0 \\
+S4 EZ & 点群 & 正常 & $\mathbb{Z}_4$ & 0 \\
+SG\#42 EZ & 空间群 & \textbf{ModRat 崩溃} & $\mathbb{Z}_2^3$ & 0 \\
+C3v s12 & 点群 & GCD\_INT 崩溃 & 崩溃（$p{+}ip$ $d_4$ 分数） & 3 \\
+\hline
+\end{tabular}
+\end{center}
+
+7 个实验中 6 个\textbf{零报错成功}，
+唯一失败的 C3v s12 是因为 $p{+}ip$ 存活到 $E_5$，
+触发了物理上未知的 $d_4$ stacking 公式，\textbf{与 Component/Derivative 修复无关}。
+
+\textbf{结论}：统一使用旧微分系统（Component/Derivative）的修复对所有
+$p{+}ip$ trivial 或早期被杀死的群\textbf{完全有效}，
+可以考虑合并回生产线。
+
 \end{document}
