@@ -3183,4 +3183,223 @@ C3v s12 & 点群 & GCD\_INT 崩溃 & 崩溃（$p{+}ip$ $d_4$ 分数） & 3 \\
 $p{+}ip$ trivial 或早期被杀死的群\textbf{完全有效}，
 可以考虑合并回生产线。
 
+\section{SG\#36 EZ 诊断实验：快速通过}
+\label{sec:sg36-ez-success}
+
+SG\#36 (Cmc$2_1$) 是生产线上有 ASSERTION 警告的空间群之一。
+
+Phase A：$p{+}ip$ 在 $d_2$ 被杀死，CF 在 $E_4$ 存活。
+$E_\infty$：MC=$\mathbb{Z}_2$，CF=$\mathbb{Z}_2$，Bosonic=$0$。
+Phase B：$\mathbb{Z}_2^2$。零诊断触发。总耗时约 3 小时。
+
+\section{$\mathbb{Z}_4^{f,T}$ s12 诊断实验：理论验证与新 bug 修复}
+\label{sec:z4ft-s12}
+
+这是一个\textbf{极其重要}的实验。
+$\mathbb{Z}_4^{f,T}$ 是最简单的非平凡费米子 SPT 对称群，
+理论结果完全已知（见 \texttt{3+1D\_Stacking.tex} 第 1271--1362 行），
+可以精确验证程序的正确性。
+更重要的是，这是\textbf{第一个所有四层（含 $p{+}ip$）都存活到 $E_\infty$} 的实验，
+暴露并修复了一个新的代码 bug。
+
+\subsection{物理背景}
+
+\begin{itemize}
+\item $G_f = \mathbb{Z}_4^{f,T}$：费米子对称群，
+      $T^2 = P_f$（时间反演的平方等于费米子宇称）
+\item $G_b = \mathbb{Z}_2^T = \{e, T\}$：玻色子商群
+\item $s_1(T) = 1$：$T$ 是反幺正算符
+\item $\omega_2(T, T) = 1$：非平凡的 $H^2(\mathbb{Z}_2, \mathbb{Z}_2)$ cocycle，
+      编码了 $T^2 = P_f$ 的扩展 $1 \to \mathbb{Z}_2^f \to \mathbb{Z}_4 \to \mathbb{Z}_2 \to 1$
+\end{itemize}
+
+\subsection{GAP 中的群构造}
+
+\begin{verbatim}
+G := Group([(1,2)]);;               % G_b = Z_2, 生成元 T = (1,2)
+f := GroupHomomorphismByImagesNC(G, GL(1, Integers),
+     [(1,2)], [ [[-1]] ]);;         % s_1(T) = 1, 即 T 反幺正
+w := function(g1, g2)               % omega_2: 非平凡 2-cocycle
+    if 1^g1 = 2 then                %   检查 g1 = T
+        return (1 - (g2^f)[1][1])/2; %   检查 g2 是否也反幺正
+    else return 0; fi; end;;         %   w(T,T) = 1, 其余 = 0
+ss := FermionSPTSpecSeq(R, f, w);;  % s12 模式
+\end{verbatim}
+
+与已有例子 \texttt{examples/ap\_z4\_z2t.g}（第 26--35 行的 $H$ 子群部分）
+使用完全相同的公式和命名约定。
+
+\subsection{Phase A 分类结果}
+
+\begin{center}
+\begin{tabular}{l|ccccc|c}
+\hline
+层 & $E_2$ & $E_3$ & $E_4$ & $E_5$ & & $E_\infty$ \\
+\hline
+$p{+}ip$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & & $\mathbb{Z}_2$ \\
+MC & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & --- & & $\mathbb{Z}_2$ \\
+CF & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & --- & & $\mathbb{Z}_2$ \\
+Bosonic & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & $\mathbb{Z}_2$ & & $\mathbb{Z}_2$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{所有四层 $E_\infty = \mathbb{Z}_2$}，所有微分 $d_r = 0$。
+与理论预期完全一致。
+零诊断触发。Phase A 耗时 114 ms（$\mathbb{Z}_2$ 群非常小）。
+
+\subsection{Phase B：新 bug 的发现与修复}
+
+\subsubsection{不含 $p{+}ip$ 的结果}
+
+$\texttt{pRange} = [2,3,4]$（MC + CF + Bosonic）：
+\[
+\boxed{\mathbb{Z}_8}
+\]
+与理论预期完全一致。扩展链：
+\[
+\mathbb{Z}_2 \xrightarrow{\text{torsion}=2} \mathbb{Z}_4
+\xrightarrow{\text{torsion}=4} \mathbb{Z}_8
+\]
+耗时 3.8 秒。
+
+\subsubsection{含 $p{+}ip$ 的崩溃与修复}
+
+$\texttt{pRange} = [1,2,3,4]$ 首次运行时\textbf{崩溃}：
+\begin{verbatim}
+Error, List Assignments: <rhss> must have the same length as <poss>
+  (lengths are 3 and 1)
+  Rmat[j]{[ r1 + 1 .. r ]} := vjnf
+  at lib/ss_module.gi:244
+\end{verbatim}
+
+\textbf{根本原因}：\texttt{SptSetSpecSeqModuleExtension} 中的维度不匹配 bug。
+
+模块有两个``空间''：
+\begin{itemize}
+\item \textbf{生成元空间}（$r$ 维）：Smith 标准形后的独立生成元个数
+\item \textbf{嵌入空间}（$n$ 维）：底层 cochain 向量的维数
+\end{itemize}
+
+对于刚创建的单层模块，$r = n$。
+但模块扩展函数内部会对 $M_1$ 做规范化（Smith 标准形），
+这会减少 $r$（去掉 torsion$=1$ 的平凡生成元）但 $n$ 不变。
+然而 \texttt{vector\_embedings} 字段\textbf{没有被同步更新}，
+仍然指向旧的 $r$ 维空间（现在已是 $n$ 维嵌入空间）。
+
+当 \texttt{ClassToLeadingVector(M\_rest, ...)} 被调用时，
+返回的向量维度是 $n = 3$（嵌入空间），
+但扩展函数期望的是 $r = 1$（生成元空间）。
+
+\textbf{为什么以前没触发}：
+在之前所有成功实验中，$p{+}ip$ 都在 Phase A 被杀死（$E_\infty = 0$），
+代码直接跳过了最后的扩展步骤（\texttt{if IsZero(Epip) then return M\_rest}）。
+$\mathbb{Z}_4^{f,T}$ 是\textbf{第一个} $p{+}ip$ 存活到 $E_\infty$
+且参与 Phase B 群扩展的实验。
+
+\textbf{修复}（\texttt{lib/ss\_module.gi}，
+\texttt{SptSetSpecSeqModuleClassToLeadingVector} 函数）：
+当返回向量维度 $\neq$ 模块生成元个数时，
+用 \texttt{projection} 矩阵从嵌入空间投影到生成元空间：
+\begin{verbatim}
+result := CanonicalElm(M!.components[p], v) * M!.vector_embedings[p];
+r := SptSetNumberOfGenerators(M);
+if Length(result) <> r then
+    result := result * M!.projection;
+fi;
+\end{verbatim}
+对于 $r = n$ 的正常模块（之前所有实验），条件不触发，行为不变。
+对于 $r < n$ 的规范化模块，正确转换维度。
+
+\subsubsection{修复后含 $p{+}ip$ 的结果}
+
+$\texttt{pRange} = [1,2,3,4]$（全部四层）：
+\[
+\boxed{\mathbb{Z}_{16}}
+\]
+\textbf{与理论预期完全一致。}
+
+\subsection{$p{+}ip$ 扩展的计算路径}
+
+这个实验揭示了一个重要的机制区分：
+代码中有两套公式系统，用途完全不同。
+
+\begin{center}
+\begin{tabular}{l|l|l}
+\hline
+机制 & 物理含义 & 用途 \\
+\hline
+\texttt{InstallCoboundary} & obstruction function & \textbf{Phase B 扩展}（已知） \\
+\texttt{InstallAddTwister} & stacking rule & Phase A 微分（部分未知） \\
+\hline
+\end{tabular}
+\end{center}
+
+Phase B 的扩展计算通过 purification 机制工作：
+\begin{enumerate}
+\item 取 $p{+}ip$ 生成元 $n_1 = m_1$，乘以 torsion 2：$2m_1$
+\item $2m_1 = \mathrm{d}_{s_1}(m_0)$，其中 $m_0 = -1$（coboundary）
+\item Gauge 掉 $p{+}ip$ 层时，MC 层通过 \texttt{Coboundary(2,0,3)} 获得修正：
+      $m_0() \cdot \omega_2(g_1, g_2) = -\omega_2(g_1, g_2)$
+\item 在 $\mathbb{Z}_2$ 系数下 $-\omega_2 = \omega_2 = m_1^2$，
+      即 MC 层的非平凡生成元
+\item 因此扩展关系：$2 \times (\text{p+ip gen}) = 1 \times (\text{MC gen})$
+\item $\mathbb{Z}_2$ 通过此关系与 $\mathbb{Z}_8$ 扩展 $\to \mathbb{Z}_{16}$
+\end{enumerate}
+
+\textbf{关键结论}：
+$p{+}ip$ 的 \texttt{AddTwister(1,3)} 和 \texttt{AddTwister(2,2)}
+虽然设为零（物理公式未知），但它们只影响 Phase A 的高阶微分 $d_r$，
+\textbf{不影响} Phase B 的群扩展。
+Phase B 用的是 \texttt{Coboundary} 公式，这些\textbf{完全已知}。
+
+\subsection{与 C3v 崩溃的对比}
+
+\begin{center}
+\begin{tabular}{l|cc}
+\hline
+& $\mathbb{Z}_4^{f,T}$ & C3v s12 \\
+\hline
+$p{+}ip$ $E_\infty$ & $\mathbb{Z}_2$（存活） & $\mathbb{Z}_2$（存活） \\
+所有 $d_r$ & 全部 $= 0$ & $d_4 \neq 0$（需要未知公式） \\
+Phase A & 成功 & 崩溃（分数） \\
+Phase B & 成功（修复后） & 未到达 \\
+根本原因 & 维度不匹配 bug（已修复） & 物理公式缺失（未解决） \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{全部实验更新总结}
+
+\begin{center}
+\begin{tabular}{l|cccc}
+\hline
+实验 & 类型 & 旧生产线 & debug 结果 & 诊断 \\
+\hline
+SG\#30 EZ & 空间群 & ASSERTION 警告 & $\mathbb{Z}_2 \times \mathbb{Z}_4 \times \mathbb{Z}_8$ & 0 \\
+C4v s12 & 点群 & ASSERTION 警告 & $\mathbb{Z}_2^4$ & 0 \\
+SG\#22 EZ & 空间群 & \textbf{ModRat 崩溃} & $\mathbb{Z}_2^9$ & 0 \\
+S4 s12 & 点群 & 正常 & $\mathbb{Z}_4$ & 0 \\
+S4 EZ & 点群 & 正常 & $\mathbb{Z}_4$ & 0 \\
+SG\#42 EZ & 空间群 & \textbf{ModRat 崩溃} & $\mathbb{Z}_2^3$ & 0 \\
+SG\#36 EZ & 空间群 & ASSERTION 警告 & $\mathbb{Z}_2^2$ & 0 \\
+$\mathbb{Z}_4^{f,T}$ s12 & 有限群 & 维度 bug & $\mathbb{Z}_{16}$（含 $p{+}ip$） & 0 \\
+ & & & $\mathbb{Z}_8$（不含 $p{+}ip$） & 0 \\
+C3v s12 & 点群 & GCD\_INT 崩溃 & 崩溃（$p{+}ip$ $d_4$ 分数） & 3 \\
+\hline
+\end{tabular}
+\end{center}
+
+9 个实验中 8 个\textbf{零报错成功}。
+唯一失败的 C3v s12 是 Phase A 的物理公式缺失，与代码 bug 无关。
+
+已修复的 bug 共两类：
+\begin{enumerate}
+\item \textbf{Component/Derivative 不一致}（之前修复）：
+      影响所有群的 Phase A/B，导致 ModRat 和 ASSERTION 错误
+\item \textbf{模块扩展维度不匹配}（本次修复）：
+      影响 $p{+}ip$ 存活的群的 Phase B 扩展，
+      \texttt{ClassToLeadingVector} 返回嵌入空间维度而非生成元空间维度
+\end{enumerate}
+
 \end{document}

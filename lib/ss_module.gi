@@ -113,7 +113,7 @@ InstallGlobalFunction
 InstallGlobalFunction
     (SptSetSpecSeqModuleClassToLeadingVector,
     function(M, cl)
-        local pRange, p, ss, deg, v;
+        local pRange, p, ss, deg, v, result, r;
         pRange := M!.pRange;
         ss := M!.specSeq;
         deg := M!.deg;
@@ -136,7 +136,12 @@ InstallGlobalFunction
                 Filtered([1..Length(v)], k->not IsInt(v[k])),
                 " vals=",Filtered(v, x->not IsInt(x)),"\n");
         fi;
-        return SptSetFpZModuleCanonicalElm(M!.components[p], v) * M!.vector_embedings[p];
+        result := SptSetFpZModuleCanonicalElm(M!.components[p], v) * M!.vector_embedings[p];
+        r := SptSetNumberOfGenerators(M);
+        if Length(result) <> r then
+            result := result * M!.projection;
+        fi;
+        return result;
     end);
 
 InstallGlobalFunction
