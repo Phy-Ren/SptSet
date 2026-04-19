@@ -1,0 +1,1122 @@
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set NEATO_PATH manually if needed.
+#I  HAP warning: Set DOT_PATH manually if needed.
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/gap-insulator/pkg/SptSet\
+/ failed
+================================================================
+2D wallpaper groups insulator EZ Phase A + Phase B diagnostic
+  SptSet loaded from: /home/user/xyren/gap-insulator/pkg/SptSet/
+  OK: insulator version confirmed.
+  Parallel: JOBS=10 THRESHOLD=10 PHASE2=true
+  Checkpoint: disabled (CKPT_MODE not set)
+  Diagnostics (12 points in lib/ source code, from debug line):
+    Bockstein, ZLMapInverse, CanonicalForm, PurifyClass,
+    PartialPurify-stack, PurifyCobdry-stack, PartialPurifySSClass,
+    PartialConstruct, BuildDeriv-par, BuildDeriv-seq,
+    ClassToLeadVec, ModExt-vjnf
+  Wallpaper group range: SG#2..#17 (16 groups)
+================================================================
+
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:195
+        SG := SpaceGroupBBNWZ(2, it);;
+        ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:196
+        fSG := IsomorphismPcpGroup(SG);;
+        ^^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:196
+        fSG := IsomorphismPcpGroup(SG);;
+                                   ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:197
+        SG1 := Image(fSG);;
+        ^^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:197
+        SG1 := Image(fSG);;
+                     ^^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:200
+        _t := NanosecondsSinceEpoch();;
+        ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:201
+        R := ResolutionAlmostCrystalGroup(SG1, 7);;
+        ^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:201
+        R := ResolutionAlmostCrystalGroup(SG1, 7);;
+                                          ^^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:203
+              Int((NanosecondsSinceEpoch()-_t)/1000000), " ms\n");;
+                                           ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:205
+        for _d in [0..7] do Print(R!.dimension(_d), " "); od;;
+            ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:205
+        for _d in [0..7] do Print(R!.dimension(_d), " "); od;;
+                                  ^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:208
+        gs := GeneratorsOfGroup(SG);;
+        ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:208
+        gs := GeneratorsOfGroup(SG);;
+                                ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:209
+        f := GroupHomomorphismByImagesNC(SG1, GL(1, Integers),
+        ^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:209
+        f := GroupHomomorphismByImagesNC(SG1, GL(1, Integers),
+                                         ^^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:210
+            List(gs, x -> Image(fSG, x)),
+                 ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:210
+            List(gs, x -> Image(fSG, x)),
+                                ^^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:211
+            List(gs, x -> [[DeterminantMat(x)]]));;
+                 ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:214
+        _t := NanosecondsSinceEpoch();;
+        ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:215
+        SS := InsulatorSPTSpecSeq(R, f, f, omega0);;
+        ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:215
+        SS := InsulatorSPTSpecSeq(R, f, f, omega0);;
+                                  ^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:215
+        SS := InsulatorSPTSpecSeq(R, f, f, omega0);;
+                                     ^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:215
+        SS := InsulatorSPTSpecSeq(R, f, f, omega0);;
+                                        ^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:217
+              Int((NanosecondsSinceEpoch()-_t)/1000000), " ms\n\n");;
+                                           ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:221
+        _t := NanosecondsSinceEpoch();;
+        ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:222
+        InsulatorSPTLayersVerbose(SS, 2);;
+                                  ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:225
+              Int((NanosecondsSinceEpoch()-_t)/1000000), " ms\n");;
+                                           ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:238
+            M := SptSetSpecSeqResult(SS, 3, [1,2,3]);;
+            ^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:238
+            M := SptSetSpecSeqResult(SS, 3, [1,2,3]);;
+                                     ^^
+Syntax warning: Unbound global variable in debug/exp_2d_wallpaper_insulator_di\
+ag.g:239
+            SptSetFpZModuleCanonicalForm(M);;
+                                         ^
+
+################################################################
+# SG#2 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 596 ms
+  Dimensions: 1 3 4 4 4 4 4 4 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 76 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 2, 2, 0 ]>
+<ZL-Module with torsions [ 2, 2, 2, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2 ]>
+------------------------------------------------------------
+Phase A completed in 53 ms
+
+*** Phase A OK in 901 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 4 generators
+    ComponentEx(2,1) class 1/4...
+      class 1 done [213 ms]
+    ComponentEx(2,1) class 2/4...
+      class 2 done [47 ms]
+    ComponentEx(2,1) class 3/4...
+      class 3 done [47 ms]
+    ComponentEx(2,1) class 4/4...
+      class 4 done [54 ms]
+    p=2: 4 generators [367 ms]
+    ComponentEx(3,0): 4 generators
+    ComponentEx(3,0) class 1/4...
+      class 1 done [6 ms]
+    ComponentEx(3,0) class 2/4...
+      class 2 done [6 ms]
+    ComponentEx(3,0) class 3/4...
+      class 3 done [6 ms]
+    ComponentEx(3,0) class 4/4...
+      class 4 done [6 ms]
+    p=3: 4 generators [30 ms]
+  >> ModExt: layer [ 2 ] gen 1/4 torsion=2
+  >> ModExt: layer [ 2 ] gen 2/4 torsion=2
+  >> ModExt: layer [ 2 ] gen 3/4 torsion=2
+    extension done [1049 ms]
+------------------------------------------------------------
+Phase B OK in 1452 ms
+Group structure: <ZL-Module with torsions [ 2, 4, 4, 4, 0 ]>
+
+*** SG#2 total: 2354 ms (PhaseA=901 ms, PhaseB=1452 ms) ***
+
+################################################################
+# SG#3 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 452 ms
+  Dimensions: 1 3 4 4 4 4 4 4 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 74 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 0 ]>
+    d^{2,1}_2: 2 gens (target_dim=2) done [parallel, 10 workers, 154 ms]
+<ZL-Module with torsions [ 2, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2 ]>
+    d^{1,1}_2: 2 gens (target_dim=2) done [parallel, 10 workers, 113 ms]
+<ZL-Module with torsions [ 2, 2 ]>
+<ZL-Module with torsions [ 2, 2 ]>
+------------------------------------------------------------
+Phase A completed in 321 ms
+
+*** Phase A OK in 1399 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 2 generators
+    ComponentEx(2,1) class 1/2...
+    d^{3,1}_2: 2 gens (target_dim=2) done [parallel, 10 workers, 394 ms]
+      class 1 done [583 ms]
+    ComponentEx(2,1) class 2/2...
+      class 2 done [43 ms]
+    p=2: 2 generators [628 ms]
+    ComponentEx(3,0): 2 generators
+    ComponentEx(3,0) class 1/2...
+      class 1 done [6 ms]
+    ComponentEx(3,0) class 2/2...
+      class 2 done [6 ms]
+    p=3: 2 generators [15 ms]
+  >> ModExt: layer [ 2 ] gen 1/2 torsion=2
+    extension done [439 ms]
+------------------------------------------------------------
+Phase B OK in 1085 ms
+Group structure: <ZL-Module with torsions [ 2, 4, 0 ]>
+
+*** SG#3 total: 2485 ms (PhaseA=1399 ms, PhaseB=1085 ms) ***
+
+################################################################
+# SG#4 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 530 ms
+  Dimensions: 1 3 4 4 4 4 4 4 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 69 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 0 ]>
+    d^{2,1}_2 gen 1/1 (target_dim=2)...
+      gen 1 done [258 ms]
+<ZL-Module with torsions [ 0 ]>
+Bosonic:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+------------------------------------------------------------
+Phase A completed in 308 ms
+
+*** Phase A OK in 1551 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 1 generators
+    ComponentEx(2,1) class 1/1...
+    d^{3,1}_2: 2 gens (target_dim=2) done [parallel, 10 workers, 1610 ms]
+      class 1 done [1727 ms]
+    p=2: 1 generators [1729 ms]
+    ComponentEx(3,0): 0 generators
+    p=3: trivial [0 ms]
+    extension done [1 ms]
+------------------------------------------------------------
+Phase B OK in 1731 ms
+Group structure: <ZL-Module with torsions [ 0 ]>
+
+*** SG#4 total: 3283 ms (PhaseA=1551 ms, PhaseB=1731 ms) ***
+
+################################################################
+# SG#5 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 409 ms
+  Dimensions: 1 3 4 4 4 4 4 4 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 66 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 0 ]>
+    d^{2,1}_2 gen 1/1 (target_dim=2)...
+      gen 1 done [78 ms]
+<ZL-Module with torsions [ 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2 ]>
+    d^{1,1}_2: 2 gens (target_dim=1) done [parallel, 10 workers, 49 ms]
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module with torsions [ 2 ]>
+------------------------------------------------------------
+Phase A completed in 182 ms
+
+*** Phase A OK in 1027 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 1 generators
+    ComponentEx(2,1) class 1/1...
+    d^{3,1}_2: 2 gens (target_dim=2) done [parallel, 10 workers, 301 ms]
+      class 1 done [373 ms]
+    p=2: 1 generators [374 ms]
+    ComponentEx(3,0): 1 generators
+    ComponentEx(3,0) class 1/1...
+      class 1 done [6 ms]
+    p=3: 1 generators [7 ms]
+    extension done [1 ms]
+------------------------------------------------------------
+Phase B OK in 386 ms
+Group structure: <ZL-Module with torsions [ 2, 0 ]>
+
+*** SG#5 total: 1414 ms (PhaseA=1027 ms, PhaseB=386 ms) ***
+
+################################################################
+# SG#6 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 1184 ms
+  Dimensions: 1 4 8 12 16 20 24 28 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 76 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 2, 2, 0 ]>
+    d^{2,1}_2: 4 gens (target_dim=8) done [parallel, 10 workers, 533 ms]
+<ZL-Module with torsions [ 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2 ]>
+    d^{1,1}_2 gen 1/1 (target_dim=8)...
+      gen 1 done [247 ms]
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2 ]>
+------------------------------------------------------------
+Phase A completed in 1077 ms
+
+*** Phase A OK in 2894 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 1 generators
+    ComponentEx(2,1) class 1/1...
+    d^{3,1}_2: 4 gens (target_dim=12) done [parallel, 10 workers, 5210 ms]
+      class 1 done [6554 ms]
+    p=2: 1 generators [6555 ms]
+    ComponentEx(3,0): 8 generators
+    ComponentEx(3,0) class 1/8...
+      class 1 done [39 ms]
+    ComponentEx(3,0) class 2/8...
+      class 2 done [39 ms]
+    ComponentEx(3,0) class 3/8...
+      class 3 done [39 ms]
+    ComponentEx(3,0) class 4/8...
+      class 4 done [39 ms]
+    ComponentEx(3,0) class 5/8...
+      class 5 done [43 ms]
+    ComponentEx(3,0) class 6/8...
+      class 6 done [38 ms]
+    ComponentEx(3,0) class 7/8...
+      class 7 done [38 ms]
+    ComponentEx(3,0) class 8/8...
+      class 8 done [38 ms]
+    p=3: 8 generators [333 ms]
+    extension done [10 ms]
+------------------------------------------------------------
+Phase B OK in 6908 ms
+Group structure: <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 2, 0 ]>
+
+*** SG#6 total: 9803 ms (PhaseA=2894 ms, PhaseB=6908 ms) ***
+
+################################################################
+# SG#7 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 1496 ms
+  Dimensions: 1 4 8 12 16 20 24 28 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 73 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 2, 0 ]>
+    d^{2,1}_2: 3 gens (target_dim=8) done [parallel, 10 workers, 789 ms]
+<ZL-Module with torsions [ 2, 2, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 2 ]>
+    d^{1,1}_2 gen 1/1 (target_dim=3)...
+      gen 1 done [270 ms]
+<ZL-Module with torsions [ 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2 ]>
+------------------------------------------------------------
+Phase A completed in 1360 ms
+
+*** Phase A OK in 3617 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 3 generators
+    ComponentEx(2,1) class 1/3...
+    d^{3,1}_2: 4 gens (target_dim=12) done [parallel, 10 workers, 17318 ms]
+      class 1 done [19377 ms]
+    ComponentEx(2,1) class 2/3...
+      class 2 done [1762 ms]
+    ComponentEx(2,1) class 3/3...
+      class 3 done [1763 ms]
+    p=2: 3 generators [22906 ms]
+    ComponentEx(3,0): 3 generators
+    ComponentEx(3,0) class 1/3...
+      class 1 done [43 ms]
+    ComponentEx(3,0) class 2/3...
+      class 2 done [44 ms]
+    ComponentEx(3,0) class 3/3...
+      class 3 done [46 ms]
+    p=3: 3 generators [138 ms]
+  >> ModExt: layer [ 2 ] gen 1/3 torsion=2
+  >> ModExt: layer [ 2 ] gen 2/3 torsion=2
+    extension done [3281 ms]
+------------------------------------------------------------
+Phase B OK in 26330 ms
+Group structure: <ZL-Module with torsions [ 2, 4, 4, 0 ]>
+
+*** SG#7 total: 29948 ms (PhaseA=3617 ms, PhaseB=26330 ms) ***
+
+################################################################
+# SG#8 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 1816 ms
+  Dimensions: 1 4 8 12 16 20 24 28 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 74 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 0 ]>
+    d^{2,1}_2: 2 gens (target_dim=8) done [parallel, 10 workers, 876 ms]
+<ZL-Module with torsions [ 2, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2 ]>
+    d^{1,1}_2 gen 1/1 (target_dim=2)...
+      gen 1 done [293 ms]
+<ZL-Module with torsions [ 2, 2 ]>
+<ZL-Module with torsions [ 2, 2 ]>
+------------------------------------------------------------
+Phase A completed in 1498 ms
+
+*** Phase A OK in 4040 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 2 generators
+    ComponentEx(2,1) class 1/2...
+    d^{3,1}_2: 4 gens (target_dim=12) done [parallel, 10 workers, 34255 ms]
+      class 1 done [36718 ms]
+    ComponentEx(2,1) class 2/2...
+      class 2 done [2151 ms]
+    p=2: 2 generators [38872 ms]
+    ComponentEx(3,0): 2 generators
+    ComponentEx(3,0) class 1/2...
+      class 1 done [47 ms]
+    ComponentEx(3,0) class 2/2...
+      class 2 done [49 ms]
+    p=3: 2 generators [99 ms]
+  >> ModExt: layer [ 2 ] gen 1/2 torsion=2
+    extension done [2088 ms]
+------------------------------------------------------------
+Phase B OK in 41062 ms
+Group structure: <ZL-Module with torsions [ 2, 4, 0 ]>
+
+*** SG#8 total: 45104 ms (PhaseA=4040 ms, PhaseB=41062 ms) ***
+
+################################################################
+# SG#9 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 1171 ms
+  Dimensions: 1 4 8 12 16 20 24 28 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 73 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 2, 0 ]>
+    d^{2,1}_2: 3 gens (target_dim=8) done [parallel, 10 workers, 472 ms]
+<ZL-Module with torsions [ 2, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>
+    d^{1,1}_2 gen 1/1 (target_dim=5)...
+      gen 1 done [219 ms]
+<ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>
+------------------------------------------------------------
+Phase A completed in 987 ms
+
+*** Phase A OK in 2629 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 2 generators
+    ComponentEx(2,1) class 1/2...
+    d^{3,1}_2: 4 gens (target_dim=12) done [parallel, 10 workers, 5319 ms]
+      class 1 done [7743 ms]
+    ComponentEx(2,1) class 2/2...
+      class 2 done [945 ms]
+    p=2: 2 generators [8691 ms]
+    ComponentEx(3,0): 5 generators
+    ComponentEx(3,0) class 1/5...
+      class 1 done [41 ms]
+    ComponentEx(3,0) class 2/5...
+      class 2 done [40 ms]
+    ComponentEx(3,0) class 3/5...
+      class 3 done [41 ms]
+    ComponentEx(3,0) class 4/5...
+      class 4 done [41 ms]
+    ComponentEx(3,0) class 5/5...
+      class 5 done [41 ms]
+    p=3: 5 generators [212 ms]
+  >> ModExt: layer [ 2 ] gen 1/2 torsion=2
+    extension done [1493 ms]
+------------------------------------------------------------
+Phase B OK in 10403 ms
+Group structure: <ZL-Module with torsions [ 2, 2, 2, 2, 4, 0 ]>
+
+*** SG#9 total: 13033 ms (PhaseA=2629 ms, PhaseB=10403 ms) ***
+
+################################################################
+# SG#10 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 659 ms
+  Dimensions: 1 3 4 4 4 4 4 4 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 74 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 4, 0 ]>
+<ZL-Module with torsions [ 2, 4, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 4, 4 ]>
+<ZL-Module with torsions [ 2, 4, 4 ]>
+<ZL-Module with torsions [ 2, 4, 4 ]>
+------------------------------------------------------------
+Phase A completed in 63 ms
+
+*** Phase A OK in 1002 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 3 generators
+    ComponentEx(2,1) class 1/3...
+      class 1 done [598 ms]
+    ComponentEx(2,1) class 2/3...
+      class 2 done [147 ms]
+    ComponentEx(2,1) class 3/3...
+      class 3 done [157 ms]
+    p=2: 3 generators [907 ms]
+    ComponentEx(3,0): 3 generators
+    ComponentEx(3,0) class 1/3...
+      class 1 done [9 ms]
+    ComponentEx(3,0) class 2/3...
+      class 2 done [9 ms]
+    ComponentEx(3,0) class 3/3...
+      class 3 done [9 ms]
+    p=3: 3 generators [32 ms]
+  >> ModExt: layer [ 2 ] gen 1/3 torsion=2
+  >> ModExt: layer [ 2 ] gen 2/3 torsion=4
+    extension done [2583 ms]
+------------------------------------------------------------
+Phase B OK in 3527 ms
+Group structure: <ZL-Module with torsions [ 2, 4, 4, 8, 0 ]>
+
+*** SG#10 total: 4530 ms (PhaseA=1002 ms, PhaseB=3527 ms) ***
+
+################################################################
+# SG#11 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 1735 ms
+  Dimensions: 1 4 8 12 16 20 24 28 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 84 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2, 4, 0 ]>
+    d^{2,1}_2: 3 gens (target_dim=8) done [parallel, 10 workers, 1505 ms]
+<ZL-Module with torsions [ 2, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+    d^{1,1}_2 gen 1/1 (target_dim=6)...
+      gen 1 done [272 ms]
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2, 2, 2 ]>
+------------------------------------------------------------
+Phase A completed in 2120 ms
+
+*** Phase A OK in 4537 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 2 generators
+    ComponentEx(2,1) class 1/2...
+    d^{3,1}_2: 4 gens (target_dim=12) done [parallel, 10 workers, 25601 ms]
+      class 1 done [29014 ms]
+    ComponentEx(2,1) class 2/2...
+      class 2 done [3062 ms]
+    p=2: 2 generators [32079 ms]
+    ComponentEx(3,0): 6 generators
+    ComponentEx(3,0) class 1/6...
+      class 1 done [51 ms]
+    ComponentEx(3,0) class 2/6...
+      class 2 done [51 ms]
+    ComponentEx(3,0) class 3/6...
+      class 3 done [51 ms]
+    ComponentEx(3,0) class 4/6...
+      class 4 done [51 ms]
+    ComponentEx(3,0) class 5/6...
+      class 5 done [51 ms]
+    ComponentEx(3,0) class 6/6...
+      class 6 done [51 ms]
+    p=3: 6 generators [317 ms]
+  >> ModExt: layer [ 2 ] gen 1/2 torsion=2
+    extension done [2251 ms]
+------------------------------------------------------------
+Phase B OK in 34655 ms
+Group structure: <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2, 0 ]>
+
+*** SG#11 total: 39193 ms (PhaseA=4537 ms, PhaseB=34655 ms) ***
+
+################################################################
+# SG#12 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 4288 ms
+  Dimensions: 1 4 8 12 16 20 24 28 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 77 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 4, 0 ]>
+    d^{2,1}_2: 2 gens (target_dim=8) done [parallel, 10 workers, 4945 ms]
+<ZL-Module with torsions [ 2, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 4 ]>
+    d^{1,1}_2 gen 1/1 (target_dim=3)...
+      gen 1 done [767 ms]
+<ZL-Module with torsions [ 2, 2, 4 ]>
+<ZL-Module with torsions [ 2, 2, 4 ]>
+------------------------------------------------------------
+Phase A completed in 6225 ms
+
+*** Phase A OK in 11292 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 2 generators
+    ComponentEx(2,1) class 1/2...
+    d^{3,1}_2: 4 gens (target_dim=12) done [parallel, 10 workers, 372170 ms]
+      class 1 done [383117 ms]
+    ComponentEx(2,1) class 2/2...
+      class 2 done [10375 ms]
+    p=2: 2 generators [393495 ms]
+    ComponentEx(3,0): 3 generators
+    ComponentEx(3,0) class 1/3...
+      class 1 done [85 ms]
+    ComponentEx(3,0) class 2/3...
+      class 2 done [85 ms]
+    ComponentEx(3,0) class 3/3...
+      class 3 done [86 ms]
+    p=3: 3 generators [262 ms]
+  >> ModExt: layer [ 2 ] gen 1/2 torsion=2
+    extension done [11755 ms]
+------------------------------------------------------------
+Phase B OK in 405517 ms
+Group structure: <ZL-Module with torsions [ 2, 2, 2, 4, 0 ]>
+
+*** SG#12 total: 416810 ms (PhaseA=11292 ms, PhaseB=405517 ms) ***
+
+################################################################
+# SG#13 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 561 ms
+  Dimensions: 1 3 4 4 4 4 4 4 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 70 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 3, 3, 0 ]>
+<ZL-Module with torsions [ 3, 3, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 3, 3, 3 ]>
+<ZL-Module with torsions [ 3, 3, 3 ]>
+<ZL-Module with torsions [ 3, 3, 3 ]>
+------------------------------------------------------------
+Phase A completed in 57 ms
+
+*** Phase A OK in 837 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 3 generators
+    ComponentEx(2,1) class 1/3...
+      class 1 done [566 ms]
+    ComponentEx(2,1) class 2/3...
+      class 2 done [141 ms]
+    ComponentEx(2,1) class 3/3...
+      class 3 done [141 ms]
+    p=2: 3 generators [852 ms]
+    ComponentEx(3,0): 3 generators
+    ComponentEx(3,0) class 1/3...
+      class 1 done [7 ms]
+    ComponentEx(3,0) class 2/3...
+      class 2 done [7 ms]
+    ComponentEx(3,0) class 3/3...
+      class 3 done [7 ms]
+    p=3: 3 generators [26 ms]
+  >> ModExt: layer [ 2 ] gen 1/3 torsion=3
+  >> ModExt: layer [ 2 ] gen 2/3 torsion=3
+    extension done [2513 ms]
+------------------------------------------------------------
+Phase B OK in 3396 ms
+Group structure: <ZL-Module with torsions [ 3, 3, 3, 3, 3, 0 ]>
+
+*** SG#13 total: 4234 ms (PhaseA=837 ms, PhaseB=3396 ms) ***
+
+################################################################
+# SG#14 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 1730 ms
+  Dimensions: 1 4 8 12 16 19 20 21 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 88 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 3, 3, 0 ]>
+    d^{2,1}_2: 3 gens (target_dim=8) done [parallel, 10 workers, 1802 ms]
+<ZL-Module with torsions [ 3, 3, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2 ]>
+    d^{1,1}_2 gen 1/1 (target_dim=1)...
+      gen 1 done [199 ms]
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module with torsions [ 2 ]>
+------------------------------------------------------------
+Phase A completed in 2302 ms
+
+*** Phase A OK in 4585 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 3 generators
+    ComponentEx(2,1) class 1/3...
+    d^{3,1}_2: 4 gens (target_dim=11) done [parallel, 10 workers, 55023 ms]
+      class 1 done [59272 ms]
+    ComponentEx(2,1) class 2/3...
+      class 2 done [3982 ms]
+    ComponentEx(2,1) class 3/3...
+      class 3 done [3981 ms]
+    p=2: 3 generators [67240 ms]
+    ComponentEx(3,0): 1 generators
+    ComponentEx(3,0) class 1/1...
+      class 1 done [49 ms]
+    p=3: 1 generators [51 ms]
+  >> ModExt: layer [ 2 ] gen 1/3 torsion=3
+  >> ModExt: layer [ 2 ] gen 2/3 torsion=3
+    extension done [3841 ms]
+------------------------------------------------------------
+Phase B OK in 71134 ms
+Group structure: <ZL-Module with torsions [ 3, 6, 0 ]>
+
+*** SG#14 total: 75720 ms (PhaseA=4585 ms, PhaseB=71134 ms) ***
+
+################################################################
+# SG#15 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 1560 ms
+  Dimensions: 1 4 8 12 16 19 20 21 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 70 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 3, 0 ]>
+    d^{2,1}_2: 2 gens (target_dim=8) done [parallel, 10 workers, 1051 ms]
+<ZL-Module with torsions [ 3, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 6 ]>
+    d^{1,1}_2 gen 1/1 (target_dim=1)...
+      gen 1 done [228 ms]
+<ZL-Module with torsions [ 6 ]>
+<ZL-Module with torsions [ 6 ]>
+------------------------------------------------------------
+Phase A completed in 1591 ms
+
+*** Phase A OK in 3555 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 2 generators
+    ComponentEx(2,1) class 1/2...
+    d^{3,1}_2: 4 gens (target_dim=11) done [parallel, 10 workers, 40062 ms]
+      class 1 done [43610 ms]
+    ComponentEx(2,1) class 2/2...
+      class 2 done [3272 ms]
+    p=2: 2 generators [46886 ms]
+    ComponentEx(3,0): 1 generators
+    ComponentEx(3,0) class 1/1...
+      class 1 done [47 ms]
+    p=3: 1 generators [49 ms]
+  >> ModExt: layer [ 2 ] gen 1/2 torsion=3
+    extension done [2147 ms]
+------------------------------------------------------------
+Phase B OK in 49086 ms
+Group structure: <ZL-Module with torsions [ 3, 6, 0 ]>
+
+*** SG#15 total: 52642 ms (PhaseA=3555 ms, PhaseB=49086 ms) ***
+
+################################################################
+# SG#16 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 1577 ms
+  Dimensions: 1 4 8 12 16 20 24 28 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 78 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 6, 0 ]>
+    d^{2,1}_2: 2 gens (target_dim=7) done [parallel, 10 workers, 966 ms]
+<ZL-Module with torsions [ 6, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 6, 6 ]>
+<ZL-Module with torsions [ 6, 6 ]>
+<ZL-Module with torsions [ 6, 6 ]>
+------------------------------------------------------------
+Phase A completed in 1288 ms
+
+*** Phase A OK in 3195 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 2 generators
+    ComponentEx(2,1) class 1/2...
+    d^{3,1}_2: 3 gens (target_dim=13) done [parallel, 10 workers, 30047 ms]
+    d^{0,3}_3 gen 1/1 (target_dim=3)...
+      gen 1 done [127 ms]
+      class 1 done [33279 ms]
+    ComponentEx(2,1) class 2/2...
+      class 2 done [2771 ms]
+    p=2: 2 generators [36054 ms]
+    ComponentEx(3,0): 2 generators
+    ComponentEx(3,0) class 1/2...
+      class 1 done [47 ms]
+    ComponentEx(3,0) class 2/2...
+      class 2 done [47 ms]
+    p=3: 2 generators [97 ms]
+  >> ModExt: layer [ 2 ] gen 1/2 torsion=6
+    extension done [3262 ms]
+------------------------------------------------------------
+Phase B OK in 39417 ms
+Group structure: <ZL-Module with torsions [ 3, 6, 12, 0 ]>
+
+*** SG#16 total: 42612 ms (PhaseA=3195 ms, PhaseB=39417 ms) ***
+
+################################################################
+# SG#17 (wallpaper group)
+################################################################
+Building resolution (depth=7, Phase B 需要 PseudoBoundary[7])...
+  Resolution built in 7109 ms
+  Dimensions: 1 5 13 25 41 60 80 101 
+Building spectral sequence (InsulatorSPTSpecSeq, EZ, omega=0)...
+  Spectral sequence created in 71 ms
+
+Phase A: InsulatorSPTLayersVerbose(SS, 2)
+------------------------------------------------------------
+Empty:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 6, 0 ]>
+    d^{2,1}_2: 2 gens (target_dim=24) done [parallel, 10 workers, 2292 ms]
+<ZL-Module with torsions [ 3, 0 ]>
+Bosonic:
+<ZL-Module with torsions [ 2, 2, 2, 2 ]>
+    d^{1,1}_2 gen 1/1 (target_dim=4)...
+      gen 1 done [564 ms]
+<ZL-Module with torsions [ 2, 2, 2, 2 ]>
+<ZL-Module with torsions [ 2, 2, 2, 2 ]>
+------------------------------------------------------------
+Phase A completed in 5755 ms
+
+*** Phase A OK in 13432 ms ***
+
+Phase B: SptSetSpecSeqResult(SS, 3, [1,2,3]) — insulator path 首次实战
+------------------------------------------------------------
+  Result(deg=3): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,2): 0 generators
+    p+ip: trivial [0 ms]
+    ComponentEx(2,1): 2 generators
+    ComponentEx(2,1) class 1/2...
+    d^{3,1}_2: 8 gens (target_dim=36) done [parallel, 10 workers, 153994 ms]
+      class 1 done [162294 ms]
+    ComponentEx(2,1) class 2/2...
+      class 2 done [3546 ms]
+    p=2: 2 generators [165843 ms]
+    ComponentEx(3,0): 4 generators
+    ComponentEx(3,0) class 1/4...
+      class 1 done [225 ms]
+    ComponentEx(3,0) class 2/4...
+      class 2 done [236 ms]
+    ComponentEx(3,0) class 3/4...
+      class 3 done [220 ms]
+    ComponentEx(3,0) class 4/4...
+      class 4 done [221 ms]
+    p=3: 4 generators [909 ms]
+  >> ModExt: layer [ 2 ] gen 1/2 torsion=3
+    extension done [6769 ms]
+------------------------------------------------------------
+Phase B OK in 173525 ms
+Group structure: <ZL-Module with torsions [ 2, 2, 2, 6, 0 ]>
+
+*** SG#17 total: 186958 ms (PhaseA=13432 ms, PhaseB=173525 ms) ***
+
+
+================================================================
+FINAL SUMMARY
+================================================================
+Total wall time: 930135 ms (930.135 s)
+
+Per-group results:
+  Group     PhaseA   PhaseB    PhaseA_dt    PhaseB_dt    total_dt
+  -------   ------   ------    ----------   ----------   ----------
+  SG#2        OK       OK     901 ms      1452 ms      2354 ms
+  SG#3        OK       OK     1399 ms      1085 ms      2485 ms
+  SG#4        OK       OK     1551 ms      1731 ms      3283 ms
+  SG#5        OK       OK     1027 ms      386 ms      1414 ms
+  SG#6        OK       OK     2894 ms      6908 ms      9803 ms
+  SG#7        OK       OK     3617 ms      26330 ms      29948 ms
+  SG#8        OK       OK     4040 ms      41062 ms      45104 ms
+  SG#9        OK       OK     2629 ms      10403 ms      13033 ms
+  SG#10        OK       OK     1002 ms      3527 ms      4530 ms
+  SG#11        OK       OK     4537 ms      34655 ms      39193 ms
+  SG#12        OK       OK     11292 ms      405517 ms      416810 ms
+  SG#13        OK       OK     837 ms      3396 ms      4234 ms
+  SG#14        OK       OK     4585 ms      71134 ms      75720 ms
+  SG#15        OK       OK     3555 ms      49086 ms      52642 ms
+  SG#16        OK       OK     3195 ms      39417 ms      42612 ms
+  SG#17        OK       OK     13432 ms      173525 ms      186958 ms
+----------------------------------------------------------------
+Phase A: 16 OK, 0 CRASH
+Phase B: 16 OK, 0 CRASH
+================================================================
+
+=== SptSet Parallel Stats ===
+Config: JOBS=10 THRESHOLD=10 PHASE2=true
+P1 (MapFromBarCocycle): 79 parallel calls (105706ms), 66 sequential calls (
+10319ms)
+P2 (BuildDerivative): 26 calls (756851ms), max_m=8
+P2b (SpecSeqResult ext): 0 calls (0ms), max_ngens=0
+
+All groups passed Phase A AND Phase B.

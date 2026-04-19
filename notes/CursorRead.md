@@ -1,22 +1,25 @@
 # 实验铁律（每次跑实验前必读）
 
-## 1. 生产线与 debug 线严格隔离
+## 1. 三条开发线严格隔离
 
-- **生产线**：`/home/user/xyren/software/gap-4.13.1/pkg/SptSet/`
-- **Debug 线**：`/home/user/xyren/gap-debug/pkg/SptSet/`
+- **生产线**：`/home/user/xyren/software/gap-4.13.1/pkg/SptSet/`（分支 `dev/cluster`）
+- **Debug 线**：`/home/user/xyren/gap-debug/pkg/SptSet/`（分支 `dev/cluster_debug`）
+- **Insulator 线（当前）**：`/home/user/xyren/gap-insulator/pkg/SptSet/`（分支 `dev/cluster_insulator`）
 
-**绝对禁止**：修改、写入、加载生产线的任何文件。所有改动只能在 debug 线。
+Insulator 线从 debug 线 (`e048f35`) fork 出来，已包含 debug 线的全部修复。
 
-启动 GAP 时必须用 `-l` 参数优先加载 debug 线：
+**绝对禁止**：修改、写入、加载生产线或 debug 线的任何文件。所有改动只能在 insulator 线。
+
+启动 GAP 时必须用 `-l` 参数优先加载 insulator 线：
 ```
-gap -l "/home/user/xyren/gap-debug/;/home/user/xyren/software/gap-4.13.1/" -r -q -b script.g
+~/software/gap-4.13.1/gap -l "/home/user/xyren/gap-insulator/;/home/user/xyren/software/gap-4.13.1/" -r -q -b script.g
 ```
 
 每个实验脚本开头必须加验证：
 ```gap
 _sptset_path := GAPInfo.PackagesInfo.sptset[1].InstallationPath;;
-if PositionSublist(_sptset_path, "gap-debug") = fail then
-    Print("FATAL: SptSet loaded from ", _sptset_path, " — NOT debug version!\n");;
+if PositionSublist(_sptset_path, "gap-insulator") = fail then
+    Print("FATAL: SptSet loaded from ", _sptset_path, " — NOT insulator version!\n");;
     FORCE_QUIT_GAP(1);;
 fi;;
 Print("OK: SptSet loaded from ", _sptset_path, "\n");;
@@ -26,7 +29,7 @@ Print("OK: SptSet loaded from ", _sptset_path, "\n");;
 
 实验脚本只负责：设置群、调用 `FermionEZSPTSpecSeq` / `FermionSPTSpecSeq`、调用 `FermionSPTLayersVerbose` / `FermionEZSPTLayersVerbose`、调用 `SptSetSpecSeqResult`。
 
-**禁止**在实验脚本中重写或绕过 `lib/` 下的核心函数逻辑。所有计算必须经过 debug 线 `lib/` 的源代码路径。如需修改计算逻辑，改 `lib/` 源文件，不要在实验脚本里 hack。
+**禁止**在实验脚本中重写或绕过 `lib/` 下的核心函数逻辑。所有计算必须经过 insulator 线 `lib/` 的源代码路径。如需修改计算逻辑，改 `lib/` 源文件，不要在实验脚本里 hack。
 
 ## 3. 全面 trouble shooting
 

@@ -1,0 +1,887 @@
+\documentclass[a4paper,fontset=ubuntu,12pt]{ctexart}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage[normalem]{ulem}
+\geometry{margin=1in}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+\setlist[itemize]{leftmargin=2.2em}
+\setlist[enumerate]{leftmargin=2.2em}
+
+\newtheorem{definition}{定义}[section]
+\newtheorem{proposition}[definition]{命题}
+\newtheorem{remark}[definition]{说明}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  language={},
+  columns=fullflexible,
+  keepspaces=true
+}
+
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\Aut}{\mathrm{Aut}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\Ker}{\mathrm{Ker}}
+\newcommand{\Img}{\mathrm{Im}}
+\newcommand{\aT}{\sigma_T}
+\newcommand{\aC}{\sigma_C}
+
+\title{Insulator AHSS 代码分析笔记}
+\author{SptSet Insulator 开发线工作笔记}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+% ============================================================
+\section{本文目标与范围}
+\label{sec:goal}
+
+本文记录 SptSet 中已有的 topological insulator（拓扑绝缘体）AHSS 实现的完整分析。
+目标是：
+\begin{enumerate}
+\item 搞清楚当前代码（\texttt{lib/ss\_ti.gi}）里已经实现了哪些公式；
+\item 对比 superconductor（\texttt{lib/ss\_fermion\_ez.gi}）的差异；
+\item 确定 3+1D 的哪些公式还缺失，为后续开发提供基础。
+\end{enumerate}
+
+本笔记的分析对象：
+\begin{itemize}
+\item 核心库文件：\texttt{lib/ss\_ti.gd}、\texttt{lib/ss\_ti.gi}
+\item 辅助文件：\texttt{lib/ss\_disorder\_ti.gd}、\texttt{lib/ss\_disorder\_ti.gi}
+\item 示例脚本：\texttt{examples/fspt\_2d\_insulator.g}、\texttt{examples/fspt\_2d\_insulator\_s12.g}
+\item 测试：\texttt{tst/z4\_ti.tst}
+\item 调试脚本：\texttt{debug/ti\_z3.g}、\texttt{debug/pm\_insulator\_s12\_ext.g} 等
+\end{itemize}
+
+% ============================================================
+\section{符号定义}
+\label{sec:notation}
+
+\begin{itemize}
+\item $G$：对称群。
+\item $\aT: G \to \ZZ_2$：time-reversal 指标。$\aT(g) = +1$ 表示 unitary，$\aT(g) = -1$ 表示 anti-unitary。
+      代码中 \texttt{auMap} 是一个到 $\mathrm{GL}(1, \ZZ)$ 的群同态，取值 $\pm 1$。
+\item $\aC: G \to \ZZ_2$：charge conjugation 指标。$\aC(g) = +1$ 保持 $U(1)$ 电荷不变，$\aC(g) = -1$ 共轭电荷。
+      代码中 \texttt{u1cMap}。
+\item $\omega \in C^2(G, \ZZ_{\aC \cdot \aT})$：spin structure / group extension cocycle。
+      代码中 \texttt{omega\_}。EZ 公式取 $\omega = 0$，spin-1/2 公式取 $\omega = \frac{1}{2} w_2$。
+\item $s(g) := \frac{1 - \aT(g)}{2}$：anti-unitary 指示函数。$s(g) = 0$（unitary）或 $s(g) = 1$（anti-unitary）。
+\item $\delta$：群上同调 coboundary 算子。
+\item $\beta$：Bockstein 同态（coboundary 在不同系数间的连接映射）。
+\item $\cup_0, \cup_1$：cup-$i$ 乘积。
+\end{itemize}
+
+% ============================================================
+\section{Spectrum（AHSS 的纤维层）}
+\label{sec:spectrum}
+
+\subsection{Insulator 的 spectrum}
+
+Insulator 的 AHSS 纤维层（代码中的 \texttt{spectrum} 数组）：
+\begin{equation}
+\label{eq:insulator-spectrum}
+\begin{aligned}
+h^0 &= U(1)_{\aT}  &&\quad \text{Bosonic 层（相位）} \\
+h^1 &= \ZZ_{\aC}    &&\quad \text{Complex fermion 层（Chern 数/电荷守恒）} \\
+h^2 &= 0            &&\quad \text{空层} \\
+h^3 &= \ZZ_{\aT}    &&\quad \text{$p+ip$ 层}
+\end{aligned}
+\end{equation}
+
+对应代码：
+\begin{lstlisting}
+spectrum[0+1] := SptSetCoefficientU1(auMap);       -- U(1) with sigma_T
+spectrum[1+1] := SptSetCoefficientZn(0, u1cMap);   -- Z with sigma_C
+-- spectrum[2+1] is 0;                              -- empty
+spectrum[3+1] := SptSetCoefficientZn(0, auMap);     -- Z with sigma_T
+\end{lstlisting}
+
+其中 \texttt{SptSetCoefficientZn(0, action)} 表示 $\ZZ$（$n = 0$ 即 $\ZZ_0 \equiv \ZZ$），
+\texttt{SptSetCoefficientU1(action)} 表示 $U(1) \cong \mathbb{R}/\ZZ$。
+
+\subsection{与 Superconductor (FermionEZ) 的对比}
+
+\begin{center}
+\begin{tabular}{c|cc|l}
+\hline
+$q$ & Superconductor $h^q$ & Insulator $h^q$ & 物理含义 \\
+\hline
+$0$ & $U(1)_{\aT}$ & $U(1)_{\aT}$ & Bosonic SPT 相位 \\
+$1$ & $\ZZ_{2,\aT}$ & $\ZZ_{\aC}$ & SC: Majorana 配对 / Ins: 复费米子带 \\
+$2$ & $\ZZ_{2,\aT}$ & $0$ & SC: Kitaev chain / Ins: 空 \\
+$3$ & $\ZZ_{\aT}$ & $\ZZ_{\aT}$ & $p + ip$ 超导体 \\
+\hline
+\end{tabular}
+\end{center}
+
+关键差异：
+\begin{enumerate}
+\item Insulator 的 $h^1 = \ZZ$（整数 Chern 数，电荷守恒），而 Superconductor 的 $h^1 = \ZZ_2$（Majorana 配对奇偶性）。
+\item Insulator 的 $h^2 = 0$，而 Superconductor 的 $h^2 = \ZZ_2$（Kitaev chain 层）。
+\item Group action 不同：Insulator 的 $h^1$ 上的作用是 $\aC$（charge conjugation），而 Superconductor 是 $\aT$（time-reversal）。
+\end{enumerate}
+
+% ============================================================
+\section{SptSet 框架：coboundary 和 twister 的含义}
+\label{sec:framework}
+
+在分析具体公式之前，先说清楚 SptSet 框架中 \texttt{SptSetInstallCoboundary} 和 \texttt{SptSetInstallAddTwister} 的含义。
+
+\subsection{总 coboundary 算子 \texttt{CoboundarySL}}
+
+一个 AHSS cochain 有多个层：在总度 $\mathrm{deg} = p + q$ 下，位于滤化 $p$ 的分量 $a_p \in C^p(G, h^q)$。
+
+\texttt{SptSetSpecSeqCoboundarySL(SS, deg, p, a)} 计算单层 $a \in C^p(G, h^q)$（其中 $q = \mathrm{deg} - p$）的总 coboundary。返回一个 cochain，各层为：
+\begin{equation}
+\label{eq:coboundary-sl}
+(\partial_{\mathrm{total}} a)_{p'} =
+\begin{cases}
+0 & p' \leq p \\
+\delta a & p' = p + 1 \quad \text{（群上同调 coboundary，} \in C^{p+1}(G, h^q)\text{）} \\
+-f_r(a, \delta a) & p' = p + r, \; r \geq 2 \quad \text{（物理 obstruction 公式）}
+\end{cases}
+\end{equation}
+
+其中 $f_r$ 就是 \texttt{SptSetInstallCoboundary(ss, r, p, q, f\_r)} 安装的函数。
+目标层的 spectrum 指标为 $q' = q - r + 1$，即 $f_r(a, \delta a) \in C^{p+r}(G, h^{q-r+1})$。
+
+\begin{remark}
+\texttt{SptSetInstallCoboundary(ss, r, p, q, func)} 的参数含义：
+\begin{itemize}
+\item \texttt{r}：这个 obstruction 跳了多少层（对应谱序列的 $d_r$ 微分）。
+\item \texttt{(p, q)}：源的位置（滤化度 $p$，谱指标 $q$）。
+\item \texttt{func(n\_q, dn\_q)}：给定 $q$-spectrum 层的 $p$-cochain $n_q$ 及其群 coboundary $\delta n_q$，
+      返回目标层的 $(p+r)$-cochain（值在 $h^{q-r+1}$ 中）。
+\end{itemize}
+注意代码中的负号：\texttt{CoboundarySL} 存储的是 $-f_r$（取负），所以物理公式的正号在 \texttt{func} 中是正的。
+\end{remark}
+
+\subsection{Stacking / AddTwister}
+
+两个 SPT 态 $c_1, c_2$ 的 stacking（加法）不是简单地逐层相加，而是有修正：
+\begin{equation}
+\label{eq:stacking}
+(\mathrm{Stack}(c_1, c_2))_p = (c_1)_p + (c_2)_p + T_{p,q}(c_1, c_2), \quad q = \mathrm{deg} - p
+\end{equation}
+
+其中 $T_{p,q}$ 就是 \texttt{SptSetInstallAddTwister(ss, p, q, T)} 安装的函数。
+$T$ 接收两个 cochain 的完整层列表 \texttt{(l1, l2)}，返回在 $(p, q)$ 位置的修正 cochain。
+
+$p = 0$（最底层）的 twister 恒为零——框架强制不扭（代码中 \texttt{if p > 0}）。
+
+% ============================================================
+\section{Insulator 的 differentials（coboundary 公式）}
+\label{sec:differentials}
+
+以下逐一分析 \texttt{ss\_ti.gi} 中安装的每个 coboundary 和 twister。
+
+\subsection{\texorpdfstring{$d_2^{1,1}$}{d2(1,1)}：Complex fermion $\to$ Bosonic}
+\label{sec:d2-11}
+
+\textbf{代码}：\texttt{SptSetInstallCoboundary(ss, 2, 1, 1, ...)}
+
+\textbf{源}：$n_1 \in C^1(G, h^1) = C^1(G, \ZZ_{\aC})$，在 $(p = 1, q = 1)$。
+
+\textbf{目标}：$C^{1+2}(G, h^{1-2+1}) = C^3(G, h^0) = C^3(G, U(1)_{\aT})$。
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:d2-11}
+\boxed{f_2^{1,1}(n_1, \delta n_1) = \omega \cdot n_1 + \frac{1}{2}\, (\delta n_1) \cdot n_1}
+\end{equation}
+
+即 $(g_1, g_2, g_3) \mapsto \omega(g_1, g_2)\, n_1(g_3) + \frac{1}{2}\, (\delta n_1)(g_1, g_2)\, n_1(g_3)$。
+
+当 $\delta n_1 = 0$（$n_1$ 是真正的 cocycle）时，简化为 $\omega \cdot n_1$。
+
+对应代码：
+\begin{lstlisting}
+SptSetInstallCoboundary(ss, 2, 1, 1,
+function(n1, dn1)
+  if dn1 = ZeroCocycle@ then
+    return {g1, g2, g3} -> omega_(g1, g2) * n1(g3);
+  else
+    return {g1, g2, g3} -> omega_(g1, g2) * n1(g3)
+      + 1/2 * dn1(g1, g2) * n1(g3);
+  fi;
+end);
+\end{lstlisting}
+
+\begin{remark}
+与 Superconductor 的关键差异：FermionEZ 中 $f_2^{1,1} = 0$（\texttt{return \{g1, g2, g3\} -> 0}），
+因为超导体的 Majorana chain 层（$\ZZ_2$ 系数）没有到 Bosonic 层的 $d_2$ obstruction。
+而 insulator 的 complex fermion 层（$\ZZ$ 系数）通过 $\omega$ 产生非零 obstruction。
+\end{remark}
+
+\subsection{\texorpdfstring{$d_2^{2,1}$}{d2(2,1)}：Complex fermion (二阶) $\to$ Bosonic}
+\label{sec:d2-21}
+
+\textbf{代码}：\texttt{SptSetInstallCoboundary(ss, 2, 2, 1, ...)}
+
+\textbf{源}：$n_2 \in C^2(G, \ZZ_{\aC})$，在 $(p = 2, q = 1)$。
+
+\textbf{目标}：$C^4(G, U(1)_{\aT})$。
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:d2-21}
+\boxed{f_2^{2,1}(n_2, \delta n_2) = \omega \cdot n_2 + \frac{1}{2}\, n_2 \cdot n_2}
+\end{equation}
+
+即 $(g_1, g_2, g_3, g_4) \mapsto \omega(g_1, g_2)\, n_2(g_3, g_4) + \frac{1}{2}\, n_2(g_1, g_2)\, n_2(g_3, g_4)$。
+
+对应代码：
+\begin{lstlisting}
+SptSetInstallCoboundary(ss, 2, 2, 1,
+function(n2, dn2)
+  return {g1, g2, g3, g4}
+  -> omega_(g1, g2) * n2(g3, g4) + 1/2 * n2(g1, g2) * n2(g3, g4);
+end);
+\end{lstlisting}
+
+\begin{remark}
+这个公式和 FermionEZ 的 $f_2^{2,1}$（即 $\frac{1}{2} n_2 \cup_0 n_2 + \text{correction}$）有相似结构，
+但多了一个 $\omega \cdot n_2$ 项，且没有 FermionEZ 中的 $\cup_1$ 修正项。
+\end{remark}
+
+\subsection{\texorpdfstring{$d_2^{3,1}$}{d2(3,1)}：Complex fermion (三阶) $\to$ Bosonic \textmd{[Xingyu, 2026-04-19 新增]}}
+\label{sec:d2-31}
+
+\textbf{代码}：\texttt{SptSetInstallCoboundary(ss, 2, 3, 1, ...)}
+
+\textbf{源}：$n_3 \in C^3(G, \ZZ_{\aC})$，在 $(p = 3, q = 1)$。
+
+\textbf{目标}：$C^{3+2}(G, h^{1-2+1}) = C^5(G, U(1)_{\aT})$。这是 3+1D 才会用到的微分（总度 $p+q = 4$）。
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:d2-31}
+\boxed{f_2^{3,1}(n_3) = \omega \cup_0 n_3 + \frac{1}{2}\, n_3 \cup_1 n_3}
+\end{equation}
+
+对应代码（采用 \texttt{Cup0@/Cup1@} 抽象，与 $d_3^{1,3}$ 保持风格一致；\texttt{coeff} 取源系数 \texttt{spectrum[1+1]}）：
+\begin{lstlisting}
+SptSetInstallCoboundary(ss, 2, 3, 1,
+function(n3, dn3)
+  local omega_n3, n3c1n3;
+  omega_n3 := Cup0@(2, 3, spectrum[1+1], omega_, n3);
+  n3c1n3 := Cup1@(3, 3, spectrum[1+1], n3, n3);
+  return AddInhomoCochain@(omega_n3,
+    ScaleInhomoCochain@(1/2, n3c1n3));
+end);
+\end{lstlisting}
+
+\begin{remark}
+\textbf{暂未包含 $\delta n_3$ 修正项}。当 $n_3$ 不是严格 cocycle 时（例如在 \texttt{PartialPurify} 调用过程中），
+本公式只反映 cocycle 部分；如出现 ``目标不闭合'' 类的诊断错误，需要按 \texttt{ss\_fermion.gi} 的模式补 $\delta n_3$ 修正。
+\end{remark}
+
+\begin{remark}
+形式上和 superconductor 中 \texttt{ss\_fermion.gi} 的 $d_2^{3,1}$ ``$O_5^c$ 部分'' 对应：
+$O_5^c = \omega_2 \cup_0 n_3 + n_3 \cup_1 n_3 + \delta n_3 \cup_2 n_3$。
+Insulator 版本不带 $\delta n_3 \cup_2 n_3$ 修正，且因为系数是 $U(1)_{\aT}$（不是 $\ZZ_2$），整体多了 $\frac{1}{2}$ 因子。
+\end{remark}
+
+\subsection{\texorpdfstring{$d_3^{0,3}$}{d3(0,3)}：$p+ip$ 根态 $\to$ Complex fermion \textmd{[Xingyu, 2026-04-19 新增]}}
+\label{sec:d3-03}
+
+\textbf{代码}：\texttt{SptSetInstallCoboundary(ss, 3, 0, 3, ...)}
+
+\textbf{源}：$n_0 \in C^0(G, \ZZ_{\aT})$，在 $(p = 0, q = 3)$ —— $p+ip$ 层的根态（一个常数整数）。
+
+\textbf{目标}：$C^{0+3}(G, h^{3-3+1}) = C^3(G, \ZZ_{\aC})$，即 complex fermion 层。
+
+这条微分在 2+1D（总度 $p+q=3$）和 3+1D（总度 $p+q=4$ 时通过 $E_3$ 页传递）都会被用到，是 ``$p+ip$ 根态把某些 CF 类打掉'' 的物理来源。
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:d3-03}
+\boxed{f_3^{0,3}(n_0) = \beta\omega \cup_0 n_0}
+\end{equation}
+
+其中 $\beta\omega = \delta_{\ZZ_{\aC \cdot \aT}} \omega \in C^3(G, \ZZ_{\aC \cdot \aT})$ 与 $d_3^{1,3}$ 中定义的 $\beta\omega$ 完全相同（同一个辅助量）。
+$n_0$ 直接以整数值进入公式（\textbf{不取半}，与 superconductor 版本中的 \texttt{Int(n0()/2)} 不同）。
+
+对应代码：
+\begin{lstlisting}
+SptSetInstallCoboundary(ss, 3, 0, 3,
+function(n0, dn0)
+  local coeff_omega_, beta_omega_;
+  coeff_omega_ := SptSetCoefficientZn(0, au_u1cMap);
+  beta_omega_ := InhomoCoboundary@(coeff_omega_, omega_);
+  return Cup0@(3, 0, spectrum[3+1], beta_omega_, n0);
+end);
+\end{lstlisting}
+
+\begin{remark}
+关键差异：superconductor 的 $d_3^{0,3}$ 形式上是 $\mathrm{Int}(n_0/2) \cdot (w \cup_1 w)$（见 \texttt{ss\_fermion.gi}），
+其中 $w$ 是 spin-1/2 因子，$\mathrm{Int}(n_0/2)$ 表示 ``$n_0$ 取半下取整''。
+Insulator 版本完全不同：用 $\beta\omega$（$\omega$ 的 Bockstein）而非 $w \cup_1 w$，且 $n_0$ 不取半。
+\end{remark}
+
+\subsection{\texorpdfstring{$d_2^{1,3}$}{d2(1,3)}：$p+ip$ 层的 $d_2$（零）}
+\label{sec:d2-13}
+
+\textbf{代码}：\texttt{SptSetInstallCoboundary(ss, 2, 1, 3, ...)}
+
+\textbf{源}：$n_1 \in C^1(G, \ZZ_{\aT})$，在 $(p = 1, q = 3)$。
+
+\textbf{目标}：$C^3(G, h^2) = C^3(G, 0) = 0$。
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:d2-13}
+f_2^{1,3} = 0
+\end{equation}
+
+这是自然的：目标 $h^2 = 0$，没有东西可以 obstruct。
+
+\subsection{\texorpdfstring{$d_3^{1,3}$}{d3(1,3)}：$p+ip$ 层的 $d_3$（非零）}
+\label{sec:d3-13}
+
+\textbf{代码}：\texttt{SptSetInstallCoboundary(ss, 3, 1, 3, ...)}
+
+\textbf{源}：$n_1 \in C^1(G, \ZZ_{\aT})$，在 $(p = 1, q = 3)$。
+
+\textbf{目标}：$C^{1+3}(G, h^{3-3+1}) = C^4(G, h^1) = C^4(G, \ZZ_{\aC})$。
+
+这是 $d_3: E_3^{1,3} \to E_3^{4,1}$，从 $p+ip$ 层到 complex fermion 层的微分。
+
+\textbf{公式}：先定义辅助量：
+\begin{align}
+\beta\omega &:= \delta_{\ZZ_{\aC \cdot \aT}} \omega \in C^3(G, \ZZ_{\aC \cdot \aT})
+\label{eq:beta-omega} \\
+\beta s &:= \tfrac{1}{2}\, \delta_{\ZZ_2} s \in C^2(G, \ZZ_2)
+\label{eq:beta-s}
+\end{align}
+
+其中 $\delta_{\ZZ_{\aC \cdot \aT}}$ 是以 $\aC \cdot \aT$ 作用的 $\ZZ$-系数 coboundary，$\delta_{\ZZ_2}$ 是平凡作用的 $\ZZ_2$-系数 coboundary。
+
+然后：
+\begin{equation}
+\label{eq:d3-13}
+\boxed{f_3^{1,3}(n_1) = \beta\omega \cup_0 n_1 + (\beta s \cup_0 n_1) \cup_0 n_1}
+\end{equation}
+
+所有 cup 乘积都是用 $h^3 = \ZZ_{\aT}$ 系数的 \texttt{Cup0@}。
+
+对应代码：
+\begin{lstlisting}
+SptSetInstallCoboundary(ss, 3, 1, 3,
+function(n1, dn1)
+  local coeff_omega_, coeff_s, beta_omega_, beta_s;
+  coeff_omega_ := SptSetCoefficientZn(0, au_u1cMap);
+  coeff_s := SptSetCoefficientZn(2, trivialMap);
+  beta_omega_ := InhomoCoboundary@(coeff_omega_, omega_);
+  beta_s := ScaleInhomoCochain@(1/2,
+              InhomoCoboundary@(coeff_s, s));
+  return AddInhomoCochain@(
+    Cup0@(3, 1, spectrum[3+1], beta_omega_, n1),
+    Cup0@(3, 1, spectrum[3+1],
+      Cup0@(2, 1, spectrum[3+1], beta_s, n1), n1));
+end);
+\end{lstlisting}
+
+其中 \texttt{au\_u1cMap} 是 $\aC \cdot \aT$ 的组合作用（代码中 \texttt{\{g\} -> auMap(g)*u1cMap(g)}）。
+
+\begin{remark}
+这是当前 insulator 代码中物理上最复杂的微分公式。
+$\beta\omega$ 是 $\omega$ 的 Bockstein（类似于超导体中的 $O_5(\gamma)$），
+$\beta s$ 是 anti-unitary 指示函数 $s$ 的 ``半 Bockstein''。
+\end{remark}
+
+% ============================================================
+\section{Insulator 的 AddTwisters（stacking 修正）}
+\label{sec:twisters}
+
+\subsection{$(p = 1, q = 1)$：Complex fermion 层 stacking — 零修正}
+
+\begin{lstlisting}
+SptSetInstallAddTwister(ss, 1, 1, {l1, l2} -> ZeroCocycle@);
+\end{lstlisting}
+
+Complex fermion 的 Chern 数直接相加，没有 stacking 修正：
+\begin{equation}
+T_{1,1}(c_1, c_2) = 0
+\end{equation}
+
+\subsection{$(p = 2, q = 0)$：Bosonic 层 (二阶) stacking 修正}
+
+\textbf{代码}：
+\begin{lstlisting}
+SptSetInstallAddTwister(ss, 2, 0,
+  function(l1, l2)
+    local n11, n12;
+    n11 := l1[1+1];   -- c_1 的 q=1 (complex fermion) 层
+    n12 := l2[1+1];   -- c_2 的 q=1 (complex fermion) 层
+    return {g1, g2} -> 1/2 * n11(g1) * n12(g2);
+  end);
+\end{lstlisting}
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:twister-20}
+\boxed{T_{2,0}(c_1, c_2)(g_1, g_2) = \frac{1}{2}\, n_1^{(1)}(g_1) \cdot n_1^{(2)}(g_2)}
+\end{equation}
+
+其中 $n_1^{(i)}$ 是第 $i$ 个态的 complex fermion 层 1-cochain。
+
+物理含义：两个带有不同 complex fermion decoration 的态叠加后，bosonic 相位在 $p = 2$ 层获得一个由两个 Chern 数的乘积给出的修正。
+
+\subsection{$(p = 3, q = 0)$：Bosonic 层 (三阶) stacking 修正}
+
+\textbf{代码}：
+\begin{lstlisting}
+SptSetInstallAddTwister(ss, 3, 0,
+function(l1, l2)
+  local coeff, n21, n22, n2c1n2;
+  n21 := l1[2+1];   -- c_1 的 q=1 (complex fermion) 层的 2-cochain 部分
+  n22 := l2[2+1];   -- c_2 的 q=1 (complex fermion) 层的 2-cochain 部分
+  coeff := spectrum[0+1];
+  if n21 = ZeroCocycle@ or n22 = ZeroCocycle@ then
+    return ZeroCocycle@;
+  else
+    n2c1n2 := Cup1@(2, 2, coeff, n21, n22);
+    return ScaleInhomoCochain@(1/2, n2c1n2);
+  fi;
+end);
+\end{lstlisting}
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:twister-30}
+\boxed{T_{3,0}(c_1, c_2) = \frac{1}{2}\, n_2^{(1)} \cup_1 n_2^{(2)}}
+\end{equation}
+
+其中 $n_2^{(i)} \in C^2(G, h^1)$ 是第 $i$ 个态在 complex fermion 层的 2-cochain 部分，
+$\cup_1$ 是 $U(1)_{\aT}$ 系数的 cup-1 乘积。
+
+\subsection{$(p = 4, q = 0)$：Bosonic 层 (四阶) stacking 修正 \textmd{[Xingyu, 2026-04-19 新增]}}
+\label{sec:twister-40}
+
+\textbf{代码}：
+\begin{lstlisting}
+SptSetInstallAddTwister(ss, 4, 0,
+function(l1, l2)
+  local coeff, n31, n32;
+  n31 := l1[3+1];   -- c_1 的 q=1 (CF) 层的 3-cochain 部分
+  n32 := l2[3+1];   -- c_2 的 q=1 (CF) 层的 3-cochain 部分
+  coeff := spectrum[0+1];
+  if n31 = ZeroCocycle@ or n32 = ZeroCocycle@ then
+    return ZeroCocycle@;
+  else
+    return ScaleInhomoCochain@(1/2,
+      Cup2@(3, 3, coeff, n31, n32));
+  fi;
+end);
+\end{lstlisting}
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:twister-40}
+\boxed{T_{4,0}(c_1, c_2) = \frac{1}{2}\, n_3^{(1)} \cup_2 n_3^{(2)}}
+\end{equation}
+
+其中 $n_3^{(i)} \in C^3(G, \ZZ_{\aC})$ 是第 $i$ 个态在 complex fermion 层的 3-cochain 部分（即 \texttt{l[3+1]}）。
+\texttt{coeff = spectrum[0+1]} 与 $T_{3,0}$ 风格保持一致（取目标系数 $U(1)_{\aT}$）。
+
+\begin{remark}
+$T_{2,0}$、$T_{3,0}$、$T_{4,0}$ 形式上构成同一族 ``CF 层自配对修正''：
+$T_{p,0} = \frac{1}{2}\, n_{p-1} \cup_{p-2} n_{p-1}$（$p = 2, 3, 4$），其中 $\cup_0$ 退化为 ``$\cdot$''。
+\end{remark}
+
+\subsection{所有零 twister（占位符）}
+
+以下 twisters 仍然安装为零：
+\begin{align}
+T_{1,2} &= 0 \quad \text{（$h^2 = 0$，自然为零）} \\
+T_{2,1} &= 0 \\
+T_{1,3} &= 0 \quad \text{（3+1D 占位符，待开发）} \\
+T_{2,2} &= 0 \quad \text{（3+1D 占位符，待开发）} \\
+T_{3,1} &= 0 \quad \text{（3+1D 占位符，待开发）}
+\end{align}
+
+注：$T_{4,0}$ 已在 \S\ref{sec:twister-40} 实现，从占位符列表中移出。
+
+% ============================================================
+\section{Insulator 公式总览表}
+\label{sec:summary-table}
+
+\subsection{Coboundary 公式}
+
+\begin{center}
+\begin{tabular}{c|c|c|l|c}
+\hline
+代码参数 & 谱序列微分 & 公式 & 说明 & 状态 \\
+\hline
+$(2,1,1)$ & $d_2^{1,1}$ & $\omega \cdot n_1 + \frac{1}{2}(\delta n_1) n_1$
+  & CF$\to$Bos, 2D & 已实现 \\
+$(2,2,1)$ & $d_2^{2,1}$ & $\omega \cdot n_2 + \frac{1}{2} n_2^2$
+  & CF$\to$Bos, 2D & 已实现 \\
+$(2,3,1)$ & $d_2^{3,1}$ & $\omega \cup_0 n_3 + \frac{1}{2}\, n_3 \cup_1 n_3$
+  & CF$\to$Bos, 3D & 已实现 \textbf{[xingyu 2026-04-19]} \\
+$(3,0,3)$ & $d_3^{0,3}$ & $\beta\omega \cup_0 n_0$
+  & $p+ip$ 根$\to$CF & 已实现 \textbf{[xingyu 2026-04-19]} \\
+$(2,1,3)$ & $d_2^{1,3}$ & $0$
+  & $p+ip$, $h^2=0$ & 已实现（自然） \\
+$(3,1,3)$ & $d_3^{1,3}$ & $\beta\omega \cup_0 n_1 + (\beta s \cup_0 n_1)\cup_0 n_1$
+  & $p+ip \to$ CF & 已实现 \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{AddTwister 公式}
+
+\begin{center}
+\begin{tabular}{c|c|l|c}
+\hline
+$(p, q)$ & 公式 & 说明 & 状态 \\
+\hline
+$(1,1)$ & $0$ & CF Chern 数直接加 & 已实现 \\
+$(2,0)$ & $\frac{1}{2} n_1^{(1)} \cdot n_1^{(2)}$ & Bos 2阶修正 & 已实现 \\
+$(3,0)$ & $\frac{1}{2} n_2^{(1)} \cup_1 n_2^{(2)}$ & Bos 3阶修正 & 已实现 \\
+$(4,0)$ & $\frac{1}{2} n_3^{(1)} \cup_2 n_3^{(2)}$ & Bos 4阶修正, 3D & 已实现 \textbf{[xingyu 2026-04-19]} \\
+$(1,2)$, $(2,1)$ & $0$ & $h^2=0$ 相关 & 已实现 \\
+$(1,3), (2,2), (3,1)$ & $0$ \textbf{(placeholder)} & 3+1D 所需 & \textbf{待开发} \\
+\hline
+\end{tabular}
+\end{center}
+
+% ============================================================
+\section{\texttt{InsulatorSPTLayersVerbose} 的层名与循环结构}
+\label{sec:layers-verbose}
+
+\begin{lstlisting}
+layerNames := ["Bosonic:", "Complex fermion:", "Empty:", "p+ip:"];
+for p in [1..(dim+1)] do
+  q := dim + 1 - p;
+  if q >= 0 and q <= 3 then
+    rmax := Maximum(q+2, p+1);
+    for r in [2..rmax] do
+      Erpq := SptSetSpecSeqComponent(ss, r, p, q);
+\end{lstlisting}
+
+对于 $d = 2$（2+1D），$\mathrm{dim} = 2$，总度 $n = d + 1 = 3$。遍历的 $(p, q)$ 为：
+\begin{center}
+\begin{tabular}{c|c|c|c}
+$p$ & $q = 3 - p$ & 层名 & 计算的页 \\
+\hline
+1 & 2 & Empty & $E_2$--$E_3$（但 $h^2=0$，全为零） \\
+2 & 1 & Complex fermion & $E_2$--$E_3$ \\
+3 & 0 & Bosonic & $E_2$--$E_4$ \\
+\end{tabular}
+\end{center}
+
+\begin{remark}
+$p+ip$ 层只在 $q = 3$ 时出现，需要 $p = 0$（$d = 2$）或 $p \geq 1$（$d \geq 4$）。
+在 $d = 2$ 时，$p + ip$ 的贡献在 $(p=0, q=3)$ 位置，但 SptSet 的 \texttt{LayersVerbose} 从 $p=1$ 开始遍历，所以 $p+ip$ 层在 2+1D 时不显示在分层输出中（但可能通过微分影响其他层）。
+\end{remark}
+
+% ============================================================
+\section{示例脚本分析}
+\label{sec:examples}
+
+\subsection{\texttt{fspt\_2d\_insulator.g}：2D EZ insulator 批量计算}
+
+这个脚本计算 2D wallpaper 群 (SG\#2--17) 的 insulator SPT 分类。流程：
+
+\begin{enumerate}
+\item 构建空间群 $\to$ pcp 群 $\to$ resolution (degree 6)。
+\item \texttt{f = DeterminantMat}：反演/镜面群元素取 $-1$（anti-unitary），平移取 $+1$。
+      这里 \texttt{auMap = u1cMap = f}，即 $\aT = \aC$。
+\item \texttt{omega0 = 0}：EZ 公式（无 spin structure）。
+\item 调用 \texttt{InsulatorSPTSpecSeq(R, f, f, omega0)} 构建谱序列。
+\item \texttt{InsulatorSPTLayersVerbose(SS, 2)}：计算 2D 各层的分类。
+\item 对 complex fermion 层的每个有限阶生成元，做 stacking $\mathrm{tor}$ 次，提取 bosonic anomaly 指标。
+\end{enumerate}
+
+\begin{remark}
+这里 Phase B（群结构计算）没有走标准的 \texttt{SptSetSpecSeqResult} 路径，
+而是手动做 stacking + purify + 提取 anomaly。这可能是因为当时 \texttt{ss\_module.gi} 的群结构计算还没有完善。
+\end{remark}
+
+\subsection{\texttt{fspt\_2d\_insulator\_s12.g}：2D spin-1/2 insulator}
+
+和 EZ 版本类似，但 $\omega = \frac{1}{2} w_2$：
+\begin{lstlisting}
+w := Spin12Factor(2, it);
+ww := {g1, g2} -> 1/2 * w(PreImageElm(fSG, g1), PreImageElm(fSG, g2));
+SS := InsulatorSPTSpecSeq(R, f, f, ww);
+\end{lstlisting}
+
+没有独立的 ``spin-1/2 insulator'' 函数（不像超导体有 \texttt{FermionSPTSpecSeq} 和 \texttt{FermionEZSPTSpecSeq} 两个）。
+Spin-1/2 insulator 直接通过传入非零 \texttt{omega\_} 实现。
+
+% ============================================================
+\section{Disorder 和 Averaged 版本}
+\label{sec:disorder}
+
+\texttt{lib/ss\_disorder\_ti.gi} 提供了两个函数：
+
+\subsection{\texttt{DisorderInsulatorSPTSpecSeq}}
+
+\textbf{Spectrum}：和 insulator 相同的四层，但 $h^0 = \ZZ_{\aT}$（不是 $U(1)$），$h^1 = \ZZ_{\aC}$，$h^2 = \ZZ_1$（平凡作用）。
+
+\textbf{所有 coboundary 和 twister 都是零}。这意味着谱序列在 $E_2$ 页就退化了——所有微分都平凡，分类直接由群上同调给出。
+
+\subsection{\texttt{AvgInsulatorSPTSpecSeq}}
+
+\textbf{Spectrum}：同 disorder 版。
+
+只有 $d_3^{1,3}$（\texttt{(3, 1, 3)}）是非零的：公式和 insulator 的 $d_3^{1,3}$ 完全相同（$\beta\omega \cup_0 n_1 + (\beta s \cup_0 n_1)^2$）。
+
+其余 coboundary 和 twister 全部为零。
+
+% ============================================================
+\section{代码历史}
+\label{sec:history}
+
+\begin{itemize}
+\item \textbf{2020-04-18}，commit \texttt{cad2440}：Yang Qi 在 \texttt{group\_ext} 分支上首次加入 insulator 代码（\texttt{ss\_ti.gi/gd}、\texttt{z4\_ti.tst}、\texttt{fspt\_2d\_insulator.g}）。
+\item 后续在 \texttt{group\_ext} 分支上持续迭代：
+  \begin{itemize}
+  \item \texttt{813e5df}：添加 ti examples
+  \item \texttt{060bbed}：修复 $dn_1$ 依赖项 bug（$d_2^{1,1}$ 中的 $\frac{1}{2} dn_1 \cdot n_1$ 项）
+  \item \texttt{6671634}：添加 spin-1/2 insulator 示例
+  \item \texttt{9648abf}, \texttt{9e7af9f}：2D insulator group extension 计算
+  \item \texttt{5a46bfb}：disorder 版本
+  \item \texttt{94fd220}：aspt (averaged SPT) 版本
+  \end{itemize}
+\item 代码从 \texttt{group\_ext} $\to$ \texttt{master} $\to$ \texttt{dev/cluster\_debug} $\to$ \texttt{dev/cluster\_insulator} 逐级继承。
+\item \texttt{dev/xingyu} 分支仅有一处空格修正，无实质改动。
+\item \textbf{没有专门的 insulator 远程分支}——insulator 代码一直生活在 \texttt{group\_ext}/\texttt{master} 中。
+\item \textbf{2026-04-19, Xingyu}：在 \texttt{ss\_ti.gi} 中新增三条 3+1D 公式
+  $d_3^{0,3} = \beta\omega \cup_0 n_0$、
+  $d_2^{3,1} = \omega \cup_0 n_3 + \frac{1}{2}\, n_3 \cup_1 n_3$、
+  $T_{4,0} = \frac{1}{2}\, n_3^{(1)} \cup_2 n_3^{(2)}$。
+\end{itemize}
+
+% ============================================================
+\section{案例分析：2D wallpaper SG\#14 的 ``Z3+Z2$\to$Z6'' extension}
+\label{sec:sg14-case}
+
+\subsection{现象与对照}
+
+在 2D wallpaper 群批量诊断（\texttt{debug/exp\_2d\_wallpaper\_insulator\_diag.g}）中，SG\#14（GAP \texttt{SpaceGroupBBNWZ(2, 14)}, BBNWZ 编号 \texttt{(2, 4, 2, 1, 1)}）的最终结果是
+\[
+\boxed{\text{当前 SptSet 给 } [3, 6, 0]}
+\]
+而独立计算（与本仓库无关的另一种方法）给
+\[
+\text{独立方法给 } [3, 3, 2, 0].
+\]
+两者只差一处：CF 层的第一个 $\ZZ_3$ 生成元有没有与 Bos 层 $\ZZ_2$ 合并成 $\ZZ_6$。
+
+\subsection{Phase A 分解（无歧义）}
+
+两边对 $E_\infty$ 页的分解完全一致：
+\begin{center}
+\begin{tabular}{c|c|c}
+\hline
+层 $(p, q)$ & 名称 & $E_\infty^{p, q}$ \\
+\hline
+$(1, 2)$ & Empty (因为 $h^2 = 0$) & $0$ \\
+$(2, 1)$ & Complex fermion (CF) & $\ZZ_3 \oplus \ZZ_3 \oplus \ZZ$ \\
+$(3, 0)$ & Bosonic (Bos) & $\ZZ_2$ \\
+\hline
+\end{tabular}
+\end{center}
+
+差异只出现在层之间的 \textbf{extension}。
+
+\subsection{Extension 来源：CF $\to$ Bos 通过 $T_{3,0}$}
+
+由于 SG\#14 \textbf{没有 $p+ip$ 层}（$E_\infty^{0, 3}$ 平凡），两边都不需要做 ``Chern$\to$CF'' 这个 extension；唯一的 extension 是 \textbf{CF $\to$ Bos}。
+
+CF 层的 stacking（即 $n$ 倍生成元算成 cocycle）通过 $T_{3,0} = \frac{1}{2}\, n_2^{(1)} \cup_1 n_2^{(2)}$ (\S\ref{sec:twisters}) 在 Bos 层引入修正。具体来说，对 CF 第一个 $\ZZ_3$ 生成元 $g_1$（$n_2$ 是它的 $E_\infty$ 表示 cocycle）：
+\begin{itemize}
+\item Stack 三次：$3 g_1$ 在 CF 层为零，但在 Bos 层留下累积修正 $\binom{3}{2} \cdot \frac{1}{2}\, n_2 \cup_1 n_2 = \frac{3}{2}\, (n_2 \cup_1 n_2) \pmod{\mathbb{Z}} = \frac{1}{2}\, (n_2 \cup_1 n_2)$，恰好等于 Bos 层的 $\ZZ_2$ 生成元；
+\item 因此 $3 g_1$ 在完整 SPT 群中 \textbf{不为零}，而是等于 Bos 层那个 $\ZZ_2$ 元素 $\Rightarrow$ extension 非平凡 $\Rightarrow$ $\ZZ_3 \oplus \ZZ_2 \to \ZZ_6$。
+\end{itemize}
+
+对 CF 第二个 $\ZZ_3$ 生成元 $g_2$：同样做 stack 三次时 $\frac{1}{2}\, n_2' \cup_1 n_2' \in \ZZ_2$ 恰好为零（因为这个 $g_2$ 对应的 $n_2'$ 满足 $n_2' \cup_1 n_2' \equiv 0 \pmod{2 \mathbb{Z}}$）。所以 $g_2$ 与 Bos 层 \textbf{trivial extension}，$\ZZ_3$ 直接保留。
+
+最终结构：$\boxed{\ZZ_3 \oplus \ZZ_6 \oplus \ZZ}$（GAP 按 invariant factor 升序输出为 \texttt{[3, 6, 0]}，其中 $3 \mid 6$）。
+
+\subsection{三条独立验证}
+
+为定位差异来源，做了三轮一次性诊断（脚本已删，结论列在下方供 reproducibility）：
+\begin{enumerate}
+\item \textbf{三套 Phase B 实现交叉验证}：分别调用 \texttt{SptSetSpecSeqResult}（hybrid）、\texttt{SptSetSpecSeqResultOld}（sequential）、\texttt{SptSetSpecSeqResultLayerwise}，三种实现 \textbf{完全一致给 [3, 6, 0]}。
+  另外手动算 \texttt{ClassToLeadingVector(EBos, 3 * gen$_i$)} 直接看每个 CF 生成元在 Bos 中的剩余：第一个生成元给 $[1]$（非零，被 $T_{3,0}$ 拉到 Bos），第二个给 $[0]$。
+\item \textbf{Manual stacking vs ModExt 一致性}：完整复现 \texttt{examples/fspt\_2d\_insulator.g} 第 22--49 行的 manual stacking 路径（用 \texttt{ClassFromLevelCocycle + cl1+cl1+cl1 + Purify}），与 ModExt 路径（\texttt{SptSetSpecSeqModuleVectorToClass + ClassToLeadingVector}）逐生成元对比。\textbf{两套算法完全一致：CF gen 1 给 $[1]$，CF gen 2 给 $[0]$}。两条独立计算路径吻合 $\Rightarrow$ 结果可信。
+\item \textbf{Depth=6 能否重现 examples baseline}：尝试用 \texttt{ResolutionAlmostCrystalGroup(SG1, 6)}（与 examples 一致）复现 examples 的 $[0, 0]$ baseline，但当前代码在 \texttt{cl1 + cl1} 这一步直接报错 \texttt{List Element: <list>[7] must have an assigned value}——因为新加的 $d_2^{3, 1}$ 公式中的 $\frac{1}{2}\, n_3 \cup_1 n_3$ 项以及 $T_{4,0} = \frac{1}{2}\, n_3 \cup_2 n_3$ 在 \texttt{Purify} 时需要更高维 boundary，depth=6 已不够。即便这 3+1D 公式和 SG\#14（2D）的 $E_2^{p,q}$ 在指标上不重合，也只要它们被 \texttt{InstallCoboundary} 注册过，purify 时就会枚举它们的 source 维度。
+\end{enumerate}
+
+\subsection{为什么 \texttt{examples/fspt\_2d\_insulator-result.txt} 的 baseline 是 [0, 0]？}
+
+我们的代码与 examples-result 都基于同一份 \texttt{lib/ss\_ti.gi}（关于 $d_2^{1, 1}$、$d_2^{2, 1}$、$T_{2,0}$、$T_{3,0}$ 这些 2+1D 公式从未改过），但 \textbf{purification 算法在 2023 年改过两个关键 bug}：
+\begin{itemize}
+\item \textbf{Commit \texttt{d4c6215}（2023-07-07，``fixed purification bug''）}：
+  原本 \texttt{SptSetPurifySpecSeqClass} 在 \texttt{p = deg} 时 \texttt{break}，即不 purify 顶层。
+  改完后顶层也走 \texttt{PartialPurifyCoboundary@}，并修正了一个 \texttt{NegativeInhomoCochain@} 的符号。
+  这\textbf{直接导致以前 ``$3 g_1$ 在 Bos 层不被 purify $\Rightarrow$ 看不到 $T_{3, 0}$ 累积的非零 obstruction $\Rightarrow$ 误判为 trivial extension''}。
+\item \textbf{Commit \texttt{4fdf24c}（2023-07-11，``fixed a bug in cup2 and other related bugs''）}：
+  修正了 \texttt{Cup2@} 的循环索引（$j$ 上限从 $q-1$ 改为 $q+i-1$，$i$ 上限从 $p-1$ 改为 $p-2$）。
+  虽然 SG\#14 是 2+1D 不直接用 \texttt{Cup2@}，但 \texttt{ss\_class.gi} 中相关流程也有联动改动。
+\end{itemize}
+
+而 \texttt{examples/fspt\_2d\_insulator-result.txt} 是 \textbf{2022-02-10 commit \texttt{9e7af9f} 时}生成的，比这两个 bug 修复\textbf{早了 17 个月}，因此使用了 buggy purification，给出虚假的 trivial extension。
+
+% Time line:
+\begin{center}
+\begin{tabular}{l|l}
+\hline
+日期 & 事件 \\
+\hline
+2022-02-10 & \texttt{060bbed}: $d_2^{1, 1}$ 加 $\frac{1}{2}(\delta n_1) n_1$ 项（bugfix） \\
+2022-02-10 & \texttt{9e7af9f}: \textbf{重新跑出 examples-result（带 buggy purify）} \\
+2023-07-07 & \texttt{d4c6215}: \textbf{修复 purify bug（顶层不 purify $\to$ 顶层 purify + 修符号）} \\
+2023-07-11 & \texttt{4fdf24c}: \textbf{修复 Cup2 循环范围 bug} \\
+2026-04-19 & 本次：新加 $d_2^{3,1}$, $d_3^{0, 3}$, $T_{4, 0}$（3+1D 公式） \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{结论}
+
+\begin{enumerate}
+\item \textbf{当前 SptSet 代码没有 bug}。三套算法（手动 stacking、ModExt、layerwise）一致给 $[3, 6, 0]$。
+\item \textbf{\texttt{examples/fspt\_2d\_insulator-result.txt} 的 SG\#14 部分（[0], [0]）是过期 baseline}，用了 2023 年之前的 buggy purification。这个 baseline 在 2D 范围内对其他多数群可能仍正确（因为多数群 CF 与 Bos 之间没有非平凡 cup-1 对偶），但 SG\#14 是反例。
+\item \textbf{独立方法 [3, 3, 2, 0] 与 examples baseline 一致}，但 \textbf{对应的物理可能漏掉了 $T_{3, 0}$ stacking 修正}。如果独立方法用的是 ``cohomology + Künneth + 直接读层结构'' 一类的``静态''方法，自然看不到 stacking 修正引入的 extension。我们的代码通过显式 cocycle stacking 看到了这一非平凡 obstruction。
+\item \textbf{建议：重新生成 \texttt{examples/fspt\_2d\_insulator-result.txt}} 作为新 baseline（任务中将做）。
+\end{enumerate}
+
+\subsection{物理诠释（更直白的说法）}
+
+SG\#14 是 \texttt{p3} 加上时间反演（具体见 BBNWZ 编号），CF 层的两个 $\ZZ_3$ 生成元对应不同的 Wyckoff 位置上的 ``有限角动量'' 装饰。其中一个生成元的 $n_2$ 在 cup-1 自配对下给出非零 $\ZZ_2$ 类（即可以用一个 Berry 相位类的 obstruction 写出来），所以三个这种 ``$\ZZ_3$ 装饰''叠在一起虽然在 CF 层抵消，但给出一个 ``Bos 层非平凡 SPT''——这就是 $\ZZ_6$ extension 的物理本质。\textbf{这是物理上真实的 ``CF 装饰 + 边界态''之间的微妙关联}，不是代码 artifact。
+
+% ============================================================
+\section{Stacking 策略设计要求（针对 3+1D）}
+\label{sec:stacking-strategy}
+
+\subsection{Superconductor 当前策略}
+
+\texttt{ss\_module.gi} 中 \texttt{SptSetSpecSeqResult}（hybrid 模式）对 superconductor 的策略：
+\begin{itemize}
+\item $p + ip$（$p = 1$）单独算一次 ext，与 MC 合并；
+\item MC、CF、Bos（$p = 2, 3, \ldots$）顺序、连续地做 ext（``一气呵成''）。
+\end{itemize}
+具体来说，``MC stack 到 CF 之后，得到的态会接着 stack 到 Bos''——MC 和 CF 之间的 ext coefficient 会经过 CF 直接传到 Bos。
+
+\subsection{Insulator 期望的策略（3+1D）}
+
+\textbf{[Xingyu]} 对 insulator 3+1D 的设计要求：
+\begin{enumerate}
+\item Chern insulator（$p + ip$ 在 insulator 框架下对应 $p = 1, q = 3$ 的 ``Chern''）$\to$ CF \textbf{独立} ext 一次，得到一个 ``Chern + CF'' 的群；
+\item \textbf{重新}从纯 CF（不带 Chern）开始，CF $\to$ Bos \textbf{独立} ext 一次，得到一个 ``CF + Bos'' 的群；
+\item \textbf{不允许}从 ``Chern + CF'' 的态继续 stack 到 Bos 层。即 Chern 层的贡献 \textbf{不通过 CF} 传到 Bos。
+\end{enumerate}
+
+物理上的意思是：把 Chern$\to$CF 的 obstruction 与 CF$\to$Bos 的 obstruction 分别量化，分两个独立的 extension 步骤，最终结果是这两套 ext 拼成 ``Chern $\to$ CF + Bos''（其中 CF$\to$Bos 是 CF 自身做完的）。
+
+\subsection{对 SG\#14（2D）的影响}
+
+\textbf{无影响}。SG\#14 是 2D，$p + ip$ 层（即 Chern 层）平凡（$E_\infty^{0, 3} = 0$），不需要 Chern$\to$CF 这次 ext。SG\#14 的 ext 完全来自 CF$\to$Bos 这一次（即 \S\ref{sec:sg14-case} 讨论的 $T_{3, 0}$）。所以本次 SG\#14 调试结果与新策略不冲突。
+
+\subsection{需要新分支的修改（dim = 3）}
+
+当前 \texttt{SptSetSpecSeqResult} hybrid 路径（\texttt{lib/ss\_module.gi} 第 317--422 行）的逻辑：
+\begin{lstlisting}
+if 1 in pRange then
+    Epip := SptSetSpecSeqComponentEx(ss, 1, deg-1);
+    M_rest := fail;
+    for p in pRange{[2..nLayers]} do  # MC, CF, Bos 顺序合并
+        Epq := SptSetSpecSeqComponentEx(ss, p, deg-p);
+        if M_rest = fail then M_rest := Epq;
+        else M_rest := SptSetSpecSeqModuleExtension(M_rest, Epq); fi;
+    od;
+    if SptSetFpZModuleIsZero(Epip) then return M_rest; fi;
+    if M_rest = fail or SptSetFpZModuleIsZero(M_rest) then return Epip; fi;
+    M := SptSetSpecSeqModuleExtension(Epip, M_rest);
+    return M;
+fi;
+\end{lstlisting}
+
+按照 insulator 3+1D 的策略要修改成：
+\begin{enumerate}
+\item 单独做 \texttt{M\_chern\_cf := SptSetSpecSeqModuleExtension(Epip, Ecf)}；
+\item 单独做 \texttt{M\_cf\_bos := SptSetSpecSeqModuleExtension(Ecf, Ebos)}（\textbf{重新}从纯 \texttt{Ecf} 开始，不复用 \texttt{M\_chern\_cf}）；
+\item 最终结果：把 \texttt{M\_chern\_cf} 和 \texttt{M\_cf\_bos} 拼出最终 SPT 群——具体形式待物理上定（可能是 ``Chern''、``CF/Chern$\to$CF 商''、``Bos/CF$\to$Bos 商'' 三块 direct sum，或者带某些 cross relation）。
+\end{enumerate}
+
+这是 \textbf{insulator 3+1D 的专属逻辑}，不能影响 superconductor。\textbf{建议}：在 \texttt{ss\_module.gi} 中加一个新参数（如 \texttt{stacking\_mode}），或者新写一个 \texttt{SptSetSpecSeqResultInsulator}，避开 hybrid。具体接口在跑通 3+1D Chern + CF + Bos 完整例子之后再决定。
+
+% ============================================================
+\section{Caveat：\texttt{Cup@} 中 \texttt{coeff} 参数的选择约定}
+\label{sec:caveat-cup}
+
+\texttt{Cup0@/Cup1@/Cup2@(p, q, coeff, a, b)} 内部用 \texttt{coeff!.gAction} 来 ``把第二个 cochain $b$ 拽过来时所需的群作用''。
+数学上 $b$ 在 $B$-系数中时，应该用 $B$ 的群作用 —— 即 \texttt{coeff} 应取 \textbf{第二个 cochain 的系数}。
+
+但 \texttt{ss\_ti.gi} 中 \textbf{coboundary 和 twister 用了不同约定}：
+
+\begin{itemize}
+\item \textbf{Coboundary}（$d_3^{1,3}$、新加的 $d_3^{0,3}$、$d_2^{3,1}$）：\texttt{coeff = spectrum[q+1]}（源系数 $h^q$，对应公式中第二个 cochain 的系数）。
+\item \textbf{Twister}（$T_{3,0}$、新加的 $T_{4,0}$）：\texttt{coeff = spectrum[0+1]}（目标系数 $U(1)_{\aT}$，\textbf{不是}第二个 cochain 的系数）。
+\end{itemize}
+
+新加的三条公式 \textbf{延续了已有约定}（$d_3^{0,3}$、$d_2^{3,1}$ 用源系数；$T_{4,0}$ 用目标系数），
+而\textbf{没有去校正 twister 一侧的可疑写法}。这是因为：
+\begin{enumerate}
+\item Twister 中两个 $n$ 都属于 $\ZZ_{\aC}$，$\aC^2 = 1$，所以 $\aC$ 作用与 $\aT$ 作用在最终 $\frac{1}{2}\, \mathbb{Z} / \mathbb{Z}$ 值上的差异未必显式可见。
+\item 强行改 twister 的 \texttt{coeff} 会破坏与已有 2+1D 测试的兼容性。
+\end{enumerate}
+
+如果将来发现 $T_{4,0}$ 在 3+1D 测试中给出非整数 / 非闭合的诊断错误，第一个怀疑对象就是这个 \texttt{coeff} 选择。
+
+% ============================================================
+\section{当前状态与待开发项}
+\label{sec:status}
+
+\subsection{已完成}
+
+\begin{enumerate}
+\item 2+1D insulator EZ 和 spin-1/2 的分类（Phase A）——可工作，有测试。
+\item 2+1D 的 coboundary 公式：$d_2^{1,1}$、$d_2^{2,1}$、$d_3^{1,3}$。
+\item 2+1D 的 twister 公式：$T_{2,0}$、$T_{3,0}$。
+\item 2+1D 的 disorder 和 averaged 版本。
+\item \textbf{[2026-04-19]} 3+1D 三条公式已加入：$d_3^{0,3}$、$d_2^{3,1}$、$T_{4,0}$（\textbf{未测试}）。
+\end{enumerate}
+
+\subsection{下一步任务}
+
+\begin{enumerate}
+\item \textbf{2+1D 回归测试}：先确认新加的 $d_3^{0,3}$ 不会破坏已有 2+1D 计算（例如 $Z_4^{f,T}$ 等案例的结果应保持不变）。
+\item \textbf{3+1D 点群测试}：在简单点群（如 $T$, $T_h$, $O_h$）上跑 3+1D insulator 分类，对比文献预期。
+\item \textbf{3+1D 空间群批量计算}：建立 \texttt{space\_group/} 下的 3D insulator 批量任务脚本。
+\end{enumerate}
+
+\subsection{已知未填的占位符}
+
+\begin{enumerate}
+\item \textbf{3+1D 仍缺失的 differentials}（如果存在）：$d_3^{2,1}$、$d_4^{1,3}$、$d_4^{0,3}$ 等更高 $r$ 的微分。
+\item \textbf{3+1D 仍缺失的 twisters}：$T_{1,3}$、$T_{2,2}$、$T_{3,1}$ 仍是零占位符。
+\item \textbf{Phase B 路径}：2D 群结构走的是手动 stacking 脚本，没走 \texttt{SptSetSpecSeqResult} 标准路径。3+1D 跑批前需要验证这条路径。
+\item \textbf{$d_2^{3,1}$ 中的 $\delta n_3$ 修正}：当前只取 cocycle 部分，若 \texttt{PartialPurify} 流程出现非闭合错误，需要补 $\delta n_3 \cup_2 n_3$ 类项。
+\end{enumerate}
+
+\end{document}
