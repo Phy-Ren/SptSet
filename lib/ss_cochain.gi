@@ -163,6 +163,11 @@ function(cl, rf, pf)
             ",rf=", rf, "): top layer NOT integer, frac indices=",
             Filtered([1..Length(cp)], i -> not IsInt(cp[i])),
             " values=", Filtered(cp, x -> not IsInt(x)), "\n");
+      # Sample the cochain on a few basis elements to see raw values
+      Print("    DIAG cochain sampling (first 10 basis elems):\n");
+      for i in [1..Minimum(10, Length(cp))] do
+        Print("      basis[",i,"]=", cp[i], "\n");
+      od;
     fi;
 
     if rf > 0 then

@@ -87,12 +87,36 @@ InstallMethod(SptSetZLMapInverse,
   "computes the preimage of a linear map",
   [IsSptSetZLMapRep, IsRowVector],
   function(psi, v)
-    local _result, _frac_idx;
+    local _result, _frac_idx, _M, _N, _A, _R2, _diagR2, _idsR2, _tA, _snf,
+          _tU, _tD, _diag, _vUt, _i;
     _result := v * SptSetZLMapInverseMat(psi);
     _frac_idx := Filtered([1..Length(_result)], i -> not IsInt(_result[i]));
     if _frac_idx <> [] then
       Print("!! DIAG ZLMapInverse: FRACTION at indices ",
             _frac_idx, " values=", _result{_frac_idx}, "\n");
+      # Recompute SNF to show why fractions appear
+      _M := psi!.domain;;
+      _N := psi!.codomain;;
+      _A := _M!.generators * psi!.B * _N!.projection;;
+      _R2 := StructuralCopy(_N!.relations);;
+      _diagR2 := DiagonalOfMat(_R2);;
+      _idsR2 := PositionsProperty(_diagR2, x -> x<>0);;
+      _R2 := _R2{_idsR2};;
+      _tA := StructuralCopy(_A);;
+      Append(_tA, _R2);;
+      _snf := SmithNormalFormIntegerMatTransforms(_tA);;
+      _tU := _snf.rowtrans;;
+      _tD := _snf.normal;;
+      _diag := DiagonalOfMat(TransposedMat(_tD));;
+      _vUt := v * _tU;;
+      Print("    DIAG ZLMapInverse: D_diag=", Filtered(_diag, x -> x<>0),
+            " vUt=", _vUt, "\n");
+      Print("    DIAG v_input_len=", Length(v),
+            " dom_gens=", SptSetNumberOfGenerators(_M),
+            " cod_gens=", SptSetNumberOfGenerators(_N),
+            " A_dims=", DimensionsMat(_A),
+            " R2_rows=", Length(_R2), "\n");
+      Print("    DIAG v[1..min(8,len)]=", v{[1..Minimum(8,Length(v))]}, "\n");
     fi;
     return _result;
   end);
