@@ -45,6 +45,18 @@ function(R, auMap, u1cMap, omega_)
     return AddInhomoCochain@(omega_n3, ScaleInhomoCochain@(1/2, n3c1n3));
   end);
 
+  # [xingyu 2026-04-19] d_2^{4,1}: omega_2 cup n_4 + 1/2 n_4 cup_2 n_4
+  # source: n_4 in C^4(G, Z_sigma_C) at (p,q)=(4,1)
+  # target: C^6(G, U(1)_sigma_T) at (p,q)=(6,0); needed in 4+1D
+  # 与 d_2^{2,1}, d_2^{3,1} 同族: d_2^{p,1} = omega cup_0 n_p + 1/2 n_p cup_{p-2} n_p
+  SptSetInstallCoboundary(ss, 2, 4, 1,
+  function(n4, dn4)
+    local omega_n4, n4c2n4;
+    omega_n4 := Cup0@(2, 4, spectrum[1+1], omega_, n4);
+    n4c2n4 := Cup2@(4, 4, spectrum[1+1], n4, n4);
+    return AddInhomoCochain@(omega_n4, ScaleInhomoCochain@(1/2, n4c2n4));
+  end);
+
   SptSetInstallAddTwister(ss, 1, 1, {l1, l2} -> ZeroCocycle@);
 
   # [xingyu 2026-04-19] d_3^{0,3}: beta(omega_2) cup n_0
@@ -121,6 +133,46 @@ function(R, auMap, u1cMap, omega_)
       return ScaleInhomoCochain@(1/2, n2c1n2);
     fi;
   end);
+
+  # [xingyu 2026-04-19] (p+q)=5 zero placeholders for PartialPurifyCoboundary
+  # stacking on intermediate deg+1=5 cochains in 3+1D Phase B (mirrors the
+  # ss_fermion_ez.gi:387..401 strategy). 物理上 SPT 只到 4D, 这些是技术性补丁,
+  # 缺它们 StackInplace 在 deg=5 cochain 上会 access addTwister[?][5] 越界.
+  SptSetInstallAddTwister(ss, 1, 4, {l1, l2} -> ZeroCocycle@);
+  SptSetInstallAddTwister(ss, 2, 3, {l1, l2} -> ZeroCocycle@);
+  SptSetInstallAddTwister(ss, 3, 2, {l1, l2} -> ZeroCocycle@);
+  SptSetInstallAddTwister(ss, 4, 1, {l1, l2} -> ZeroCocycle@);
+
+  # [xingyu 2026-04-19] twister(5,0): 1/2 n_4^(1) cup_3 n_4^(2)
+  # n_4 lives in q=1 layer, p=4 slot in total degree 5 (so l[4+1])
+  # 与 T_{2,0}/T_{3,0}/T_{4,0} 同族: T_{p,0} = 1/2 n_{p-1}^(1) cup_{p-2} n_{p-1}^(2)
+  # coeff = spectrum[0+1] (target U(1)_sigma_T), 与同族其他 twister 风格一致
+  SptSetInstallAddTwister(ss, 5, 0,
+  function(l1, l2)
+    local coeff, n41, n42;
+    n41 := l1[4+1];
+    n42 := l2[4+1];
+    coeff := spectrum[0+1];
+
+    if n41 = ZeroCocycle@ or n42 = ZeroCocycle@ then
+      return ZeroCocycle@;
+    else
+      return ScaleInhomoCochain@(1/2, Cup3@(4, 4, coeff, n41, n42));
+    fi;
+  end);
+
+  # [xingyu 2026-04-19] (p+q)=6 zero placeholders for d_2^{4,1} 引发的
+  # deg=6 intermediate cochain stacking. d_2^{4,1} target 落在 (p,q)=(6,0),
+  # 故 PartialPurify 在 4+1D Phase B 的 stacking chain 中会访问 addTwister[?][6].
+  # 3+1D Phase B 不会触发 (验证: PurifyCoboundary 只调 deg-1=4 上的 SpecSeqCoboundarySL,
+  # 而 d_2^{4,1} source (4,1) 需要 input deg=5, 不在 3+1D Phase B 链上).
+  # 真实 4+1D 公式 (T_{6,0} = 1/2 n_5 cup_4 n_5 等) 按需后续填.
+  SptSetInstallAddTwister(ss, 1, 5, {l1, l2} -> ZeroCocycle@);
+  SptSetInstallAddTwister(ss, 2, 4, {l1, l2} -> ZeroCocycle@);
+  SptSetInstallAddTwister(ss, 3, 3, {l1, l2} -> ZeroCocycle@);
+  SptSetInstallAddTwister(ss, 4, 2, {l1, l2} -> ZeroCocycle@);
+  SptSetInstallAddTwister(ss, 5, 1, {l1, l2} -> ZeroCocycle@);
+  SptSetInstallAddTwister(ss, 6, 0, {l1, l2} -> ZeroCocycle@);
 
   return ss;
 end);
