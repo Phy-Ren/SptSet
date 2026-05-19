@@ -154,7 +154,7 @@ end);
 InstallGlobalFunction(PartialPurifyCoboundary@,
 function(coc, p, cp)
   local F, SS, deg, brMap, q,
-  cp_, n, n_, bdry, dnc, _pp, _chk;
+  cp_, n, n_, bdry, dnc, _pp, _chk, _psi, _psi_mat, _cp_psi;
   F := FamilyObj(coc);
   SS := F!.specSeq;
   deg := F!.degree;
@@ -166,6 +166,17 @@ function(coc, p, cp)
   # cp_ must be a trivial coboundary.
   Print("  > PurifyCobdry p=", p, " q=", q, " cp_len=", Length(cp),
         " cp=", cp, "\n");
+  # DIAG: is cp a cocycle? (in ker(d_1^{p,q})?)
+  if p >= 1 and q >= 0 then
+    _psi := SptSetSpecSeqDerivative(SS, 1, p, q);;
+    if not IsSptSetZLMapZeroRep(_psi) and IsBound(_psi!.B) then
+      _psi_mat := _psi!.domain!.generators * _psi!.B * _psi!.codomain!.projection;;
+      _cp_psi := cp * _psi_mat;;
+      Print("    DIAG cp*psi (cocycle check) len=", Length(_cp_psi),
+            " allZero=", ForAll(_cp_psi, x->x=0),
+            " firstNonzero=", Filtered(_cp_psi, x->x<>0), "\n");
+    fi;
+  fi;
   n := SptSetZLMapInverse(SptSetSpecSeqDerivative(SS, 1, p-1, q), cp);
   n_ := SptSetSolveCocycleEq(brMap, p, SS!.spectrum[q+1], cp_, n);
   # n_ := NegativeInhomoCochain@(n_);
