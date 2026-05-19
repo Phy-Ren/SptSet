@@ -97,6 +97,13 @@ InstallMethod(SptSetZLMapInverse,
       # Recompute SNF to show why fractions appear
       _M := psi!.domain;;
       _N := psi!.codomain;;
+      Print("    DIAG dom gens_dims=", DimensionsMat(_M!.generators),
+            " proj_dims=", DimensionsMat(_M!.projection),
+            " rels_dims=", DimensionsMat(_M!.relations), "\n");
+      Print("    DIAG cod gens_dims=", DimensionsMat(_N!.generators),
+            " proj_dims=", DimensionsMat(_N!.projection),
+            " rels_dims=", DimensionsMat(_N!.relations), "\n");
+      Print("    DIAG psi.B dims=", DimensionsMat(psi!.B), "\n");
       _A := _M!.generators * psi!.B * _N!.projection;;
       _R2 := StructuralCopy(_N!.relations);;
       _diagR2 := DiagonalOfMat(_R2);;
@@ -109,14 +116,13 @@ InstallMethod(SptSetZLMapInverse,
       _tD := _snf.normal;;
       _diag := DiagonalOfMat(TransposedMat(_tD));;
       _vUt := v * _tU;;
-      Print("    DIAG ZLMapInverse: D_diag=", Filtered(_diag, x -> x<>0),
+      Print("    DIAG D_diag=", Filtered(_diag, x -> x<>0),
             " vUt=", _vUt, "\n");
-      Print("    DIAG v_input_len=", Length(v),
-            " dom_gens=", SptSetNumberOfGenerators(_M),
-            " cod_gens=", SptSetNumberOfGenerators(_N),
-            " A_dims=", DimensionsMat(_A),
-            " R2_rows=", Length(_R2), "\n");
-      Print("    DIAG v[1..min(8,len)]=", v{[1..Minimum(8,Length(v))]}, "\n");
+      Print("    DIAG A_dims=", DimensionsMat(_A), " R2_rows=", Length(_R2), "\n");
+      Print("    DIAG v_len=", Length(v), " dom_gens=",
+            SptSetNumberOfGenerators(_M), " cod_gens=",
+            SptSetNumberOfGenerators(_N), "\n");
+      Print("    DIAG v=", v, "\n");
     fi;
     return _result;
   end);
