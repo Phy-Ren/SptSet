@@ -185,6 +185,9 @@ function(cl, rf, pf)
     for r in [p,(p-1)..2] do
       Erpq := SptSetSpecSeqComponent(SS, r, p, q);
       if not SptSetFpZModuleIsZeroElm(Erpq, cp) then
+        Print("    DIAG purify r=", r, " p=", p, " q=", q,
+              " IsZeroElm=", SptSetFpZModuleIsZeroElm(Erpq, cp),
+              " cp=", cp, "\n");
         bdry2 := PartialPurify@(coc, p, r, cp);
         SptSetStackInplace(bdry, bdry2);
         cp_ := coc!.layers[p+1];
@@ -192,6 +195,14 @@ function(cl, rf, pf)
       fi;
     od;
 
+    # DIAG: before calling PartialPurifyCoboundary, check E_2
+    if p >= 2 then
+      Print("    DIAG before PurifyCobdry p=", p, " q=", q,
+            " E2_IsZero=", SptSetFpZModuleIsZeroElm(
+              SptSetSpecSeqComponent(SS, 2, p, q), cp),
+            " rf_IsZero=", SptSetFpZModuleIsZeroElm(Epqrf, cp),
+            " cp=", cp, "\n");
+    fi;
     bdry2 := PartialPurifyCoboundary@(coc, p, cp);
     SptSetStackInplace(bdry, bdry2);
 
