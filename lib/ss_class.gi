@@ -134,6 +134,18 @@ function(coc, p, r, cp)
           SptSetNumberOfGenerators(dr!.domain),
           " cod_gens=", SptSetNumberOfGenerators(dr!.codomain),
           " cp[1..min(6,len)]=", cp{[1..Minimum(6,Length(cp))]}, "\n");
+    # Check if cp is zero in the codomain module
+    Print("    DIAG codomain IsZeroElm(cp)=",
+          SptSetFpZModuleIsZeroElm(dr!.codomain, cp), "\n");
+    # Convert cp to canonical form in codomain
+    if not SptSetFpZModuleIsCanonical(dr!.codomain) then
+      SptSetFpZModuleCanonicalForm(dr!.codomain);
+    fi;
+    Print("    DIAG codomain canon elm len=",
+          Length(SptSetFpZModuleCanonicalElm(dr!.codomain, cp)),
+          " val=", SptSetFpZModuleCanonicalElm(dr!.codomain, cp), "\n");
+    Print("    DIAG codomain relations diag=",
+          DiagonalOfMat(dr!.codomain!.relations), "\n");
     beta := SptSetZLMapInverse(dr, cp);
     beta_ := SptSetMapToBarCocycle(brMap, p-r, SS!.spectrum[q+r-1 +1], beta);
 
