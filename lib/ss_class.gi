@@ -155,7 +155,7 @@ InstallGlobalFunction(PartialPurifyCoboundary@,
 function(coc, p, cp)
   local F, SS, deg, brMap, q,
   cp_, n, n_, bdry, dnc, _pp, _chk, _psi, _psi_mat, _cp_psi,
-  _bw, _val, _j;
+  _bw, _val, _j, _G, _elts, _g1, _g2, _g3, _g4, _g5, _dcp, _dcp_val;
   F := FamilyObj(coc);
   SS := F!.specSeq;
   deg := F!.degree;
@@ -167,35 +167,19 @@ function(coc, p, cp)
   # cp_ must be a trivial coboundary.
   Print("  > PurifyCobdry p=", p, " q=", q, " cp_len=", Length(cp),
         " cp=", cp, "\n");
-  # DIAG: directly sample the cochain function on a few bar basis elements
-  Print("    DIAG direct cochain sample (first 5 bar words):\n");
-  for _ii in [1..Minimum(5, Length(cp))] do
-    _bw := SptSetMapToBarWord(brMap, p, _ii);;
-    _val := 0;;
-    for _j in [1..Length(_bw)] do
-      _val := _val + _bw[_j][1] * (_bw[_j][2]^(SS!.spectrum[q+1]!.gAction))[1][1]
-        * CallFuncList(cp_, _bw[_j]{[3..(p+2)]});
-    od;
-    Print("      bar[", _ii, "]=", _val, " vs cp[", _ii, "]=", cp[_ii], "\n");
-  od;
-  # DIAG: check psi = d_1^{p,q} matrix directly
-  _psi := SptSetSpecSeqDerivative(SS, 1, p, q);;
-  if not IsSptSetZLMapZeroRep(_psi) and IsBound(_psi!.B) then
-    Print("    DIAG psi.B dims=", DimensionsMat(_psi!.B), "\n");
-    Print("    DIAG psi.domain gens_dims=", DimensionsMat(_psi!.domain!.generators),
-          " proj_dims=", DimensionsMat(_psi!.domain!.projection), "\n");
-    Print("    DIAG psi.codomain gens_dims=", DimensionsMat(_psi!.codomain!.generators),
-          " proj_dims=", DimensionsMat(_psi!.codomain!.projection), "\n");
-    _psi_mat := _psi!.domain!.generators * _psi!.B * _psi!.codomain!.projection;;
-    _cp_psi := cp * _psi_mat;;
-    Print("    DIAG cp*_psi_mat len=", Length(_cp_psi),
-          " allZero=", ForAll(_cp_psi, x->x=0),
-          " firstNonzero=", Filtered(_cp_psi, x->x<>0), "\n");
-    # Also try: cp directly on psi.B (raw bar basis coboundary)
-    _cp_psi_raw := cp * _psi!.B;;
-    Print("    DIAG cp*psi.B (raw bar) len=", Length(_cp_psi_raw),
-          " allZero=", ForAll(_cp_psi_raw, x->x=0),
-          " firstNonzero=", Filtered(_cp_psi_raw, x->x<>0), "\n");
+  # DIAG: compute d_1(cp_) directly as an inhomogeneous cochain function
+  # and evaluate on a specific 5-tuple of group elements
+  _G := GroupOfResolution(brMap!.hapResolution);;
+  _elts := Elements(_G);;
+  if Length(_elts) >= 2 then
+    _g1 := _elts[1]; _g2 := _elts[2]; _g3 := _elts[1]; _g4 := _elts[2]; _g5 := _elts[1];;
+    _dcp := InhomoCoboundary@(SS!.spectrum[q+1], cp_);;
+    _dcp_val := _dcp(_g1, _g2, _g3, _g4, _g5);;
+    Print("    DIAG d1(cp_)(g1..g5) direct=", _dcp_val,
+          " (should be 0 if cp_ is cocycle)\n");
+    # Also try another tuple
+    _dcp_val := _dcp(_g2, _g1, _g2, _g1, _g2);;
+    Print("    DIAG d1(cp_)(g2,g1,g2,g1,g2) direct=", _dcp_val, "\n");
   fi;
   n := SptSetZLMapInverse(SptSetSpecSeqDerivative(SS, 1, p-1, q), cp);
   n_ := SptSetSolveCocycleEq(brMap, p, SS!.spectrum[q+1], cp_, n);
