@@ -164,6 +164,8 @@ function(coc, p, cp)
   bdry := SptSetSpecSeqCochainZero(SS, deg-1);
   cp_ := coc!.layers[p+1];
   # cp_ must be a trivial coboundary.
+  Print("  > PurifyCobdry p=", p, " q=", q, " cp_len=", Length(cp),
+        " cp=", cp, "\n");
   n := SptSetZLMapInverse(SptSetSpecSeqDerivative(SS, 1, p-1, q), cp);
   n_ := SptSetSolveCocycleEq(brMap, p, SS!.spectrum[q+1], cp_, n);
   # n_ := NegativeInhomoCochain@(n_);
