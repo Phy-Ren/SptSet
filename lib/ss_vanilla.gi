@@ -180,6 +180,11 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
           fi;
           np_ := SptSetMapToBarCocycle(ss!.brMap, p,
             ss!.spectrum[q+1], M!.generators[i]);
+          # DIAG: check if module generator is genuine cocycle
+          if r >= 3 then
+            Print("    DIAG gen[",i,"] raw vec len=", Length(M!.generators[i]),
+                  " =", M!.generators[i], "\n");
+          fi;
           dnp := SptSetSpecSeqCoboundarySL(ss, p+q, p, np_);
           dnp!.layers[p+1 +1] := ZeroCocycle@;
           cl_dnp := SptSetSpecSeqClassFromCochainNC(dnp);
