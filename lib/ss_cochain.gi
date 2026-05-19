@@ -195,13 +195,22 @@ function(cl, rf, pf)
       fi;
     od;
 
-    # DIAG: before calling PartialPurifyCoboundary, check E_2
+    # DIAG: before calling PartialPurifyCoboundary, diagnose cp vs E_2
     if p >= 2 then
       Print("    DIAG before PurifyCobdry p=", p, " q=", q,
             " E2_IsZero=", SptSetFpZModuleIsZeroElm(
               SptSetSpecSeqComponent(SS, 2, p, q), cp),
-            " rf_IsZero=", SptSetFpZModuleIsZeroElm(Epqrf, cp),
-            " cp=", cp, "\n");
+            "\n");
+      Print("      cp=", cp, "\n");
+      Print("      E2 proj_dims=", DimensionsMat(
+              SptSetSpecSeqComponent(SS, 2, p, q)!.projection),
+            " rels_dims=", DimensionsMat(
+              SptSetSpecSeqComponent(SS, 2, p, q)!.relations),
+            " rels_diag=", Filtered(DiagonalOfMat(
+              SptSetSpecSeqComponent(SS, 2, p, q)!.relations), x->x<>0), "\n");
+      Print("      cp*proj=", cp * SptSetSpecSeqComponent(SS, 2, p, q)!.projection, "\n");
+      Print("      CanonicalElm=", SptSetFpZModuleCanonicalElm(
+              SptSetSpecSeqComponent(SS, 2, p, q), cp), "\n");
     fi;
     bdry2 := PartialPurifyCoboundary@(coc, p, cp);
     SptSetStackInplace(bdry, bdry2);
