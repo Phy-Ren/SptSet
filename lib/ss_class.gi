@@ -155,7 +155,7 @@ InstallGlobalFunction(PartialPurifyCoboundary@,
 function(coc, p, cp)
   local F, SS, deg, brMap, q,
   cp_, n, n_, bdry, dnc, _pp, _chk, _psi, _psi_mat, _cp_psi,
-  _ii, _bw, _val, _j;
+  _bw, _val, _j;
   F := FamilyObj(coc);
   SS := F!.specSeq;
   deg := F!.degree;
@@ -178,16 +178,24 @@ function(coc, p, cp)
     od;
     Print("      bar[", _ii, "]=", _val, " vs cp[", _ii, "]=", cp[_ii], "\n");
   od;
-  # DIAG: is cp a cocycle? (in ker(d_1^{p,q})?)
-  if p >= 1 and q >= 0 then
-    _psi := SptSetSpecSeqDerivative(SS, 1, p, q);;
-    if not IsSptSetZLMapZeroRep(_psi) and IsBound(_psi!.B) then
-      _psi_mat := _psi!.domain!.generators * _psi!.B * _psi!.codomain!.projection;;
-      _cp_psi := cp * _psi_mat;;
-      Print("    DIAG cp*psi (cocycle check) len=", Length(_cp_psi),
-            " allZero=", ForAll(_cp_psi, x->x=0),
-            " firstNonzero=", Filtered(_cp_psi, x->x<>0), "\n");
-    fi;
+  # DIAG: check psi = d_1^{p,q} matrix directly
+  _psi := SptSetSpecSeqDerivative(SS, 1, p, q);;
+  if not IsSptSetZLMapZeroRep(_psi) and IsBound(_psi!.B) then
+    Print("    DIAG psi.B dims=", DimensionsMat(_psi!.B), "\n");
+    Print("    DIAG psi.domain gens_dims=", DimensionsMat(_psi!.domain!.generators),
+          " proj_dims=", DimensionsMat(_psi!.domain!.projection), "\n");
+    Print("    DIAG psi.codomain gens_dims=", DimensionsMat(_psi!.codomain!.generators),
+          " proj_dims=", DimensionsMat(_psi!.codomain!.projection), "\n");
+    _psi_mat := _psi!.domain!.generators * _psi!.B * _psi!.codomain!.projection;;
+    _cp_psi := cp * _psi_mat;;
+    Print("    DIAG cp*_psi_mat len=", Length(_cp_psi),
+          " allZero=", ForAll(_cp_psi, x->x=0),
+          " firstNonzero=", Filtered(_cp_psi, x->x<>0), "\n");
+    # Also try: cp directly on psi.B (raw bar basis coboundary)
+    _cp_psi_raw := cp * _psi!.B;;
+    Print("    DIAG cp*psi.B (raw bar) len=", Length(_cp_psi_raw),
+          " allZero=", ForAll(_cp_psi_raw, x->x=0),
+          " firstNonzero=", Filtered(_cp_psi_raw, x->x<>0), "\n");
   fi;
   n := SptSetZLMapInverse(SptSetSpecSeqDerivative(SS, 1, p-1, q), cp);
   n_ := SptSetSolveCocycleEq(brMap, p, SS!.spectrum[q+1], cp_, n);
