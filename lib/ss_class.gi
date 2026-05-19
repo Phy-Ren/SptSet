@@ -122,30 +122,10 @@ function(coc, p, r, cp)
     if IsSptSetZLMapZeroRep(dr) then
       return SptSetSpecSeqCochainZero(SS, deg-1);
     fi;
-    # ---- DIAG: inspect cp before ZLMapInverse ----
-    if not ForAll(cp, IsInt) then
-      Print("!! DIAG PartialPurify(deg=",deg,",p=",p,",r=",r,
-            "): cp NOT integer BEFORE ZLMapInverse, frac_idx=",
-            Filtered([1..Length(cp)], i->not IsInt(cp[i])),
-            " vals=", Filtered(cp, x->not IsInt(x)), "\n");
-    fi;
-    Print("    DIAG PartialPurify(deg=",deg,",p=",p,",r=",r,
-          "): cp_len=", Length(cp), " dom_gens=",
-          SptSetNumberOfGenerators(dr!.domain),
-          " cod_gens=", SptSetNumberOfGenerators(dr!.codomain),
-          " cp[1..min(6,len)]=", cp{[1..Minimum(6,Length(cp))]}, "\n");
-    # Check if cp is zero in the codomain module
-    Print("    DIAG codomain IsZeroElm(cp)=",
-          SptSetFpZModuleIsZeroElm(dr!.codomain, cp), "\n");
-    # Convert cp to canonical form in codomain
-    if not SptSetFpZModuleIsCanonical(dr!.codomain) then
-      SptSetFpZModuleCanonicalForm(dr!.codomain);
-    fi;
-    Print("    DIAG codomain canon elm len=",
-          Length(SptSetFpZModuleCanonicalElm(dr!.codomain, cp)),
-          " val=", SptSetFpZModuleCanonicalElm(dr!.codomain, cp), "\n");
-    Print("    DIAG codomain relations diag=",
-          DiagonalOfMat(dr!.codomain!.relations), "\n");
+    # ---- DIAG: print BEFORE calling ZLMapInverse ----
+    Print("  > PartialPurify r=", r, " p=", p, " q=", q,
+          " cp_len=", Length(cp),
+          " cp=", cp, "\n");
     beta := SptSetZLMapInverse(dr, cp);
     beta_ := SptSetMapToBarCocycle(brMap, p-r, SS!.spectrum[q+r-1 +1], beta);
 
