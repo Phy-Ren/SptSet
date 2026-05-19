@@ -111,7 +111,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
   [IsSptSetSpecSeqVanillaRep, IsInt, IsInt, IsInt],
   function(ss, r, p, q)
     local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs, t_p2,
-          t_gen, dt_gen;
+          t_gen, dt_gen, _d1, _cocycle_chk;
     M := SptSetSpecSeqComponent(ss, r, p, q);
     N := SptSetSpecSeqComponent(ss, r, p+r, q-r+1);
     if SptSetFpZModuleIsZero(M) or SptSetFpZModuleIsZero(N) then
@@ -182,8 +182,14 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
             ss!.spectrum[q+1], M!.generators[i]);
           # DIAG: check if module generator is genuine cocycle
           if r >= 3 then
-            Print("    DIAG gen[",i,"] raw vec len=", Length(M!.generators[i]),
-                  " =", M!.generators[i], "\n");
+            _d1 := SptSetSpecSeqDerivative(ss, 1, p, q);;
+            _cocycle_chk := M!.generators[i] * _d1!.B;;
+            Print("    DIAG gen[",i,"] vec=", M!.generators[i],
+                  " len=", Length(M!.generators[i]),
+                  " d1B_dims=", DimensionsMat(_d1!.B),
+                  " d1(vec)_len=", Length(_cocycle_chk),
+                  " allZero=", ForAll(_cocycle_chk, x->x=0),
+                  " firstNonzero=", Filtered(_cocycle_chk, x->x<>0), "\n");
           fi;
           dnp := SptSetSpecSeqCoboundarySL(ss, p+q, p, np_);
           dnp!.layers[p+1 +1] := ZeroCocycle@;
