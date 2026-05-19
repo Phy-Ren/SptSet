@@ -154,7 +154,8 @@ end);
 InstallGlobalFunction(PartialPurifyCoboundary@,
 function(coc, p, cp)
   local F, SS, deg, brMap, q,
-  cp_, n, n_, bdry, dnc, _pp, _chk, _psi, _psi_mat, _cp_psi;
+  cp_, n, n_, bdry, dnc, _pp, _chk, _psi, _psi_mat, _cp_psi,
+  _ii, _bw, _val, _j;
   F := FamilyObj(coc);
   SS := F!.specSeq;
   deg := F!.degree;
@@ -166,6 +167,17 @@ function(coc, p, cp)
   # cp_ must be a trivial coboundary.
   Print("  > PurifyCobdry p=", p, " q=", q, " cp_len=", Length(cp),
         " cp=", cp, "\n");
+  # DIAG: directly sample the cochain function on a few bar basis elements
+  Print("    DIAG direct cochain sample (first 5 bar words):\n");
+  for _ii in [1..Minimum(5, Length(cp))] do
+    _bw := SptSetMapToBarWord(brMap, p, _ii);;
+    _val := 0;;
+    for _j in [1..Length(_bw)] do
+      _val := _val + _bw[_j][1] * (_bw[_j][2]^(SS!.spectrum[q+1]!.gAction))[1][1]
+        * CallFuncList(cp_, _bw[_j]{[3..(p+2)]});
+    od;
+    Print("      bar[", _ii, "]=", _val, " vs cp[", _ii, "]=", cp[_ii], "\n");
+  od;
   # DIAG: is cp a cocycle? (in ker(d_1^{p,q})?)
   if p >= 1 and q >= 0 then
     _psi := SptSetSpecSeqDerivative(SS, 1, p, q);;
