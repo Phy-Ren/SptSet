@@ -111,7 +111,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
   [IsSptSetSpecSeqVanillaRep, IsInt, IsInt, IsInt],
   function(ss, r, p, q)
     local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs, t_p2,
-          t_gen, dt_gen, _d1, _cocycle_chk;
+          t_gen, dt_gen, _d1, _cocycle_chk, _np_vec, _d1_np_mat, _d1_np_fn;
     M := SptSetSpecSeqComponent(ss, r, p, q);
     N := SptSetSpecSeqComponent(ss, r, p+r, q-r+1);
     if SptSetFpZModuleIsZero(M) or SptSetFpZModuleIsZero(N) then
@@ -180,15 +180,25 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
           fi;
           np_ := SptSetMapToBarCocycle(ss!.brMap, p,
             ss!.spectrum[q+1], M!.generators[i]);
+          # DIAG: compare bar-word vs matrix coboundary for np_ itself
+          if r >= 3 then
+            _np_vec := SptSetMapFromBarCocycle(ss!.brMap, p,
+                       ss!.spectrum[q+1], np_);;
+            _d1 := SptSetSpecSeqDerivative(ss, 1, p, q);;
+            _d1_np_mat := _np_vec * _d1!.B;;
+            _d1_np_fn := SptSetMapFromBarCocycle(ss!.brMap, p+1,
+                         ss!.spectrum[q-1+1], InhomoCoboundary@(ss!.spectrum[q+1], np_));;
+            Print("    DIAG np_ bar-vs-mat: mat_nonzero=",
+                  Filtered(_d1_np_mat, x->x<>0),
+                  " fn_nonzero=", Filtered(_d1_np_fn, x->x<>0),
+                  " match=", _d1_np_mat = _d1_np_fn, "\n");
+          fi;
           # DIAG: check if module generator is genuine cocycle
           if r >= 3 then
             _d1 := SptSetSpecSeqDerivative(ss, 1, p, q);;
             _cocycle_chk := M!.generators[i] * _d1!.B;;
-            Print("    DIAG gen[",i,"] vec=", M!.generators[i],
-                  " len=", Length(M!.generators[i]),
-                  " d1B_dims=", DimensionsMat(_d1!.B),
-                  " d1(vec)_len=", Length(_cocycle_chk),
-                  " allZero=", ForAll(_cocycle_chk, x->x=0),
+            Print("    DIAG gen[",i,"] cocycle: allZero=",
+                  ForAll(_cocycle_chk, x->x=0),
                   " firstNonzero=", Filtered(_cocycle_chk, x->x<>0), "\n");
           fi;
           dnp := SptSetSpecSeqCoboundarySL(ss, p+q, p, np_);
