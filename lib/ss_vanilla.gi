@@ -111,7 +111,8 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
   [IsSptSetSpecSeqVanillaRep, IsInt, IsInt, IsInt],
   function(ss, r, p, q)
     local M, N, m, n, fA, i, np_, dnp, cl_dnp, opr_, opr, saved_jobs, t_p2,
-          t_gen, dt_gen, _d1, _cocycle_chk, _np_vec, _d1_np_mat, _d1_np_fn;
+          t_gen, dt_gen, _d1, _cocycle_chk, _np_vec, _d1_np_mat, _d1_np_fn,
+          _phi, _psi;
     M := SptSetSpecSeqComponent(ss, r, p, q);
     N := SptSetSpecSeqComponent(ss, r, p+r, q-r+1);
     if SptSetFpZModuleIsZero(M) or SptSetFpZModuleIsZero(N) then
@@ -119,6 +120,18 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
     fi;
 
     if r = 1 then
+      # DIAG: check E_1 page cohomology for suspected issues
+      if p = 3 and q = 1 then
+        _phi := SptSetCoboundaryMap(
+          SptSetCochainModule(ss!.resolution, 2, ss!.spectrum[1+1]),
+          SptSetCochainModule(ss!.resolution, 3, ss!.spectrum[1+1]),
+          ss!.resolution, 2, ss!.spectrum[1+1]);;
+        _psi := SptSetCoboundaryMap(M, N, ss!.resolution, 3, ss!.spectrum[1+1]);;
+        Print("    DIAG E2(3,1): dom_dim=", SptSetEmbedDimension(M),
+              " cod_dim=", SptSetEmbedDimension(N),
+              " ker_psi_rank=", SptSetEmbedDimension(SptSetKernelModule(_psi)),
+              " im_phi_rank=", SptSetEmbedDimension(SptSetCokernelModule(_phi)), "\n");
+      fi;
       return SptSetCoboundaryMap(M, N,
         ss!.resolution, p, ss!.spectrum[q+1]);
     fi;
