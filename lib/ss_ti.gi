@@ -39,10 +39,25 @@ function(R, auMap, u1cMap, omega_)
   # target: C^5(G, U(1)_sigma_T) at (p,q)=(5,0); needed in 3+1D
   SptSetInstallCoboundary(ss, 2, 3, 1,
   function(n3, dn3)
-    local omega_n3, n3c1n3;
+    local omega_n3, n3c1n3, _result, _sample_vals, _i, _brMap, _bw, _j, _v;
     omega_n3 := Cup0@(2, 3, spectrum[1+1], omega_, n3);
     n3c1n3 := Cup1@(3, 3, spectrum[1+1], n3, n3);
-    return AddInhomoCochain@(omega_n3, ScaleInhomoCochain@(1/2, n3c1n3));
+    _result := AddInhomoCochain@(omega_n3, ScaleInhomoCochain@(1/2, n3c1n3));
+    # DIAG: sample cup1 values and the 1/2-scaled result on bar basis
+    _brMap := ss!.brMap;;
+    _sample_vals := [];;
+    for _i in [1..Minimum(10, Dimension(_brMap!.hapResolution)(5))] do
+      _bw := SptSetMapToBarWord(_brMap, 5, _i);;
+      _v := 0;;
+      for _j in [1..Length(_bw)] do
+        _v := _v + _bw[_j][1] * (_bw[_j][2]^(spectrum[0+1]!.gAction))[1][1]
+          * CallFuncList(n3c1n3, _bw[_j]{[3..7]});
+      od;
+      Add(_sample_vals, _v);
+    od;
+    Print("    DIAG d2(3,1): cup1 sample (first 10 bar)=", _sample_vals,
+          " anyOdd=", ForAny(_sample_vals, x->x mod 2 <> 0), "\n");
+    return _result;
   end);
 
   # [xingyu 2026-04-19] d_2^{4,1}: omega_2 cup n_4 + 1/2 n_4 cup_2 n_4
