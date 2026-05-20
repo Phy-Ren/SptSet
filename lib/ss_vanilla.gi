@@ -187,7 +187,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
             _d1 := SptSetSpecSeqDerivative(ss, 1, p, q);;
             _d1_np_mat := _np_vec * _d1!.B;;
             _d1_np_fn := SptSetMapFromBarCocycle(ss!.brMap, p+1,
-                         ss!.spectrum[q-1+1], InhomoCoboundary@(ss!.spectrum[q+1], np_));;
+                         ss!.spectrum[q+1], InhomoCoboundary@(ss!.spectrum[q+1], np_));;
             Print("    DIAG np_ bar-vs-mat: mat_nonzero=",
                   Filtered(_d1_np_mat, x->x<>0),
                   " fn_nonzero=", Filtered(_d1_np_fn, x->x<>0),
