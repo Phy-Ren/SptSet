@@ -155,7 +155,8 @@ InstallGlobalFunction(PartialPurifyCoboundary@,
 function(coc, p, cp)
   local F, SS, deg, brMap, q,
   cp_, n, n_, bdry, dnc, _pp, _chk, _psi, _psi_mat, _cp_psi,
-  _bw, _val, _j, _G, _elts, _g1, _g2, _g3, _g4, _g5, _dcp, _dcp_val;
+  _bw, _val, _j, _G, _elts, _g1, _g2, _g3, _g4, _g5, _dcp, _dcp_val,
+  _cp_vec, _d1cp_mat, _d1cp_fn;
   F := FamilyObj(coc);
   SS := F!.specSeq;
   deg := F!.degree;
@@ -167,6 +168,14 @@ function(coc, p, cp)
   # cp_ must be a trivial coboundary.
   Print("  > PurifyCobdry p=", p, " q=", q, " cp_len=", Length(cp),
         " cp=", cp, "\n");
+  # DIAG: bar-word vs matrix consistency check for cp_
+  _cp_vec := SptSetMapFromBarCocycle(brMap, p, SS!.spectrum[q+1], cp_);;
+  _d1cp_mat := _cp_vec * SptSetSpecSeqDerivative(SS, 1, p, q)!.B;;
+  _d1cp_fn := SptSetMapFromBarCocycle(brMap, p+1, SS!.spectrum[q+1],
+              InhomoCoboundary@(SS!.spectrum[q+1], cp_));;
+  Print("    DIAG cp_ bar-vs-mat: mat_nonzero=", Filtered(_d1cp_mat, x->x<>0),
+        " fn_nonzero=", Filtered(_d1cp_fn, x->x<>0),
+        " match=", _d1cp_mat = _d1cp_fn, "\n");
   # DIAG: compute d_1(cp_) directly as an inhomogeneous cochain function
   # and evaluate on a specific 5-tuple of group elements
   _G := GroupOfResolution(brMap!.hapResolution);;
