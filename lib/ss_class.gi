@@ -169,13 +169,16 @@ function(coc, p, cp)
   Print("  > PurifyCobdry p=", p, " q=", q, " cp_len=", Length(cp),
         " cp=", cp, "\n");
   # DIAG: bar-word vs matrix consistency check for cp_
-  _cp_vec := SptSetMapFromBarCocycle(brMap, p, SS!.spectrum[q+1], cp_);;
-  _d1cp_mat := _cp_vec * SptSetSpecSeqDerivative(SS, 1, p, q)!.B;;
-  _d1cp_fn := SptSetMapFromBarCocycle(brMap, p+1, SS!.spectrum[q+1],
-              InhomoCoboundary@(SS!.spectrum[q+1], cp_));;
-  Print("    DIAG cp_ bar-vs-mat: mat_nonzero=", Filtered(_d1cp_mat, x->x<>0),
-        " fn_nonzero=", Filtered(_d1cp_fn, x->x<>0),
-        " match=", _d1cp_mat = _d1cp_fn, "\n");
+  _psi := SptSetSpecSeqDerivative(SS, 1, p, q);;
+  if not IsSptSetZLMapZeroRep(_psi) and IsBound(_psi!.B) then
+    _cp_vec := SptSetMapFromBarCocycle(brMap, p, SS!.spectrum[q+1], cp_);;
+    _d1cp_mat := _cp_vec * _psi!.B;;
+    _d1cp_fn := SptSetMapFromBarCocycle(brMap, p+1, SS!.spectrum[q+1],
+                InhomoCoboundary@(SS!.spectrum[q+1], cp_));;
+    Print("    DIAG cp_ bar-vs-mat: mat_nonzero=", Filtered(_d1cp_mat, x->x<>0),
+          " fn_nonzero=", Filtered(_d1cp_fn, x->x<>0),
+          " match=", _d1cp_mat = _d1cp_fn, "\n");
+  fi;
   # DIAG: compute d_1(cp_) directly as an inhomogeneous cochain function
   # and evaluate on a specific 5-tuple of group elements
   _G := GroupOfResolution(brMap!.hapResolution);;
