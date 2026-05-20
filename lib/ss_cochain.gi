@@ -163,11 +163,6 @@ function(cl, rf, pf)
             ",rf=", rf, "): top layer NOT integer, frac indices=",
             Filtered([1..Length(cp)], i -> not IsInt(cp[i])),
             " values=", Filtered(cp, x -> not IsInt(x)), "\n");
-      # Sample the cochain on a few basis elements to see raw values
-      Print("    DIAG cochain sampling (first 10 basis elems):\n");
-      for i in [1..Minimum(10, Length(cp))] do
-        Print("      basis[",i,"]=", cp[i], "\n");
-      od;
     fi;
 
     if rf > 0 then
@@ -185,9 +180,6 @@ function(cl, rf, pf)
     for r in [p,(p-1)..2] do
       Erpq := SptSetSpecSeqComponent(SS, r, p, q);
       if not SptSetFpZModuleIsZeroElm(Erpq, cp) then
-        Print("    DIAG purify r=", r, " p=", p, " q=", q,
-              " IsZeroElm=", SptSetFpZModuleIsZeroElm(Erpq, cp),
-              " cp=", cp, "\n");
         bdry2 := PartialPurify@(coc, p, r, cp);
         SptSetStackInplace(bdry, bdry2);
         cp_ := coc!.layers[p+1];
@@ -195,23 +187,6 @@ function(cl, rf, pf)
       fi;
     od;
 
-    # DIAG: before calling PartialPurifyCoboundary, diagnose cp vs E_2
-    if p >= 2 then
-      Print("    DIAG before PurifyCobdry p=", p, " q=", q,
-            " E2_IsZero=", SptSetFpZModuleIsZeroElm(
-              SptSetSpecSeqComponent(SS, 2, p, q), cp),
-            "\n");
-      Print("      cp=", cp, "\n");
-      Print("      E2 proj_dims=", DimensionsMat(
-              SptSetSpecSeqComponent(SS, 2, p, q)!.projection),
-            " rels_dims=", DimensionsMat(
-              SptSetSpecSeqComponent(SS, 2, p, q)!.relations),
-            " rels_diag=", Filtered(DiagonalOfMat(
-              SptSetSpecSeqComponent(SS, 2, p, q)!.relations), x->x<>0), "\n");
-      Print("      cp*proj=", cp * SptSetSpecSeqComponent(SS, 2, p, q)!.projection, "\n");
-      Print("      CanonicalElm=", SptSetFpZModuleCanonicalElm(
-              SptSetSpecSeqComponent(SS, 2, p, q), cp), "\n");
-    fi;
     bdry2 := PartialPurifyCoboundary@(coc, p, cp);
     SptSetStackInplace(bdry, bdry2);
 
