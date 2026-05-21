@@ -92,13 +92,20 @@ function(R, auMap, u1cMap, omega_)
 
   SptSetInstallCoboundary(ss, 3, 1, 3,
   function(n1, dn1)
-    local coeff_omega_, coeff_s, beta_omega_, beta_s;
+    local coeff_omega_, coeff_s, beta_omega_, beta_s, _raw;
     coeff_omega_ := SptSetCoefficientZn(0, au_u1cMap);
     coeff_s := SptSetCoefficientZn(2, trivialMap);
     beta_omega_ := InhomoCoboundary@(coeff_omega_, omega_);
     beta_s := ScaleInhomoCochain@(1/2, InhomoCoboundary@(coeff_s, s));
-    return AddInhomoCochain@(Cup0@(3, 1, spectrum[3+1], beta_omega_, n1),
+    _raw := AddInhomoCochain@(Cup0@(3, 1, spectrum[3+1], beta_omega_, n1),
       Cup0@(3, 1, spectrum[3+1], Cup0@(2, 1, spectrum[3+1], beta_s, n1), n1));
+    # Fix: multiplication by σC/σT² corrects target coefficient action
+    return function(g1,g2,g3,g4)
+      local _gprod;
+      _gprod := g1*g2*g3*g4;
+      return CallFuncList(_raw, [g1,g2,g3,g4])
+        * ((_gprod^u1cMap)[1][1]);
+    end;
   end);
     
   SptSetInstallAddTwister(ss, 2, 0,
