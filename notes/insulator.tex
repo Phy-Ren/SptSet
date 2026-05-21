@@ -127,7 +127,7 @@ $q$ & Superconductor $h^q$ & Insulator $h^q$ & 物理含义 \\
 $0$ & $U(1)_{\aT}$ & $U(1)_{\aT}$ & Bosonic SPT 相位 \\
 $1$ & $\ZZ_{2,\aT}$ & $\ZZ_{\aC}$ & SC: Majorana 配对 / Ins: 复费米子带 \\
 $2$ & $\ZZ_{2,\aT}$ & $0$ & SC: Kitaev chain / Ins: 空 \\
-$3$ & $\ZZ_{\aT}$ & $\ZZ_{\aT}$ & $p + ip$ 超导体 \\
+$3$ & $\ZZ_{\aT}$ & $\ZZ_{\aT}$ & $p + ip$ 超导体 / Ins： Chern insulator（约等于两层p+ip） \\
 \hline
 \end{tabular}
 \end{center}
@@ -298,6 +298,51 @@ end);
 形式上和 superconductor 中 \texttt{ss\_fermion.gi} 的 $d_2^{3,1}$ ``$O_5^c$ 部分'' 对应：
 $O_5^c = \omega_2 \cup_0 n_3 + n_3 \cup_1 n_3 + \delta n_3 \cup_2 n_3$。
 Insulator 版本不带 $\delta n_3 \cup_2 n_3$ 修正，且因为系数是 $U(1)_{\aT}$（不是 $\ZZ_2$），整体多了 $\frac{1}{2}$ 因子。
+\end{remark}
+
+\subsection{\texorpdfstring{$d_2^{4,1}$}{d2(4,1)}：Complex fermion (四阶) $\to$ Bosonic \textmd{[Xingyu, 2026-04-19 新增]}}
+\label{sec:d2-41}
+
+\textbf{代码}：\texttt{SptSetInstallCoboundary(ss, 2, 4, 1, ...)}
+
+\textbf{源}：$n_4 \in C^4(G, h^1) = C^4(G, \ZZ_{\aC})$，在 $(p = 4, q = 1)$。
+
+\textbf{目标}：$C^{4+2}(G, h^{1-2+1}) = C^6(G, U(1)_{\aT})$，对应 $(p, q) = (6, 0)$。这是 4+1D 才会用到的微分（总度 $p+q = 5$）。
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:d2-41}
+\boxed{f_2^{4,1}(n_4) = \omega \cup_0 n_4 + \frac{1}{2}\, n_4 \cup_2 n_4}
+\end{equation}
+
+对应代码（采用 \texttt{Cup0@/Cup2@} 抽象，与 $d_2^{2,1}, d_2^{3,1}$ 同族；\texttt{coeff} 取源系数 \texttt{spectrum[1+1]}）：
+\begin{lstlisting}
+SptSetInstallCoboundary(ss, 2, 4, 1,
+function(n4, dn4)
+  local omega_n4, n4c2n4;
+  omega_n4 := Cup0@(2, 4, spectrum[1+1], omega_, n4);
+  n4c2n4 := Cup2@(4, 4, spectrum[1+1], n4, n4);
+  return AddInhomoCochain@(omega_n4,
+    ScaleInhomoCochain@(1/2, n4c2n4));
+end);
+\end{lstlisting}
+
+\begin{remark}
+\textbf{$d_2^{p, 1}$ 同族}：
+\[
+d_2^{p, 1} = \omega \cup_0 n_p + \tfrac{1}{2}\, n_p \cup_{p-2} n_p, \quad p = 2, 3, 4
+\]
+（$\cup_0$ 退化为 ``$\cdot$'')。本公式 $p = 4$ 是该族当前最高阶。
+\end{remark}
+
+\begin{remark}
+\textbf{暂未包含 $\delta n_4$ 修正项}。与 $d_2^{3, 1}$ 同样的处理 —— 当 $n_4$ 不是严格 cocycle 时（在 \texttt{PartialPurify} 中），公式只反映 cocycle 部分。如出现 ``目标不闭合'' 类的诊断错误，需要按 \texttt{ss\_fermion.gi} 的模式补 $\delta n_4 \cup_3 n_4$ 等修正项。
+\end{remark}
+
+\begin{remark}
+\textbf{对 3+1D Phase B 的影响}：本公式 source $(4, 1)$ 需要 input cochain 的 deg $= 5$，
+而 3+1D Phase B 的 \texttt{PurifyCoboundary} 只调 \texttt{SpecSeqCoboundarySL(SS, deg-1=4, p-1, ...)}，
+input deg $= 4$，不会触发本微分。故新加 $d_2^{4, 1}$ \textbf{不会影响}已有 3+1D 计算结果。
 \end{remark}
 
 \subsection{\texorpdfstring{$d_3^{0,3}$}{d3(0,3)}：$p+ip$ 根态 $\to$ Complex fermion \textmd{[Xingyu, 2026-04-19 新增]}}
@@ -508,6 +553,46 @@ $T_{2,0}$、$T_{3,0}$、$T_{4,0}$ 形式上构成同一族 ``CF 层自配对修�
 $T_{p,0} = \frac{1}{2}\, n_{p-1} \cup_{p-2} n_{p-1}$（$p = 2, 3, 4$），其中 $\cup_0$ 退化为 ``$\cdot$''。
 \end{remark}
 
+\subsection{$(p = 5, q = 0)$：Bosonic 层 (五阶) stacking 修正 \textmd{[Xingyu, 2026-04-19 新增]}}
+\label{sec:twister-50}
+
+\textbf{代码}：
+\begin{lstlisting}
+SptSetInstallAddTwister(ss, 5, 0,
+function(l1, l2)
+  local coeff, n41, n42;
+  n41 := l1[4+1];   -- c_1 的 q=1 (CF) 层的 4-cochain 部分
+  n42 := l2[4+1];   -- c_2 的 q=1 (CF) 层的 4-cochain 部分
+  coeff := spectrum[0+1];
+  if n41 = ZeroCocycle@ or n42 = ZeroCocycle@ then
+    return ZeroCocycle@;
+  else
+    return ScaleInhomoCochain@(1/2,
+      Cup3@(4, 4, coeff, n41, n42));
+  fi;
+end);
+\end{lstlisting}
+
+\textbf{公式}：
+\begin{equation}
+\label{eq:twister-50}
+\boxed{T_{5,0}(c_1, c_2) = \frac{1}{2}\, n_4^{(1)} \cup_3 n_4^{(2)}}
+\end{equation}
+
+其中 $n_4^{(i)} \in C^4(G, \ZZ_{\aC})$ 是第 $i$ 个态在 complex fermion 层的 4-cochain 部分（即 \texttt{l[4+1]}）。
+\texttt{coeff = spectrum[0+1]} 与同族其他 twister 风格保持一致。
+
+\begin{remark}
+\textbf{$T_{p, 0}$ 同族}：
+\[
+T_{p, 0} = \tfrac{1}{2}\, n_{p-1}^{(1)} \cup_{p-2} n_{p-1}^{(2)}, \quad p = 2, 3, 4, 5
+\]
+本公式 $p = 5$ 把同族延伸到 4+1D。
+
+\textbf{对 3+1D Phase B 的影响}：本公式所在位置 $(p, q) = (5, 0)$ 在 3+1D Phase B 的 deg $= 5$ 中间 cochain 的 \texttt{StackInplace} 中确实会被调用，原本是 \texttt{ZeroCocycle@} 占位符，现替换为非零真实公式。
+此处由零变非零 \textbf{可能}改变 3+1D Phase B 的 PurifyCoboundary 结果，\textbf{需要回归测试}所有 3+1D 案例（如 Cs 等）。
+\end{remark}
+
 \subsection{所有零 twister（占位符）}
 
 以下 twisters 仍然安装为零：
@@ -516,10 +601,12 @@ T_{1,2} &= 0 \quad \text{（$h^2 = 0$，自然为零）} \\
 T_{2,1} &= 0 \\
 T_{1,3} &= 0 \quad \text{（3+1D 占位符，待开发）} \\
 T_{2,2} &= 0 \quad \text{（3+1D 占位符，待开发）} \\
-T_{3,1} &= 0 \quad \text{（3+1D 占位符，待开发）}
+T_{3,1} &= 0 \quad \text{（3+1D 占位符，待开发）} \\
+T_{1,4}, T_{2,3}, T_{3,2}, T_{4,1} &= 0 \quad \text{（3+1D 中间 deg=5 cochain stacking 用占位符）} \\
+T_{1,5}, T_{2,4}, T_{3,3}, T_{4,2}, T_{5,1}, T_{6,0} &= 0 \quad \text{（4+1D 中间 deg=6 cochain stacking 用占位符）}
 \end{align}
 
-注：$T_{4,0}$ 已在 \S\ref{sec:twister-40} 实现，从占位符列表中移出。
+注：$T_{4,0}$、$T_{5,0}$ 已分别在 \S\ref{sec:twister-40}、\S\ref{sec:twister-50} 实现，从占位符列表中移出。
 
 % ============================================================
 \section{Insulator 公式总览表}
@@ -533,11 +620,13 @@ T_{3,1} &= 0 \quad \text{（3+1D 占位符，待开发）}
 代码参数 & 谱序列微分 & 公式 & 说明 & 状态 \\
 \hline
 $(2,1,1)$ & $d_2^{1,1}$ & $\omega \cdot n_1 + \frac{1}{2}(\delta n_1) n_1$
-  & CF$\to$Bos, 2D & 已实现 \\
+  & CF$\to$Bos, 1D & 已实现 \\
 $(2,2,1)$ & $d_2^{2,1}$ & $\omega \cdot n_2 + \frac{1}{2} n_2^2$
   & CF$\to$Bos, 2D & 已实现 \\
 $(2,3,1)$ & $d_2^{3,1}$ & $\omega \cup_0 n_3 + \frac{1}{2}\, n_3 \cup_1 n_3$
   & CF$\to$Bos, 3D & 已实现 \textbf{[xingyu 2026-04-19]} \\
+$(2,4,1)$ & $d_2^{4,1}$ & $\omega \cup_0 n_4 + \frac{1}{2}\, n_4 \cup_2 n_4$
+  & CF$\to$Bos, 4D & 已实现 \textbf{[xingyu 2026-04-19]} \\
 $(3,0,3)$ & $d_3^{0,3}$ & $\beta\omega \cup_0 n_0$
   & $p+ip$ 根$\to$CF & 已实现 \textbf{[xingyu 2026-04-19]} \\
 $(2,1,3)$ & $d_2^{1,3}$ & $0$
@@ -559,8 +648,11 @@ $(1,1)$ & $0$ & CF Chern 数直接加 & 已实现 \\
 $(2,0)$ & $\frac{1}{2} n_1^{(1)} \cdot n_1^{(2)}$ & Bos 2阶修正 & 已实现 \\
 $(3,0)$ & $\frac{1}{2} n_2^{(1)} \cup_1 n_2^{(2)}$ & Bos 3阶修正 & 已实现 \\
 $(4,0)$ & $\frac{1}{2} n_3^{(1)} \cup_2 n_3^{(2)}$ & Bos 4阶修正, 3D & 已实现 \textbf{[xingyu 2026-04-19]} \\
+$(5,0)$ & $\frac{1}{2} n_4^{(1)} \cup_3 n_4^{(2)}$ & Bos 5阶修正, 4D & 已实现 \textbf{[xingyu 2026-04-19]} \\
 $(1,2)$, $(2,1)$ & $0$ & $h^2=0$ 相关 & 已实现 \\
 $(1,3), (2,2), (3,1)$ & $0$ \textbf{(placeholder)} & 3+1D 所需 & \textbf{待开发} \\
+$(1,4), (2,3), (3,2), (4,1)$ & $0$ \textbf{(placeholder)} & 3+1D PurifyCoboundary chain 所需 & \textbf{待开发} \\
+$(1,5), (2,4), (3,3), (4,2), (5,1), (6,0)$ & $0$ \textbf{(placeholder)} & 4+1D 所需 & \textbf{待开发} \\
 \hline
 \end{tabular}
 \end{center}
@@ -671,7 +763,10 @@ Spin-1/2 insulator 直接通过传入非零 \texttt{omega\_} 实现。
 \item \textbf{2026-04-19, Xingyu}：在 \texttt{ss\_ti.gi} 中新增三条 3+1D 公式
   $d_3^{0,3} = \beta\omega \cup_0 n_0$、
   $d_2^{3,1} = \omega \cup_0 n_3 + \frac{1}{2}\, n_3 \cup_1 n_3$、
-  $T_{4,0} = \frac{1}{2}\, n_3^{(1)} \cup_2 n_3^{(2)}$。
+  $T_{4,0} = \frac{1}{2}\, n_3^{(1)} \cup_2 n_3^{(2)}$；
+  以及两条 4+1D 公式
+  $d_2^{4,1} = \omega \cup_0 n_4 + \frac{1}{2}\, n_4 \cup_2 n_4$、
+  $T_{5,0} = \frac{1}{2}\, n_4^{(1)} \cup_3 n_4^{(2)}$（前者 3+1D 不触发，后者替换 $T_{5,0}$ 占位符可能改变 3+1D Phase B 结果，需回归测试）。
 \end{itemize}
 
 % ============================================================
@@ -864,24 +959,149 @@ fi;
 \item 2+1D 的 coboundary 公式：$d_2^{1,1}$、$d_2^{2,1}$、$d_3^{1,3}$。
 \item 2+1D 的 twister 公式：$T_{2,0}$、$T_{3,0}$。
 \item 2+1D 的 disorder 和 averaged 版本。
-\item \textbf{[2026-04-19]} 3+1D 三条公式已加入：$d_3^{0,3}$、$d_2^{3,1}$、$T_{4,0}$（\textbf{未测试}）。
+\item \textbf{[2026-04-19]} 3+1D 三条公式已加入：$d_3^{0,3}$、$d_2^{3,1}$、$T_{4,0}$。
+\item \textbf{[2026-04-19]} 4+1D 两条公式已加入：$d_2^{4,1}$、$T_{5,0}$（\textbf{未测试}，加入是为后续 4D 批量计算和 3+1D PurifyCoboundary chain 完整性铺路）。
 \end{enumerate}
 
-\subsection{下一步任务}
+\subsection{Cs (3D mirror) Phase A 4-setup 对比 \textmd{[Xingyu, 2026-04-19]}}
+\label{sec:cs_setup_compare}
+
+针对 30 PG 批量测试中 Cs 给 \texttt{[2,4]} 而独立方法给 ``Chern $Z_2 \times Z_8$, 其余 trivial'' 的 fundamental 不一致，
+\texttt{debug/exp\_cs\_phaseA\_diag.g} 在 Cs ($PG = \{e, m\}$, $|G| = 2$) 上穷举 4 种 $(\aT, \aC)$ 组合（depth = 8），
+只算 Phase A 的 $E_2 \to E_\infty$。结果：
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|c|l|c|c|c|c|}
+\hline
+Setup & $(\aT, \aC)$ & $E_\infty^{0,3}$ Chern & $E_\infty^{1,3}$ Chern & $E_\infty^{3,1}$ CF & $E_\infty^{4,0}$ Bos \\
+\hline
+A & $(\det, \det)$ & $0$ & $\Z_2$ & $\Z_2$ & $\Z_2$ \\
+B & $(\det, \mathrm{triv})$ & $0$ & $0$ & $0$ & $0$ \\
+C & $(\mathrm{triv}, \det)$ & $\Z$ & $0$ & $0$ & $0$ \\
+D & $(\mathrm{triv}, \mathrm{triv})$ & $\Z$ & $0$ & $0$ & $0$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{关键发现}：
 
 \begin{enumerate}
-\item \textbf{2+1D 回归测试}：先确认新加的 $d_3^{0,3}$ 不会破坏已有 2+1D 计算（例如 $Z_4^{f,T}$ 等案例的结果应保持不变）。
-\item \textbf{3+1D 点群测试}：在简单点群（如 $T$, $T_h$, $O_h$）上跑 3+1D insulator 分类，对比文献预期。
-\item \textbf{3+1D 空间群批量计算}：建立 \texttt{space\_group/} 下的 3D insulator 批量任务脚本。
+\item \textbf{代码本身没 bug}。每个 setup 的输出都跟 $H^p(\Z_2, M)$ 的手算一致：
+  $H^p(\Z_2, \Z) \in \{\Z, 0, \Z_2\}$、$H^p(\Z_2, U(1)) \in \{U(1), 0, \Z_2\}$。
+
+\item \textbf{Setup D (mirror unitary, preserves charge) 才是 spinless crystalline insulator 的物理正确 setup}。镜面是空间对称，本质上 unitary 且不动 $U(1)$ 电荷。
+  这个 setup 给 Chern $(0, 3) = \Z$，其余全 trivial —— 跟 user 描述的 ``只有 Chern 这一层有非平凡分类'' 结构吻合。
+
+\item \textbf{Setup A $(\det, \det)$ 是当前 \texttt{examples/fspt\_*\_insulator*.g} 用的 convention}，把 mirror 同时当 anti-unitary + charge-flipping。
+  这是从 superconductor 框架 (\texttt{FermionEZSPTSpecSeq(R, f)}) 的 single $f = \det$ convention 直接复制过来的。
+  对 superconductor 这是合理（mirror + PHS 复合后行为像 anti-unitary），但对 insulator 物理上是错的。
+
+\item \textbf{$\Z_8$ 不可能直接来自 $\Z_2$ 群上同调}：任何 $E_r^{p,q}$ 都是 $E_2$ 的 subquotient，
+  而 $\Z_2$ 群对 $\{\Z, U(1)\}$ 系数只能给 $\{\Z, U(1), \Z_2, 0\}$。SptSet 框架本身只能给 Chern $\Z$。
+  user 期望的 $\Z_2 \times \Z_8$ 必须来自框架外：K-theory + interaction reduction
+  (Fidkowski-Kitaev $\Z \to \Z_8$ 在 1D BDI; 3D + spinless mirror 类似 collapse), 或 spinful 体系 + nontrivial $\omega_2$。
 \end{enumerate}
 
-\subsection{已知未填的占位符}
+\textbf{下一步}：检查 \texttt{examples/fspt\_*\_insulator*.g} 是否需要按 PG 元素 unitary/anti-unitary 拆分 $\aT, \aC$（最 general 的方式），
+或者直接改成 Setup D 的 $\mathrm{triv}, \mathrm{triv}$（适用于纯空间对称的 spinless 体系）。
+注意 spinful 体系还需带 SOC 的 $\omega_2$。
+
+\subsection{3+1D 点群批量测试：30 个晶体点群 Phase A}
+
+\subsubsection{Convention}
+
+采用与 2D wallpaper 完全一致的 convention（已验证正确）：
+\begin{enumerate}
+\item $\aT$ (auMap) = DeterminantMat
+\item $\aC$ (u1cMap) = DeterminantMat
+\item $\omega = 0$ (EZ mode)
+\end{enumerate}
+
+\subsubsection{Phase A 结果总览}
+
+与 arXiv:2204.13558 Table 2 的 spin-1/2 TI 列对比。\textbf{注：}尚未完成 Phase B 群结构计算的群只列出 $E_\infty$ 层。
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|l}
+\hline
+群 & $E_\infty$ p+ip & $E_\infty$ CF & $E_\infty$ Bos & 我们 Phase B & Paper spin-1/2 & E8 \\
+\hline
+S2 (Ci,2) & $\ZZ_2$ & $\ZZ_2$ & $\ZZ_2$ & $[2,4]=\ZZ_2\times\ZZ_4$ & $\ZZ_8\times\ZZ_2$ & $\ZZ_2$ \\
+Cs (6) & $\ZZ_2$ & $\ZZ_2$ & $\ZZ_2$ & $[2,4]$ & $\ZZ_8\times\ZZ_2$ & $\ZZ_2$ \\
+C2 (3) & 0 & 0 & 0 & trivial & $\ZZ_1$ & 0 \\
+C3 (143) & 0 & 0 & 0 & trivial & $\ZZ_1$ & 0 \\
+C6 (168) & 0 & 0 & 0 & trivial & $\ZZ_1$ & 0 \\
+D3 (149) & 0 & 0 & 0 & trivial & $\ZZ_1$ & 0 \\
+T (195) & 0 & 0 & 0 & trivial & $\ZZ_1$ & 0 \\
+\hline
+D2 (16) & 0 & 0(kill) & $\ZZ_2^2$ & $[2,2]=\ZZ_2^2$ & $\ZZ_2^3$ & 0 \\
+D4 (89) & 0 & 0(kill) & $\ZZ_2^2$ & $[2,2]=\ZZ_2^2$ & $\ZZ_2^2$ & 0 \\
+D6 (177) & 0 & 0(kill) & $\ZZ_2^2$ & $[2,2]=\ZZ_2^2$ & $\ZZ_2^3$ & 0 \\
+\hline
+C3h (174) & $\ZZ_2$ & $\ZZ_2$ & $\ZZ_2$ & 3 Z$_2$ (B崩) & $\ZZ_8\times\ZZ_2$ & $\ZZ_2$ \\
+S4 (81) & $\ZZ_2$ & $\ZZ_2$ & $\ZZ_2$ & 3 Z$_2$ (B崩) & $\ZZ_2^4$ & $\ZZ_2$ \\
+C4h (83) & $\ZZ_2$ & $\ZZ_2$ & $\ZZ_2$ & 3 Z$_2$ (B崩) & $\ZZ_8\times\ZZ_4\times\ZZ_2^2$ & $\ZZ_2$ \\
+S6 (147) & $\ZZ_2$ & $\ZZ_2$ & $\ZZ_2$ & 3 Z$_2$ (B崩) & $\ZZ_4\times\ZZ_2^2$ & $\ZZ_2$ \\
+D3d (162) & 0 & $\ZZ_2^2$ & $\ZZ_2^2$ & 4 Z$_2$ (B崩) & $\ZZ_8\times\ZZ_2^3$ & $\ZZ_2$ \\
+\hline
+C2h (10) & 崩 & -- & -- & -- & $\ZZ_8\times\ZZ_4\times\ZZ_2$ & $\ZZ_2^2$ \\
+C2v (25) & 崩 & -- & -- & -- & $\ZZ_8\times\ZZ_4\times\ZZ_2$ & $\ZZ_2$ \\
+C4v (99) & 崩 & -- & -- & -- & $\ZZ_8\times\ZZ_4\times\ZZ_2$ & $\ZZ_2$ \\
+C3v (156) & 崩 & -- & -- & -- & $\ZZ_8\times\ZZ_2$ & $\ZZ_2$ \\
+D2h (47) & 崩 & -- & -- & -- & $\ZZ_8\times\ZZ_4^2\times\ZZ_2^5$ & ? \\
+D2d (111) & 崩 & -- & -- & -- & $\ZZ_8\times\ZZ_2^5$ & $\ZZ_2$ \\
+C6h (175) & 崩 & -- & -- & -- & $\ZZ_8\times\ZZ_4\times\ZZ_2$ & $\ZZ_2$ \\
+C6v (183) & 崩 & -- & -- & -- & $\ZZ_8\times\ZZ_4\times\ZZ_2$ & $\ZZ_2$ \\
+D3h (187) & 崩 & -- & -- & -- & $\ZZ_8\times\ZZ_4\times\ZZ_2^3$ & $\ZZ_2$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Phase A crash 分析}
+
+Crash 全部出在 $d_4^{1,3}$ 计算链路的 \texttt{ZLMapInverse} 分数错误。
+根本矛盾：$d_3^{1,3}(n_1) = (\beta s \cup_0 n_1) \cup_0 n_1$ 用 $\aT$ 系数的 Cup0@ 构造，
+产出 cochain 隐含系数为 $\ZZ_{(\aT)^2} = \ZZ_{\mathrm{triv}}$，但目标系数是 $\ZZ_{\aC} = \ZZ_{\mathrm{Det}}$。
+当 $\aT(g)^2 \neq \aC(g)$（即 $g$ 有 $\det=-1$）时，cochain 不是 $\aC$-cocycle。
+
+\textbf{Crash 条件：镜面/反演是必要条件，但不充分。} 还需要 $E_4^{1,3}\neq 0$（p+ip 层在 $E_4$ 页存活）。
+$E_4^{1,3}=0$ 的群（C3h, S4, C4h, S6, D3d）虽有 det=-1 元素但不触发 crash。
+
+两次 minimal 修复尝试均失败：
+\begin{enumerate}
+\item 输出乘 $\aC(\prod g_i)$ 补偿变换：无效，FRACTION 不变
+\item 外层 Cup0@ 改用 $\aC$ 系数：$\aT=\aC$ 时无区别，无效
+\end{enumerate}
+
+\subsubsection{E8 state 与分类对照}
+
+所有 Phase A 通过的群，扣除 E8 贡献后 $E_\infty$ 的 $\ZZ_2$ 计数与 paper 吻合——
+\textbf{除了 D2 和 D6}。
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c}
+\hline
+群 & E2 全层 Z$_2$ 数 & E$\infty$ Z$_2$ 数 & Phase B & 扣 E8 后 \\
+\hline
+S2/Cs & 3 (p+ip=1,CF=1,Bos=1) & 3 & [2,4] & $\ZZ_2\times\ZZ_4$+E8$\to\ZZ_8\times\ZZ_2$ $\checkmark$ \\
+D2/D6 & 3 (CF=1,Bos=2) & 2 (CF被$d_2^{3,1}$kill) & [2,2] & $\ZZ_2^2$ vs paper $\ZZ_2^3$ $\times$ \\
+D4 & 3 (CF=1,Bos=2) & 2 (CF被kill) & [2,2] & $\ZZ_2^2$ vs paper $\ZZ_2^2$ $\checkmark$ \\
+\hline
+\end{tabular}
+\end{center}
+
+D2 和 D6 的 CF 层 $\ZZ_2$ 被 $d_2^{3,1}=\frac12 n_3\cup_1 n_3$ 杀死。
+若该微分正确，CF 不应贡献最终分类——D4 正好不需要它。
+D2/D6 缺的 $\ZZ_2$ 不是被错误 trivialize 的问题（E2 页总共只有 3 个 $\ZZ_2$，D4 也是 3 个），
+而可能是 D2/D6 比 D4 多一个来自别处的贡献（0D block states / 不可约表示）。
+
+\subsection{待解决问题}
 
 \begin{enumerate}
-\item \textbf{3+1D 仍缺失的 differentials}（如果存在）：$d_3^{2,1}$、$d_4^{1,3}$、$d_4^{0,3}$ 等更高 $r$ 的微分。
-\item \textbf{3+1D 仍缺失的 twisters}：$T_{1,3}$、$T_{2,2}$、$T_{3,1}$ 仍是零占位符。
-\item \textbf{Phase B 路径}：2D 群结构走的是手动 stacking 脚本，没走 \texttt{SptSetSpecSeqResult} 标准路径。3+1D 跑批前需要验证这条路径。
-\item \textbf{$d_2^{3,1}$ 中的 $\delta n_3$ 修正}：当前只取 cocycle 部分，若 \texttt{PartialPurify} 流程出现非闭合错误，需要补 $\delta n_3 \cup_2 n_3$ 类项。
+\item \textbf{$d_3^{1,3}$ crash（约 9 个群）}：数学上 $(\aT)^2\neq\aC$ 时 cochain 不闭合。需从公式层面修正。
+\item \textbf{D2/D6 缺 $\ZZ_2$（2 个群）}：E2 只有 3 个 $\ZZ_2$，与 D4 相同。paper 期望值更大的原因待查。
+\item \textbf{Phase B crash（约 4 个群：C3h,S4,C4h,S6,D3d）}：Phase A 通过但 stacking 崩，独立问题。
 \end{enumerate}
 
 \end{document}
