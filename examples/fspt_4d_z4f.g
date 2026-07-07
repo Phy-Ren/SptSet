@@ -12,7 +12,7 @@ LoadPackage("HAP");
 LoadPackage("SptSet");
 
 G := CyclicGroup(2);;
-R := ResolutionFiniteGroup(G, 8);;
+R := ResolutionFiniteGroup(G, 10);;
 utAct := SptSetTrivialGroupAction(G);;
 f1 := GeneratorsOfGroup(G)[1];;
 

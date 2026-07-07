@@ -35,8 +35,10 @@ function(c1, c2)
     q := deg - p;
     layers[p+1] := AddInhomoCochain@(c1!.layers[p+1], c2!.layers[p+1]);
     if p > 0 then # the p=0 layer cannot be twisted
-      layers[p+1] := AddInhomoCochain@(layers[p+1],
-      SS!.addTwister[p+1][q+1](c1!.layers, c2!.layers));
+      if IsBound(SS!.addTwister[p+1]) and IsBound(SS!.addTwister[p+1][q+1]) then
+        layers[p+1] := AddInhomoCochain@(layers[p+1],
+        SS!.addTwister[p+1][q+1](c1!.layers, c2!.layers));
+      fi;
     fi;
   od;
 
@@ -57,8 +59,10 @@ function(c1, c2)
     q := deg - p;
     layers[p+1] := AddInhomoCochain@(c1!.layers[p+1], c2!.layers[p+1]);
     if p > 0 then # the p=0 layer cannot be twisted
-      layers[p+1] := AddInhomoCochain@(layers[p+1],
-      SS!.addTwister[p+1][q+1](c1!.layers, c2!.layers));
+      if IsBound(SS!.addTwister[p+1]) and IsBound(SS!.addTwister[p+1][q+1]) then
+        layers[p+1] := AddInhomoCochain@(layers[p+1],
+        SS!.addTwister[p+1][q+1](c1!.layers, c2!.layers));
+      fi;
     fi;
   od;
 

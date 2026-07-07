@@ -4,3 +4,5 @@ DeclareGlobalFunction("FermionSPTLayersVerbose");
 DeclareGlobalFunction("FermionSPTLayers");
 DeclareGlobalFunction("FermionEZSPTLayersVerbose");
 DeclareGlobalFunction("FermionEZSPTLayers");
+DeclareGlobalFunction("FermionSPTLayersNoPipVerbose");
+DeclareGlobalFunction("FermionSPTLayersNoPip");
