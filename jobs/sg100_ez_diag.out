@@ -1,0 +1,137 @@
+Warning: no access to tty (Bad file descriptor).
+Thus no job control in this shell.
+=== SG#100 EZ Diagnostic Job ===
+Host: n16.local
+Date: Thu May 14 20:58:36 HKT 2026
+
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set BROWSER_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/gap-debug/pkg/SptSet/ fa\
+iled
+================================================================
+SG#100 (P4bm) EZ diagnostic
+  SptSet loaded from: /home/user/xyren/gap-debug/pkg/SptSet/
+  OK: debug version confirmed.
+  Parallel: JOBS=26 THRESHOLD=10 PHASE2=true
+  Diagnostics (12 points in lib/ source code):
+    Bockstein, ZLMapInverse, CanonicalForm, PurifyClass,
+    PartialPurify-stack, PurifyCobdry-stack, PartialPurifySSClass,
+    PartialConstruct, BuildDeriv-par, BuildDeriv-seq,
+    ClassToLeadVec, ModExt-vjnf
+================================================================
+
+Building resolution for SG#100...
+  Resolution built in 161546 ms
+  Dimensions: 1 6 18 37 60 84 108 132 156 
+
+Building spectral sequence (EZ, spinless)...
+  Spectral sequence created.
+
+Phase A: Classification (with p+ip, zero-module early stop)
+------------------------------------------------------------
+--- Layer p+ip: (p=1, q=3, rmax=5) ---
+[1] E^{1,3}_2... = <ZL-Module with torsions [ 2 ]>  (41 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[2] E^{1,3}_3...    d^{1,3}_2 gen 1/1 (target_dim=37)...
+      gen 1 done [711 ms]
+ = <ZL-Module []>  (2943 ms)
+  -> ZERO, skipping higher r for (1,3)
+
+--- Layer Majorana: (p=2, q=2, rmax=4) ---
+[3] E^{2,2}_2... = <ZL-Module with torsions [ 2, 2, 2, 2, 2 ]>  (365 ms)
+  Generators: 5, torsion: [ 2, 2, 2, 2, 2 ]
+
+[4] E^{2,2}_3...    d^{2,2}_2: 5 gens (target_dim=60) done [parallel, 
+26 workers, 61275 ms]
+ = <ZL-Module with torsions [ 2 ]>  (69313 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[5] E^{2,2}_4...    d^{3,1}_2: 37 gens (target_dim=48) done [parallel, 
+26 workers, 117421738 ms]
+    d^{2,2}_3 gen 1/1 (target_dim=48)...
+    d^{4,1}_2: 9 gens (target_dim=60) done [parallel, 26 workers, 150680 ms]
+      gen 1 done [237882189 ms]
+ = <ZL-Module with torsions [ 2 ]>  (355317201 ms)
+  Generators: 1, torsion: [ 2 ]
+
+--- Layer Complex fermion: (p=3, q=1, rmax=4) ---
+[6] E^{3,1}_2... = <ZL-Module with torsions [ 2, 2, 2, 2, 2, 2, 2 ]>  (246 ms)
+  Generators: 7, torsion: [ 2, 2, 2, 2, 2, 2, 2 ]
+
+[7] E^{3,1}_3...    d^{1,2}_2: 6 gens (target_dim=7) done [parallel, 
+26 workers, 644 ms]
+ = <ZL-Module with torsions [ 2 ]>  (2043 ms)
+  Generators: 1, torsion: [ 2 ]
+
+[8] E^{3,1}_4... = <ZL-Module with torsions [ 2 ]>  (1 ms)
+  Generators: 1, torsion: [ 2 ]
+
+--- Layer Bosonic: (p=4, q=0, rmax=5) ---
+[9] E^{4,0}_2... = <ZL-Module with torsions [ 2, 2, 2, 2, 4 ]>  (3672 ms)
+  Generators: 5, torsion: [ 2, 2, 2, 2, 4 ]
+
+[10] E^{4,0}_3...    d^{2,1}_2: 18 gens (target_dim=5) done [parallel, 
+26 workers, 389836 ms]
+ = <ZL-Module with torsions [ 2, 2, 4 ]>  (390179 ms)
+  Generators: 3, torsion: [ 2, 2, 4 ]
+
+[11] E^{4,0}_4...    d^{1,2}_3: 6 gens (target_dim=3) done [parallel, 
+26 workers, 4937811 ms]
+ = <ZL-Module with torsions [ 2, 2, 4 ]>  (4937828 ms)
+  Generators: 3, torsion: [ 2, 2, 4 ]
+
+[12] E^{4,0}_5... = <ZL-Module with torsions [ 2, 2, 4 ]>  (2 ms)
+  Generators: 3, torsion: [ 2, 2, 4 ]
+
+============================================================
+Phase A COMPLETE in 360723843 ms
+============================================================
+
+Phase B: Computing group structure...
+  SptSetSpecSeqResult(SS, 4, [1,2,3,4]) — includes p+ip
+------------------------------------------------------------
+  Result(deg=4): hybrid [p+ip separate, MC/CF/Bos sequential]
+    ComponentEx(1,3): 0 generators
+    p+ip: trivial [3 ms]
+    ComponentEx(2,2): 1 generators
+    ComponentEx(2,2) class 1/1...
+      class 1 done [719471620 ms]
+    p=2: 1 generators [719471621 ms]
+    ComponentEx(3,1): 1 generators
+    ComponentEx(3,1) class 1/1...
+      class 1 done [15777728 ms]
+    p=3: 1 generators [15777729 ms]
+  >> ModExt: layer [ 2 ] gen 1/1 torsion=2
+    extension done [83010392 ms]
+    ComponentEx(4,0): 3 generators
+    ComponentEx(4,0) class 1/3...
+      class 1 done [1896 ms]
+    ComponentEx(4,0) class 2/3...
+      class 2 done [1352 ms]
+    ComponentEx(4,0) class 3/3...
+      class 3 done [1361 ms]
+    p=4: 3 generators [4614 ms]
+  >> ModExt: layer [ 2, 3 ] gen 1/2 torsion=2
+Terminated

@@ -1,0 +1,12 @@
+Syntax warning: Unbound global variable in /home/user/xyren/gap-debug/pkg/SptS\
+et/debug/exp_sg100_ez_diag_ckpt.g:99
+                    function(j) return _Erpq!.relations[j][j]; end), "\n\n");;
+                                       ^^^^^
+Syntax warning: Unbound global variable in /home/user/xyren/gap-debug/pkg/SptS\
+et/debug/exp_sg100_ez_diag_ckpt.g:119
+    M := SptSetSpecSeqResult(SS, 4, [1,2,3,4]);;
+    ^
+Syntax warning: Unbound global variable in /home/user/xyren/gap-debug/pkg/SptS\
+et/debug/exp_sg100_ez_diag_ckpt.g:120
+    SptSetFpZModuleCanonicalForm(M);;
+                                 ^

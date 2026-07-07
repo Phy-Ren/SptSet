@@ -2,12 +2,8 @@ InstallMethod(FermionEZSPTSpecSeq,
   "build fermion-ez-spt spectral sequence",
   [IsHapResolution, IsGeneralMapping],
   function(R, auMap)
-    local brMap, spectrum, ss, s, G, trivialMap, coeffZ, coeffZ2;
+    local brMap, spectrum, ss, s;
     brMap := SptSetBarResolutionMap(R);
-    G := GroupOfResolution(R);
-    trivialMap := SptSetTrivialGroupAction(G);
-    coeffZ := SptSetCoefficientZn(0, trivialMap);
-    coeffZ2 := SptSetCoefficientZn(2, trivialMap);
     spectrum := [];
     spectrum[1] := SptSetCoefficientU1(auMap);
     spectrum[2] := SptSetCoefficientZn(2, auMap);
@@ -113,21 +109,6 @@ InstallMethod(FermionEZSPTSpecSeq,
       return ZeroCocycle@;
     end);
 
-    # 4+1D p+ip -> Majorana-chain obstruction for omega2=0:
-    #   dn2 = 0 on the E_2 page, and
-    #   dn3 = n2 cup n2 + s1 cup (n2 cup_1 n2)  (mod 2).
-    SptSetInstallCoboundary(ss, 2, 2, 3,
-    function(n2, dn2)
-      local n2m, c4;
-      n2m := function(args...)
-        return CallFuncList(n2, args) mod 2;
-      end;
-      c4 := Cup0@(2, 2, coeffZ2, n2m, n2m);
-      c4 := AddInhomoCochain@(c4,
-        Cup0@(1, 3, coeffZ2, s, Cup1@(2, 2, coeffZ2, n2m, n2m)));
-      return {g1, g2, g3, g4} -> (c4(g1, g2, g3, g4) mod 2);
-    end);
-
     SptSetInstallCoboundary(ss, 2, 2, 2,
     function(n2, dn2)
       return
@@ -191,89 +172,7 @@ InstallMethod(FermionEZSPTSpecSeq,
           n2(g1, g2*g3*g4*g5), n2(g1, g2*g3*g4), n2(g1, g2*g3), n2(g1, g2));
       end;
     end);
-
-    # 4+1D Majorana-chain -> complex-fermion obstruction for omega2=0:
-    #   dn4 = n3 cup_1 n3 + s1 cup (n3 cup_2 n3)  (mod 2).
-    SptSetInstallCoboundary(ss, 2, 3, 2,
-    function(n3, dn3)
-      local coeff, c5;
-      coeff := spectrum[1+1];
-      c5 := Cup1@(3, 3, coeff, n3, n3);
-      c5 := AddInhomoCochain@(c5,
-        Cup0@(1, 4, coeff, s, Cup2@(3, 3, coeff, n3, n3)));
-      return {g1, g2, g3, g4, g5} -> (c5(g1, g2, g3, g4, g5) mod 2);
-    end);
-
-    # 4+1D pure Majorana phase O^gamma_6 from the Cartan-Adem representative.
-    # EZ has omega2=0.  The n4-dependent complex-fermion terms are installed
-    # separately in InstallCoboundary(ss, 2, 4, 1).
-    #
-    # DOMAIN: n3 must be a Z2 cocycle (dn3 = 0 mod 2).  See the full
-    # (non-EZ) ss_fermion.gi for a detailed explanation.
-    SptSetInstallCoboundary(ss, 3, 3, 2,
-    function(n3, dn3)
-      local n3m, w0, smod, beta, betam,
-            zeta23, x6, n3c1n3, omegaN3, sBeta, zeta14,
-            omegaCup1s, s2, s3, half6,
-            quarterOmegaBeta, quarterBetaBeta, quarterS2Beta, quarterS3N3;
-
-      n3m := function(args...)
-        return CallFuncList(n3, args) mod 2;
-      end;
-      w0 := ZeroCocycle@;
-      smod := function(g)
-        return s(g) mod 2;
-      end;
-
-      beta := ScaleInhomoCochain@(1/2, InhomoCoboundary@(coeffZ, n3m));
-      betam := function(args...)
-        return CallFuncList(beta, args) mod 2;
-      end;
-
-      zeta23 := SurjectionProductZ2@([2, 2, 3, 3],
-        [w0, w0, n3m, n3m], [1, 2, 3, 1, 3, 4, 3, 4]);
-
-      x6 := SurjectionProductZ2@([3, 3, 3, 3],
-        [n3m, n3m, n3m, n3m], [1, 2, 1, 3, 2, 4, 3, 1, 4, 2]);
-      x6 := AddInhomoCochain@(x6, SurjectionProductZ2@([3, 3, 3, 3],
-        [n3m, n3m, n3m, n3m], [1, 2, 1, 3, 4, 3, 1, 4, 1, 2]));
-      x6 := AddInhomoCochain@(x6, SurjectionProductZ2@([3, 3, 3, 3],
-        [n3m, n3m, n3m, n3m], [1, 2, 3, 2, 4, 3, 1, 4, 2, 1]));
-      x6 := AddInhomoCochain@(x6, SurjectionProductZ2@([3, 3, 3, 3],
-        [n3m, n3m, n3m, n3m], [1, 2, 3, 4, 3, 1, 4, 2, 1, 2]));
-
-      n3c1n3 := Cup1@(3, 3, coeffZ2, n3m, n3m);
-      omegaN3 := Cup0@(2, 3, coeffZ2, w0, n3m);
-      sBeta := Cup0@(1, 4, coeffZ2, smod, betam);
-
-      zeta14 := SurjectionProductZ2@([1, 1, 4, 4],
-        [smod, smod, betam, betam], [1, 2, 3, 2, 4, 3, 4, 3]);
-      omegaCup1s := Cup1@(2, 1, coeffZ2, w0, smod);
-
-      half6 := AddInhomoCochain@(zeta23, x6);
-      half6 := AddInhomoCochain@(half6, Cup4@(5, 5, coeffZ2, n3c1n3, omegaN3));
-      half6 := AddInhomoCochain@(half6, Cup4@(5, 5, coeffZ2, n3c1n3, sBeta));
-      half6 := AddInhomoCochain@(half6, Cup4@(5, 5, coeffZ2, omegaN3, sBeta));
-      half6 := AddInhomoCochain@(half6, zeta14);
-      half6 := AddInhomoCochain@(half6, Cup0@(2, 4, coeffZ2, omegaCup1s, betam));
-      half6 := AddInhomoCochain@(half6, Cup0@(1, 5, coeffZ2, smod, n3c1n3));
-
-      quarterOmegaBeta := Cup0@(2, 4, coeffZ, w0, beta);
-      quarterBetaBeta := Cup2@(4, 4, coeffZ, beta, beta);
-      s2 := Cup0@(1, 1, coeffZ2, smod, smod);
-      s3 := Cup0@(2, 1, coeffZ2, s2, smod);
-      quarterS2Beta := Cup0@(2, 4, coeffZ2, s2, betam);
-      quarterS3N3 := Cup0@(3, 3, coeffZ2, s3, n3m);
-
-      return function(g1, g2, g3, g4, g5, g6)
-        return 1/2 * (half6(g1, g2, g3, g4, g5, g6) mod 2)
-          + 1/4 * (quarterOmegaBeta(g1, g2, g3, g4, g5, g6)
-            - quarterBetaBeta(g1, g2, g3, g4, g5, g6)
-            + (quarterS2Beta(g1, g2, g3, g4, g5, g6) mod 2)
-            + (quarterS3N3(g1, g2, g3, g4, g5, g6) mod 2));
-      end;
-    end);
-
+    
     # xingyu 2026 0314: translated from C++ classification_others()
     # in 260310 Consistency Check.cpp lines 204-216
     # replaces Cup1/Cup2 and addTwister(5,0) Cup3 with direct Z2 expansion
@@ -315,22 +214,6 @@ InstallMethod(FermionEZSPTSpecSeq,
       #   c5 := AddInhomoCochain@(c5, Cup2@(4, 3, coeff, dn3, n3));
       # fi;
       # return ScaleInhomoCochain@(1/2, c5);
-    end);
-
-    # 4+1D complex-fermion contribution to the bosonic obstruction, omega2=0:
-    #   O^c_6 = 1/2[ n4 cup_2 n4 + dn4 cup_3 n4 ],
-    #   O^{c gamma}_6 = 1/2[ dn4 cup_4 dn4 ].
-    SptSetInstallCoboundary(ss, 2, 4, 1,
-    function(n4, dn4)
-      local coeff, c6;
-      coeff := spectrum[1+1];
-      c6 := Cup2@(4, 4, coeff, n4, n4);
-      if dn4 <> ZeroCocycle@ then
-        c6 := AddInhomoCochain@(c6, Cup3@(5, 4, coeff, dn4, n4));
-        c6 := AddInhomoCochain@(c6, Cup4@(5, 5, coeff, dn4, dn4));
-      fi;
-      return {g1, g2, g3, g4, g5, g6} ->
-        (1/2 * (c6(g1, g2, g3, g4, g5, g6) mod 2));
     end);
 
     SptSetInstallAddTwister(ss, 1, 1, {l1, l2} -> ZeroCocycle@);
@@ -504,7 +387,6 @@ InstallMethod(FermionEZSPTSpecSeq,
     # place holders for twisters in (4+1)D
     SptSetInstallAddTwister(ss, 1, 4, {l1, l2} -> ZeroCocycle@);
     SptSetInstallAddTwister(ss, 2, 3, {l1, l2} -> ZeroCocycle@);
-    # 4+1D Majorana stacking: N3 = n3 + n3'.  There is no m3 correction.
     SptSetInstallAddTwister(ss, 3, 2, {l1, l2} -> ZeroCocycle@);
     SptSetInstallAddTwister(ss, 4, 1, {l1, l2} -> ZeroCocycle@);
     # xingyu 2026 0314: O5cgamma now included in InstallCoboundary(ss, 2, 3, 1, ...)
@@ -618,40 +500,3 @@ end);
 
 #  return [E412, E321, E230];
 #end);
-
-InstallGlobalFunction(FermionSPTLayersNoPipVerbose,
-function(ss, dim)
-  # Print only the triplet (Majorana, complex fermion, bosonic), i.e. q=2,1,0.
-  # This is the intended view for the present 4+1D implementation, where the
-  # p+ip layer is deliberately excluded.
-  local layerNames, p, q, rmax, r, Erpq;
-  layerNames := ["Bosonic:", "Complex fermion:", "Majorana:", "p+ip:"];
-  for p in [1..(dim+1)] do
-    q := dim + 1 - p;
-    if q >= 0 and q <= 2 then
-      Display(layerNames[q+1]);
-      rmax := Maximum(q+2, p+1);
-      for r in [2..rmax] do
-        Erpq := SptSetSpecSeqComponent(ss, r, p, q);
-        SptSetFpZModuleCanonicalForm(Erpq);
-        Display(Erpq);
-      od;
-    fi;
-  od;
-end);
-
-InstallGlobalFunction(FermionSPTLayersNoPip,
-function(ss, dim)
-  local layers, p, q, rmax, E;
-  layers := [];
-  for p in [1..(dim+1)] do
-    q := dim + 1 - p;
-    if q >= 0 and q <= 2 then
-      rmax := Maximum(q+2, p+1);
-      E := SptSetSpecSeqComponent(ss, rmax, p, q);
-      SptSetFpZModuleCanonicalForm(E);
-      Add(layers, E);
-    fi;
-  od;
-  return layers;
-end);

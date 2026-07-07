@@ -1,0 +1,1378 @@
+% =========================================================================
+% SciPost LaTeX template — Lecture notes
+% =========================================================================
+
+\documentclass{SciPost}
+
+% Prevent all line breaks in inline equations.
+\binoppenalty=10000
+\relpenalty=10000
+
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
+\usepackage[bitstream-charter]{mathdesign}
+\urlstyle{same}
+
+% Number lines in verbatim code blocks for easy reference
+\usepackage{fancyvrb}
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{numbers=left,numbersep=5pt,frame=single,fontsize=\small}
+
+% Fix \cal and \mathcal characters look (so it's not the same as \mathscr)
+\DeclareSymbolFont{usualmathcal}{OMS}{cmsy}{m}{n}
+\DeclareSymbolFontAlphabet{\mathcal}{usualmathcal}
+
+\fancypagestyle{SPstyle}{
+\fancyhf{}
+\lhead{\colorbox{scipostblue}{\bf \color{white} ~SciPost Physics Lecture Notes }}
+\rhead{{\bf \color{scipostdeepblue} ~Draft }}
+\renewcommand{\headrulewidth}{1pt}
+\fancyfoot[C]{\textbf{\thepage}}
+}
+
+% Additional packages not provided by SciPost
+\usepackage{mathtools}
+\usepackage{physics}
+\usepackage{cleveref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tikz-cd}
+\usepackage{amsthm}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+% Shortcuts
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Zt}{\mathbb{Z}_2}
+\newcommand{\Zn}[1]{\mathbb{Z}_{#1}}
+\newcommand{\U}{\mathrm{U}}
+\newcommand{\Gb}{G_b}
+\newcommand{\Gf}{G_f}
+\newcommand{\dd}{\mathrm{d}}
+\renewcommand{\im}{\operatorname{im}}
+\newcommand{\coker}{\operatorname{coker}}
+\newcommand{\gr}{\operatorname{gr}}
+\renewcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Ext}{\operatorname{Ext}}
+
+
+\begin{document}
+
+\pagestyle{SPstyle}
+
+\begin{center}{\Large \textbf{\color{scipostdeepblue}{
+Landscape of Interacting Fermionic Symmetry-Protected Topological Phases
+}}}\end{center}
+
+\begin{center}\textbf{
+Xing-Yu Ren\textsuperscript{1$\star$}
+}\end{center}
+
+\begin{center}
+{\bf 1} Department of Physics, The Chinese University of Hong Kong
+\\ [\baselineskip]
+$\star$ \href{mailto:xy.ren@link.cuhk.edu.hk}{\small xy.ren@link.cuhk.edu.hk}\
+\end{center}
+
+
+\section*{\color{scipostdeepblue}{Abstract}}
+\textbf{\boldmath{%
+Symmetry-protected topological (SPT) phases reveal deep connections between symmetry and quantum entanglement.
+While free-fermion classifications are well established, interacting fermionic SPT phases---especially under crystalline symmetries---exhibit a far richer structure.
+In this lecture, I present a systematic landscape based on domain wall decoration and organized by the Atiyah--Hirzebruch spectral sequence (AHSS), yielding a complete classification of fermionic SPT phases protected by space group symmetries and uncovering new interacting invariants beyond free-fermion approaches.
+These lecture notes are designed to be self-contained for physicists who may not have encountered spectral sequences before, with emphasis on the physical intuition behind the mathematical formalism.
+}}
+
+\linenumbers
+
+\vspace{10pt}
+\noindent\rule{\textwidth}{1pt}
+\tableofcontents
+\noindent\rule{\textwidth}{1pt}
+\vspace{10pt}
+
+%% ============================================================
+%% CHAPTER 1
+%% ============================================================
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{What is a topological phase?}
+
+Consider a quantum many-body system at zero temperature, described by a gapped Hamiltonian $H$.
+Two gapped Hamiltonians $H_0$ and $H_1$ are in the \emph{same phase} if there exists a smooth path of gapped Hamiltonians $H(t)$, $t\in[0,1]$, connecting them without closing the energy gap.
+A \emph{topological phase} is an equivalence class under this relation.
+
+The trivial phase is the one containing a product state (a state with no entanglement at all).
+All other gapped phases are ``topological'' in the sense that they carry patterns of quantum entanglement that cannot be smoothly removed.
+
+\subsection{Symmetry protection}
+
+Many interesting topological phases become trivial if we do not impose symmetry.
+A \emph{symmetry-protected topological} (SPT) phase is a gapped phase that:
+\begin{enumerate}[label=(\roman*)]
+    \item has a unique ground state on any closed manifold (no topological order),
+    \item is distinct from the trivial phase \emph{only when} a specified symmetry $G$ is preserved along the interpolation path.
+\end{enumerate}
+The most familiar examples include the Haldane chain (protected by $\Zt \times \Zt$ or $SO(3)$) and topological insulators (protected by time-reversal and charge conservation).
+
+\subsection{Free fermions vs.\ interactions}
+
+For non-interacting (free) fermion systems, the classification of topological phases is completely understood through $K$-theory \cite{Kitaev2009, Ryu2010, Schnyder2008}.
+The result is the celebrated \emph{periodic table} of topological insulators and superconductors, organized by spatial dimension and the ten Altland--Zirnbauer symmetry classes.
+
+However, this classification assumes the absence of interactions.
+When interactions are included, two qualitatively new phenomena occur:
+\begin{enumerate}[label=(\roman*)]
+    \item \textbf{Interaction-induced collapse}: Some phases that are distinct in the free-fermion classification become equivalent once interactions are allowed.
+    A celebrated example is the $\Z$ classification of 1D class BDI topological superconductors, which collapses to $\Z_8$ upon including interactions \cite{Fidkowski2010, Fidkowski2011}.
+    \item \textbf{Interaction-enabled phases}: New phases can appear that have no free-fermion counterpart.
+    These are ``intrinsically interacting'' topological phases.
+\end{enumerate}
+The goal of this lecture is to present a systematic framework that captures \emph{all} interacting fermionic SPT phases for a given symmetry, not just those visible to band theory.
+
+\subsection{Our approach: decoration + spectral sequence}
+
+The framework we use has two complementary aspects:
+\begin{enumerate}[label=(\roman*)]
+    \item \textbf{Domain wall decoration} (physics): A constructive method to build SPT states by decorating symmetry domain walls with lower-dimensional topological phases.
+    This gives a concrete physical picture for every phase in the classification.
+    \item \textbf{Atiyah--Hirzebruch spectral sequence} (mathematics): A powerful algebraic machine that organizes the decoration data, systematically accounts for obstructions and equivalences, and yields the classification as a computable algebraic object.
+\end{enumerate}
+The deep insight is that these two aspects are \emph{the same thing viewed from different angles}: the physical construction naturally produces a filtered cochain complex, and AHSS is precisely the standard mathematical tool for computing the cohomology of filtered complexes.
+
+Moreover, the entire framework has been implemented as a computational tool---the \texttt{SptSet} package for the GAP computer algebra system---allowing systematic, automated classification for any symmetry group.
+
+\subsection{Plan of the lecture}
+
+The lecture is organized into two main parts:
+
+\medskip
+\noindent\textbf{Part I: Classification.}
+\begin{itemize}
+    \item \S\ref{sec:decoration}: The physics of domain wall decoration---how to construct FSPT states layer by layer, and the consistency conditions (coboundary equations) that the decoration data must satisfy.
+    \item \S\ref{sec:AHSS}: The AHSS formalism---how the layered decoration structure maps into a spectral sequence, and how the spectral sequence systematically computes the classification. \emph{This is the mathematical heart of the lecture.}
+    \item \S\ref{sec:sptset-classification}: Hands-on use of the \texttt{SptSet} package to compute classifications.
+\end{itemize}
+
+\medskip
+\noindent\textbf{Part II: Stacking.}
+\begin{itemize}
+    \item \S\ref{sec:stacking-physics}: The physics of stacking---what happens when you combine two SPT phases, and why the group law has nontrivial cross-terms.
+    \item \S\ref{sec:extension}: The extension problem in AHSS---how stacking maps to the mathematical problem of reconstructing a group from its graded pieces.
+    \item \S\ref{sec:sptset-stacking}: Computing stacking groups with \texttt{SptSet}.
+\end{itemize}
+
+\medskip
+\noindent We conclude in \S\ref{sec:outlook} with results, comparisons to free-fermion classifications, and open problems.
+
+
+%% ============================================================
+%% CHAPTER 2
+%% ============================================================
+\section{Domain Wall Decoration: Physics of Classification}
+\label{sec:decoration}
+
+This section introduces the physical framework of domain wall decoration for constructing fermionic SPT phases.
+The key idea is simple: decorate symmetry domain walls with lower-dimensional topological phases, then impose consistency conditions.
+
+\subsection{Fermionic symmetry}
+\label{subsec:fermionic-symmetry}
+
+In a fermionic system, the fermion parity symmetry $\Zt^f$ is always present and cannot be explicitly broken.
+The total symmetry group $\Gf$ is a central extension of the bosonic symmetry group $\Gb$ by the fermion parity:
+\begin{equation}
+\label{eq:Gf-extension}
+1 \longrightarrow \Zt^f \longrightarrow \Gf \longrightarrow \Gb \longrightarrow 1.
+\end{equation}
+This extension is classified by a 2-cocycle $\omega_2 \in H^2(\Gb, \Zt)$.
+Physically, $\omega_2$ encodes whether the symmetry operators of $\Gb$ commute or anticommute with the fermion parity.
+
+If the system has anti-unitary symmetries (such as time-reversal), we additionally specify a group homomorphism
+\begin{equation}
+\label{eq:s1}
+s_1 \in \Hom(\Gb, \Zt) = H^1(\Gb, \Zt),
+\end{equation}
+where $s_1(g) = 0$ if $g$ is unitary and $s_1(g) = 1$ if $g$ is anti-unitary.
+
+\begin{definition}[Fermionic symmetry]
+The symmetry of an internal fermionic SPT phase is specified by a triplet
+\begin{equation}
+\Gf := (\Gb,\, \omega_2,\, s_1).
+\end{equation}
+\end{definition}
+
+\begin{example}
+Consider the symmetry group $\Gf = \Zn{4}^{f,T}$, generated by time-reversal $T$ with $T^2 = (-1)^F$ (the fermion parity).
+Then $\Gb = \Zt^T$ with $s_1(T) = 1$ (anti-unitary) and $\omega_2(T, T) = 1$ (nontrivial extension).
+\end{example}
+
+
+\subsection{The decoration scheme}
+\label{subsec:decoration-scheme}
+
+The construction of fermionic SPT states proceeds on a triangulated spatial manifold equipped with a branching structure (a consistent choice of edge orientations that avoids oriented loops in each simplex).
+
+The key physical idea is to break the symmetry $\Gb$ explicitly, creating domain walls between different symmetry-breaking regions, and then decorate these domain walls with lower-dimensional invertible topological phases.
+Afterwards, one restores the symmetry by quantum superposing all possible symmetry-breaking patterns and their decorations.
+
+For a $d$-dimensional spatial system, the decoration data consists of \emph{layers} of topological phases living on simplices of different dimensions:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{cccl}
+\toprule
+\textbf{Layer} & \textbf{Cochain} & \textbf{Coefficient} & \textbf{Physical content} \\
+\midrule
+$d$ (top) & $\nu_{d+1}$ & $\U(1)$ & Bosonic SPT phase factor \\
+$d-1$ & $n_d$ & $\Zt$ & Complex fermion decoration \\
+$d-2$ & $n_{d-1}$ & $\Zt$ & Majorana chain decoration \\
+$d-3$ & $n_{d-2}$ & $\Z$ & $p+ip$ superconductor decoration \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Each layer is described by an \emph{inhomogeneous cochain} on $\Gb$ with values in the corresponding coefficient module.
+Specifically, a $p$-cochain $f \in C^p(\Gb, A)$ is a function
+\begin{equation}
+f: \underbrace{\Gb \times \cdots \times \Gb}_{p} \longrightarrow A, \qquad (g_1, \ldots, g_p) \mapsto f(g_1, \ldots, g_p),
+\end{equation}
+that assigns a value in the coefficient group $A$ to each $p$-tuple of group elements.
+
+\subsection{Consistency conditions: the coboundary equations}
+\label{subsec:coboundary-eqs}
+
+The decoration data cannot be chosen freely.
+When the symmetry-breaking pattern fluctuates (as required by the restoration of symmetry), the decorations on adjacent simplices must be \emph{mutually consistent}.
+This consistency manifests as a system of coboundary equations that the decoration data must satisfy.
+
+\subsubsection{The 2+1D case}
+
+Let us be explicit for $d=2$ spatial dimensions.
+The decoration data is a triplet $(n_1, n_2, \nu_3)$ where:
+\begin{itemize}
+    \item $n_1 \in C^1(\Gb, \Zt)$ describes the Majorana chain decoration on 1-simplices (edges),
+    \item $n_2 \in C^2(\Gb, \Zt)$ describes the complex fermion decoration on 2-simplices (triangles),
+    \item $\nu_3 \in C^3(\Gb, \U(1))$ is the bosonic SPT $\U(1)$ phase factor on 3-simplices (tetrahedra in spacetime).
+\end{itemize}
+
+The consistency conditions form a hierarchical system of coboundary equations:
+\begin{align}
+\dd n_1 &= 0 \pmod{2}, \label{eq:2d-layer1} \\
+\dd n_2 &= \omega_2 \cup n_1 + s_1 \cup n_1 \cup n_1 \pmod{2}, \label{eq:2d-layer2} \\
+\dd_{s_1} \nu_3 &= \mathcal{O}_4[n_2]. \label{eq:2d-layer3}
+\end{align}
+
+Let us unpack these equations:
+
+\paragraph{Equation \eqref{eq:2d-layer1}: Majorana chains must form closed loops.}
+The Majorana chain decoration $n_1$ must be a cocycle (mod 2).
+Physically, Majorana chains are 1D objects that must form closed loops on the domain walls---they cannot have dangling endpoints.
+This is the simplest consistency condition.
+
+\paragraph{Equation \eqref{eq:2d-layer2}: Complex fermion parity constraint.}
+The coboundary of $n_2$ is not zero, but is determined by $n_1$ and the symmetry data $(\omega_2, s_1)$.
+The right-hand side has two terms:
+\begin{itemize}
+    \item $\omega_2 \cup n_1$: the Majorana chains interact with the fermion parity extension,
+    \item $s_1 \cup n_1 \cup n_1$: time-reversal symmetry produces additional Majorana modes that must be compensated by complex fermions.
+\end{itemize}
+This equation tells us that once we choose $n_1$, the complex fermion decoration $n_2$ is constrained: not every $n_2$ is allowed, only those whose failure to be a cocycle is exactly $\omega_2 \cup n_1 + s_1 \cup n_1 \cup n_1$.
+
+\paragraph{Equation \eqref{eq:2d-layer3}: Bosonic phase obstruction.}
+The twisted coboundary of $\nu_3$ is determined by a complicated obstruction function $\mathcal{O}_4[n_2]$, which involves cup products, higher cup products ($\cup_1$, $\cup_2$), and the symmetry data.
+The explicit form is
+\begin{align}
+\mathcal{O}_4[n_2](01234) &= (-1)^{[\omega_2 \cup n_2 + n_2 \cup n_2 + n_2 \cup_1 \dd n_2 + \dd(s_1 \cup n_2 + n_2 \cup_2 \dd n_2)](01234)} \nonumber \\
+&\quad \times (-1)^{\omega_2(013)\, \dd n_2(1234) + \dd n_2(0124)\, \dd n_2(0234)} \nonumber \\
+&\quad \times (-i)^{\dd n_2(0123)\, [1 - \dd n_2(0124)] \pmod{2}}. \label{eq:O4-explicit}
+\end{align}
+We present this formula here not to derive it (which requires careful tracking of Majorana fermion phases under retriangulation), but to illustrate two important features:
+\begin{enumerate}[label=(\roman*)]
+    \item The obstruction function $\mathcal{O}_4$ depends on the \emph{lower layer} data $n_2$ (and through \eqref{eq:2d-layer2}, also on $n_1$).
+    The layers are coupled: you cannot classify them independently.
+    \item The formula is explicit and computable, involving only algebraic operations on cochains.
+    This is what makes the entire classification amenable to computer algebra.
+\end{enumerate}
+
+\subsubsection{The 3+1D case}
+\label{subsubsec:3d-case}
+
+For $d=3$ spatial dimensions, the decoration data is $(n_1, n_2, n_3, \nu_4)$ with an additional layer:
+\begin{itemize}
+    \item $n_1 \in C^1(\Gb, \Z)$: the $p+ip$ superconductor decoration,
+    \item $n_2 \in C^2(\Gb, \Zt)$: Majorana chain decoration,
+    \item $n_3 \in C^3(\Gb, \Zt)$: complex fermion decoration,
+    \item $\nu_4 \in C^4(\Gb, \U(1))$: bosonic SPT phase.
+\end{itemize}
+The consistency conditions follow the same hierarchical pattern:
+\begin{align}
+\dd n_1 &= 0, \label{eq:3d-layer1} \\
+\dd n_2 &= n_2 \text{-dependent terms involving } \omega_2, s_1, n_1 \pmod{2}, \label{eq:3d-layer2} \\
+\dd n_3 &= n_2 \cup n_2 + \omega_2 \cup n_2 + s_1 \cup (n_2 \cup_1 n_2) \pmod{2}, \label{eq:3d-layer3} \\
+\dd \nu_4 &= \mathcal{O}_5[n_3, n_2], \label{eq:3d-layer4}
+\end{align}
+where the 3+1D obstruction function $\mathcal{O}_5$ has three components:
+\begin{equation}
+\mathcal{O}_5[n_3, n_2] = \mathcal{O}_5^c[n_3] \cdot \mathcal{O}_5^{c\gamma}[\dd n_3] \cdot \mathcal{O}_5^\gamma[n_2].
+\end{equation}
+These come from, respectively, the anticommutation of complex fermions, the cross terms between complex fermions and Majorana fermions, and the pure Majorana phase.
+
+\subsection{The hierarchical structure: a preview of the spectral sequence}
+\label{subsec:hierarchical-preview}
+
+Let us step back and observe the structure of the coboundary equations.
+There is a clear \textbf{hierarchy}:
+\begin{enumerate}
+    \item First solve for $n_1$: the equation $\dd n_1 = 0$ is independent of everything else.
+    \item Then solve for $n_2$: the equation $\dd n_2 = F(n_1)$ depends on $n_1$ but not on $n_2$ or $\nu_3$.
+    \item Finally solve for $\nu_3$: the equation $\dd \nu_3 = G(n_2, n_1)$ depends on both lower layers.
+\end{enumerate}
+
+This hierarchical structure is not accidental.
+It reflects the fact that the decoration layers live on simplices of \emph{different codimensions}, and lower-codimensional data constrains higher-codimensional data.
+
+Furthermore, at each level, the solving process has two aspects:
+\begin{itemize}
+    \item \textbf{Existence (obstruction)}: Given $n_1$, does a consistent $n_2$ exist? The right-hand side of \eqref{eq:2d-layer2} must itself be a cocycle (its coboundary must vanish). If it is not, then this particular $n_1$ is \emph{obstructed}---no consistent $n_2$ exists, and we must discard this $n_1$.
+    \item \textbf{Uniqueness (equivalence)}: When solutions exist, different choices of $n_2$ may be equivalent if they differ by a coboundary of some lower-degree cochain. This reduces the space of distinct solutions.
+\end{itemize}
+
+This pattern of alternating obstruction and equivalence, applied layer by layer, is \emph{precisely} what a spectral sequence does.
+In the next section, we will see how the Atiyah--Hirzebruch spectral sequence formalizes this intuitive picture into a rigorous and computable algebraic framework.
+
+
+%% ============================================================
+%% CHAPTER 3
+%% ============================================================
+\section{The Atiyah--Hirzebruch Spectral Sequence}
+\label{sec:AHSS}
+
+This is the mathematical core of the lecture.
+We introduce the AHSS step by step, always keeping the physical decoration problem in sight.
+The goal is not to present spectral sequences as abstract algebra, but to explain \emph{why they naturally arise} from the physics and \emph{how they help us compute}.
+
+\subsection{Motivation: why we need more than group cohomology}
+\label{subsec:motivation}
+
+If the consistency equations in \S\ref{subsec:coboundary-eqs} were simply $\dd n_p = 0$ for every layer independently, the classification would reduce to a product of group cohomology groups:
+\begin{equation}
+\label{eq:naive-product}
+\prod_{p} H^p(\Gb, A_{q(p)}).
+\end{equation}
+But the equations are \emph{coupled}: $\dd n_2$ depends on $n_1$, and $\dd \nu_3$ depends on $n_2$.
+These couplings mean that:
+\begin{itemize}
+    \item Not every cocycle $n_1 \in Z^1(\Gb, \Zt)$ leads to a consistent decoration---some are obstructed by \eqref{eq:2d-layer2}.
+    \item Two solutions $(n_1, n_2, \nu_3)$ and $(n_1, n_2', \nu_3')$ may be physically equivalent if they differ by a gauge transformation that mixes the layers.
+\end{itemize}
+The true classification is therefore \emph{smaller} than the naive product \eqref{eq:naive-product}, and the reduction is organized by the AHSS.
+
+\subsection{Cochain complexes and cohomology: a brief reminder}
+\label{subsec:cochain-reminder}
+
+Before introducing spectral sequences, let us recall the basic objects.
+
+\begin{definition}[Cochain complex]
+A \emph{cochain complex} $(C^\bullet, \dd)$ is a sequence of abelian groups
+\begin{equation}
+\cdots \xrightarrow{\dd} C^{n-1} \xrightarrow{\dd} C^n \xrightarrow{\dd} C^{n+1} \xrightarrow{\dd} \cdots
+\end{equation}
+with $\dd \circ \dd = 0$.
+Elements of $\ker(\dd: C^n \to C^{n+1})$ are called \emph{$n$-cocycles}, and elements of $\im(\dd: C^{n-1} \to C^n)$ are called \emph{$n$-coboundaries}.
+\end{definition}
+
+\begin{definition}[Cohomology]
+The $n$-th \emph{cohomology group} is the quotient
+\begin{equation}
+H^n(C) := \frac{\ker(\dd: C^n \to C^{n+1})}{\im(\dd: C^{n-1} \to C^n)} = \frac{Z^n(C)}{B^n(C)}.
+\end{equation}
+\end{definition}
+
+In our context, the cochain complex is built from the group $\Gb$ and a coefficient module $A$.
+The group $C^p(\Gb, A)$ consists of all functions from $\Gb^p$ to $A$, and the coboundary $\dd$ is the standard group cohomology coboundary.
+
+\subsection{Filtered complexes: the mathematical structure behind the layers}
+\label{subsec:filtration}
+
+The hierarchical structure of the decoration problem---different layers, coupled by cross-term obstructions---has a precise mathematical name: a \emph{filtered cochain complex}.
+
+\begin{definition}[Decreasing filtration]
+\label{def:filtration}
+A \emph{decreasing filtration} on a cochain complex $(C^\bullet, \dd)$ is a sequence of subcomplexes
+\begin{equation}
+\label{eq:filtration}
+\cdots \supseteq F^{p-1} C^n \supseteq F^p C^n \supseteq F^{p+1} C^n \supseteq \cdots \supseteq 0
+\end{equation}
+satisfying $\dd(F^p C^n) \subseteq F^p C^{n+1}$ (the coboundary respects the filtration).
+\end{definition}
+
+In the FSPT classification, the filtration has a direct physical interpretation.
+Let the total cochain complex $C^n$ be the space of all decoration data of total degree $n = p + q$.
+The filtration level $F^p C^n$ consists of decoration data where the first $p-1$ layers (the ones on \emph{low}-codimensional domain walls) are trivially zero:
+\begin{equation}
+\alpha \in F^p C^n \quad \Longleftrightarrow \quad \text{layers } 0, 1, \ldots, p-1 \text{ of } \alpha \text{ are zero.}
+\end{equation}
+The condition $\dd(F^p C^n) \subseteq F^p C^{n+1}$ holds because the coboundary of a cochain with vanishing low layers has vanishing low layers in its coboundary (the coboundary equations are ``upper-triangular'' in the layer index).
+
+\begin{remark}
+The filtration captures the idea that the layers have a natural ordering: you solve the bottom layer first, then use its solution to constrain the next layer, and so on.
+A spectral sequence is the algebraic machine that implements this ``solve layer by layer'' strategy.
+\end{remark}
+
+\subsection{The bigrading: what $(p,q)$ means}
+\label{subsec:bigrading}
+
+The total degree $n$ of a cochain decomposes as $n = p + q$, where:
+\begin{itemize}
+    \item $p$ is the \emph{filtration degree}: it labels the layer (i.e., which codimensional domain wall the decoration lives on).
+    Equivalently, $p$ is the degree of the inhomogeneous cochain on $\Gb$.
+    \item $q$ is the \emph{complementary degree}: it labels the \emph{type} of the decorating topological phase.
+\end{itemize}
+
+For the FSPT classification, the $q$-index has a direct physical meaning:
+\begin{equation}
+\label{eq:q-dictionary}
+\boxed{
+\begin{aligned}
+q = 0 &: \quad \text{Bosonic SPT phase} \quad (A_0 = \U(1)), \\
+q = 1 &: \quad \text{Complex fermion} \quad (A_1 = \Zt), \\
+q = 2 &: \quad \text{Majorana chain} \quad (A_2 = \Zt), \\
+q = 3 &: \quad p+ip \text{ superconductor} \quad (A_3 = \Z).
+\end{aligned}
+}
+\end{equation}
+
+So for a $d$-dimensional spatial FSPT, the total degree is $n = d + 1$ (the spacetime dimension), and the relevant entries are those with $p + q = d + 1$, $p \geq 1$, $q \geq 0$.
+
+\begin{example}[2+1D bigrading]
+\label{ex:2d-bigrading}
+For $d = 2$, the total degree is $n = 3$.
+The relevant bidegrees are:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{cccl}
+\toprule
+$(p,q)$ & $p$-cochain on $\Gb$ & Coefficient $A_q$ & Physical layer \\
+\midrule
+$(1,2)$ & 1-cochain & $\Zt$ & Majorana chain \\
+$(2,1)$ & 2-cochain & $\Zt$ & Complex fermion \\
+$(3,0)$ & 3-cochain & $\U(1)$ & Bosonic SPT \\
+\bottomrule
+\end{tabular}
+\end{center}
+This is exactly the triplet $(n_1, n_2, \nu_3)$ from \S\ref{subsec:coboundary-eqs}.
+\end{example}
+
+\begin{example}[3+1D bigrading]
+For $d = 3$, the total degree is $n = 4$.
+The relevant bidegrees are:
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{ccl}
+\toprule
+$(p,q)$ & Coefficient $A_q$ & Physical layer \\
+\midrule
+$(1,3)$ & $\Z$ & $p+ip$ superconductor \\
+$(2,2)$ & $\Zt$ & Majorana chain \\
+$(3,1)$ & $\Zt$ & Complex fermion \\
+$(4,0)$ & $\U(1)$ & Bosonic SPT \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{example}
+
+\subsection{The $E_2$ page: the first approximation}
+\label{subsec:E2-page}
+
+Given the bigrading, the simplest thing we can do is to classify each layer \emph{independently}, ignoring all cross-layer couplings.
+This means computing the group cohomology of $\Gb$ with each coefficient module separately:
+\begin{equation}
+\label{eq:E2-page}
+E_2^{p,q} := H^p(\Gb, A_q).
+\end{equation}
+
+\begin{definition}[$E_2$ page]
+The \emph{second page} (or $E_2$ page) of the AHSS is the collection of all groups $E_2^{p,q}$, arranged in a grid with $p$ on the horizontal axis and $q$ on the vertical axis.
+\end{definition}
+
+Why is this called the ``second page'' and not the ``first''?
+The first page $E_1^{p,q} = C^p(\Gb, A_q)$ is the full cochain module, before taking any cohomology.
+The $E_2$ page takes the cohomology of the standard group coboundary, which is a well-defined operation independent of the cross-layer couplings.
+It is the natural starting point for classification.
+
+\begin{remark}[Physical interpretation of $E_2$]
+\label{rem:E2-physical}
+$E_2^{p,q} = H^p(\Gb, A_q)$ is the group of \emph{inequivalent cocycles} in degree $p$ with coefficient $A_q$, modulo coboundaries.
+Physically, this is the classification of $A_q$-type decorations on $p$-dimensional domain walls, if those decorations were completely independent of all other layers.
+The $E_2$ page is the ``zeroth-order'' classification: it tells you how many candidate decorations there are, before accounting for inter-layer obstructions.
+\end{remark}
+
+\begin{example}[2+1D $E_2$ page for $\Gb = \Zt$]
+For $\Gb = \Zt$ (e.g., time-reversal symmetry alone), the group cohomology is $H^n(\Zt, \Zt) = \Zt$ for all $n \geq 0$, and similarly for $\U(1)$ coefficients.
+So the $E_2$ page along the line $p + q = 3$ is:
+\begin{equation}
+E_2^{1,2} = H^1(\Zt, \Zt) = \Zt, \quad
+E_2^{2,1} = H^2(\Zt, \Zt) = \Zt, \quad
+E_2^{3,0} = H^3(\Zt, \U(1)) = \Zt.
+\end{equation}
+If there were no cross-layer couplings, the classification would be $\Zt^3$.
+As we will see, the differentials may reduce this.
+\end{example}
+
+\subsection{Differentials: obstructions from cross-layer couplings}
+\label{subsec:differentials}
+
+The $E_2$ page ignores the couplings between layers.
+The \emph{differentials} of the spectral sequence encode precisely these couplings.
+
+\begin{definition}[Differential]
+The $r$-th differential is a homomorphism
+\begin{equation}
+\label{eq:dr-bidegree}
+d_r: E_r^{p,q} \longrightarrow E_r^{p+r,\, q-r+1}
+\end{equation}
+satisfying $d_r \circ d_r = 0$.
+\end{definition}
+
+The bidegree shift $(+r, -r+1)$ is universal for all cohomological spectral sequences.
+Let us see why this particular shift arises from physics.
+
+\paragraph{Physical interpretation of $d_2$.}
+The first nontrivial differential is $d_2: E_2^{p,q} \to E_2^{p+2, q-1}$.
+In the 2+1D case, this gives
+\begin{equation}
+d_2: E_2^{1,2} \longrightarrow E_2^{3,1}.
+\end{equation}
+This maps the Majorana layer $(p,q) = (1,2)$ to the complex fermion layer $(p,q) = (3,1)$.
+Wait---$(3,1)$ has $p + q = 4 \neq 3$.
+The total degree has changed by $+1$!
+This is correct: the differential $d_2$ raises the total degree by 1, reflecting the fact that the \emph{obstruction} to extending a solution from one layer to the next lives one degree higher.
+
+Let us connect this to the coboundary equations.
+Consider a Majorana cocycle $n_1 \in Z^1(\Gb, \Zt)$, representing an element of $E_2^{1,2}$.
+The coboundary equation \eqref{eq:2d-layer2} says
+\begin{equation}
+\dd n_2 = \omega_2 \cup n_1 + s_1 \cup n_1 \cup n_1 \pmod{2}.
+\end{equation}
+For this equation to have a solution $n_2$, the right-hand side must itself be a coboundary (i.e., it must be cohomologically trivial).
+The map
+\begin{equation}
+d_2(n_1) := [\omega_2 \cup n_1 + s_1 \cup n_1 \cup n_1] \in H^3(\Gb, \Zt) = E_2^{3,1}
+\end{equation}
+is precisely the obstruction.
+If $d_2(n_1) \neq 0$, then this particular $n_1$ is \emph{obstructed}: there is no consistent complex fermion decoration compatible with it.
+
+\begin{remark}
+More precisely, $d_2$ is not just defined on cocycles $n_1$ but on cohomology classes $[n_1] \in H^1(\Gb, \Zt)$.
+One can verify that the obstruction depends only on the cohomology class, not on the particular cocycle representative.
+This is a standard check in the construction of spectral sequence differentials.
+\end{remark}
+
+\paragraph{Physical interpretation of higher differentials.}
+The $d_3$ differential connects $E_3^{p,q}$ to $E_3^{p+3, q-2}$, skipping two bidegree positions.
+Physically, this represents a \emph{secondary obstruction}: even after resolving the $d_2$ obstruction, there may be a further obstruction that only becomes visible after the first-order correction is made.
+
+In the FSPT context, $d_3$ and higher differentials typically encode the obstruction of the bosonic phase $\nu_{d+1}$ by the fermionic decoration data.
+For example, the complicated obstruction function $\mathcal{O}_4[n_2]$ in \eqref{eq:O4-explicit} contributes to both $d_2$ (through its dependence on $n_2$, which in turn depends on $n_1$) and potentially $d_3$ (through higher-order effects).
+
+\subsection{Pages: the ``survivors'' after each round}
+\label{subsec:pages}
+
+After defining $d_r$, the next page is obtained by taking cohomology:
+
+\begin{definition}[Page recursion]
+\begin{equation}
+\label{eq:page-recursion}
+E_{r+1}^{p,q} := \frac{\ker\bigl(d_r: E_r^{p,q} \to E_r^{p+r,\, q-r+1}\bigr)}{\im\bigl(d_r: E_r^{p-r,\, q+r-1} \to E_r^{p,q}\bigr)}.
+\end{equation}
+\end{definition}
+
+Let us parse this formula carefully.
+
+The \textbf{numerator} $\ker(d_r)$ is the subgroup of $E_r^{p,q}$ consisting of elements that are \emph{not obstructed} by $d_r$.
+These are the ``survivors'' that pass the obstruction test.
+
+The \textbf{denominator} $\im(d_r)$ is the subgroup of $E_r^{p,q}$ consisting of elements that are ``hit'' by $d_r$ from another bidegree.
+Being hit by a differential means being the image of an obstruction, which corresponds to a \emph{redundancy}: these elements can be trivialized by a gauge transformation.
+
+\begin{remark}[An elimination tournament]
+The progression $E_2 \to E_3 \to E_4 \to \cdots$ can be thought of as an elimination tournament:
+\begin{itemize}
+    \item $E_2$: all candidates (group cohomology classes).
+    \item $d_2$ eliminates obstructed candidates and identifies redundant ones.
+    \item $E_3$: survivors of the first round.
+    \item $d_3$ eliminates further obstructed candidates.
+    \item $E_4$: survivors of the second round.
+    \item And so on.
+\end{itemize}
+At each round, the groups can only get \emph{smaller} (or stay the same).
+The process terminates when no further differentials can act.
+\end{remark}
+
+\subsection{Convergence: the $E_\infty$ page}
+\label{subsec:convergence}
+
+For bounded spectral sequences (which is always the case in our setting, since $p \geq 0$ and $q \geq 0$), the pages eventually stabilize:
+\begin{equation}
+\label{eq:stabilization}
+E_r^{p,q} = E_{r+1}^{p,q} = \cdots = E_\infty^{p,q} \qquad \text{for } r \gg 0.
+\end{equation}
+
+\begin{definition}[Convergence]
+The spectral sequence \emph{converges} to the cohomology of the total complex:
+\begin{equation}
+\label{eq:convergence}
+E_\infty^{p,q} \cong \gr^p H^{p+q}(C),
+\end{equation}
+where $\gr^p H^n(C) := F^p H^n(C) / F^{p+1} H^n(C)$ is the associated graded of the filtration on cohomology.
+\end{definition}
+
+What does this mean physically?
+The total cohomology $H^{d+1}(C)$ is the \emph{true classification group} of FSPT phases in $d$ spatial dimensions.
+The $E_\infty$ page gives the \emph{graded pieces} of this group.
+Each graded piece $E_\infty^{p,q}$ tells us how many independent phases survive in the layer with bidegree $(p,q)$, after all obstructions and equivalences have been accounted for.
+
+\begin{remark}[Warning: $E_\infty$ is not the whole answer]
+\label{rem:Einfty-warning}
+The $E_\infty$ page gives the \emph{graded pieces}, not the classification group itself.
+Knowing the graded pieces $\gr^p H^n$ does not uniquely determine $H^n$ as an abelian group.
+The passage from graded pieces to the full group requires solving the \emph{extension problem}, which we will discuss in detail in Part II (\S\ref{sec:extension}).
+
+As a simple analogy: knowing that a group has composition factors $\Zt$ and $\Zt$ does not tell you whether the group is $\Zt \times \Zt$ or $\Zn{4}$.
+\end{remark}
+
+
+\subsection{The AHSS in action: a complete 2+1D example}
+\label{subsec:AHSS-example}
+
+Let us work through the full AHSS for 2+1D FSPT with $\Gb = \Zt \times \Zt$ (two independent $\Zt$ symmetries, both unitary), with trivial $\omega_2 = 0$ and $s_1 = 0$.
+
+\paragraph{Step 1: Compute $E_2$.}
+The group cohomology of $\Gb = \Zt \times \Zt$ with $\Zt$ coefficients is computed by the Künneth formula.
+The relevant entries at total degree $n = 3$ are:
+\begin{align}
+E_2^{1,2} &= H^1(\Zt \times \Zt, \Zt) = \Zt^2, \\
+E_2^{2,1} &= H^2(\Zt \times \Zt, \Zt) = \Zt^3, \\
+E_2^{3,0} &= H^3(\Zt \times \Zt, \U(1)) = \Zt^4.
+\end{align}
+
+\paragraph{Step 2: Compute $d_2$.}
+Since $\omega_2 = 0$ and $s_1 = 0$, the differential $d_2: E_2^{1,2} \to E_2^{3,1}$ is the map
+$d_2(n_1) = [\omega_2 \cup n_1 + s_1 \cup n_1 \cup n_1] = 0.$
+So $d_2 = 0$ in this case, and no Majorana cocycles are obstructed.
+
+\paragraph{Step 3: Compute $E_3$.}
+Since $d_2 = 0$ everywhere along the $n = 3$ line, we have $E_3^{p,q} = E_2^{p,q}$ for all $(p,q)$ with $p + q = 3$.
+
+\paragraph{Step 4: Check $d_3$ and higher.}
+For this particular symmetry, the higher differentials also turn out to be zero, so $E_\infty = E_2$ along the line $p + q = 3$.
+The classification (before solving the extension problem) has graded pieces:
+\begin{equation}
+E_\infty^{1,2} = \Zt^2, \quad E_\infty^{2,1} = \Zt^3, \quad E_\infty^{3,0} = \Zt^4.
+\end{equation}
+
+The naive direct sum would give $\Zt^9$.
+But whether the true classification group is $\Zt^9$ or something else (e.g., $\Zn{4}$ appearing) depends on the extension problem, which we will address in Part II.
+
+\subsection{Dictionary: physics $\leftrightarrow$ AHSS}
+\label{subsec:dictionary}
+
+We now summarize the complete correspondence between the physical domain wall decoration and the AHSS:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{>{\raggedright}p{6.5cm} p{6.5cm}}
+\toprule
+\textbf{Physics} & \textbf{AHSS} \\
+\midrule
+Decoration layers on domain walls of codimension $q$
+& Bigrading $(p,q)$: the coefficient $A_q$ labels the type of decoration, $p$ labels the cochain degree \\
+\midrule
+Candidate decorations (ignoring inter-layer coupling)
+& $E_2^{p,q} = H^p(\Gb, A_q)$ \\
+\midrule
+Consistency equations coupling different layers (e.g., $\dd n_2 = F(n_1)$)
+& Differentials $d_r: E_r^{p,q} \to E_r^{p+r, q-r+1}$ \\
+\midrule
+A cocycle $n_1$ is obstructed: no consistent $n_2$ exists
+& $d_2([n_1]) \neq 0$ in $E_2^{p+2, q-1}$ \\
+\midrule
+Two solutions $(n_1, n_2, \nu_3)$ differ by a gauge transformation
+& Quotient by $\im(d_r)$ in the page recursion \\
+\midrule
+``Survivors'' after accounting for all obstructions and equivalences
+& $E_\infty^{p,q}$: the stabilized page \\
+\midrule
+Total classification of FSPT phases in $d$ dimensions
+& $H^{d+1}(C)$, reconstructed from $E_\infty^{p,q}$ via extensions \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Why AHSS is more than bookkeeping}
+\label{subsec:AHSS-power}
+
+One might ask: if the coboundary equations already encode all the physics, why bother with the spectral sequence?
+The answer is that AHSS provides three things that working directly with coboundary equations does not:
+
+\begin{enumerate}[label=(\roman*)]
+    \item \textbf{Systematic organization.}
+    For complicated symmetry groups (e.g., space groups with hundreds of generators), the coboundary equations form a massive coupled system.
+    The spectral sequence breaks this into a sequence of \emph{independent} linear algebra problems on each page, which can be solved one at a time.
+
+    \item \textbf{Computability.}
+    Each page $E_r$ is obtained from $E_{r-1}$ by a standard algebraic operation (taking cohomology of a linear map).
+    This is amenable to computer algebra.
+    The \texttt{SptSet} package exploits this by implementing the page recursion directly.
+
+    \item \textbf{Structural insight.}
+    The spectral sequence reveals which obstructions are ``primary'' (visible at $E_2$), which are ``secondary'' (only appearing at $E_3$), and so on.
+    This hierarchy has physical meaning: primary obstructions come from simple consistency conditions, while secondary obstructions arise from subtler interference effects.
+\end{enumerate}
+
+
+%% ============================================================
+%% CHAPTER 4
+%% ============================================================
+\section{Computing Classification with SptSet}
+\label{sec:sptset-classification}
+
+The mathematical framework of the AHSS has been implemented as the \texttt{SptSet} package for the GAP computer algebra system.
+This section gives a hands-on introduction: how to set up a computation, how to read the output, and what the output means mathematically and physically.
+
+\subsection{The computational pipeline}
+\label{subsec:pipeline}
+
+The standard workflow for computing an FSPT classification with \texttt{SptSet} consists of five steps:
+
+\begin{equation}
+\boxed{\text{Group}} \;\xrightarrow{1}\; \boxed{\text{Resolution}} \;\xrightarrow{2}\; \boxed{\text{Parity map}} \;\xrightarrow{3}\; \boxed{\text{Spectral sequence}} \;\xrightarrow{4}\; \boxed{\text{Classification}}
+\end{equation}
+
+Let us walk through each step using a concrete 2D example.
+
+\subsubsection{Step 1: Choose a symmetry group}
+
+For crystalline symmetries, the symmetry group $\Gb$ is a space group.
+In GAP, 2D space groups (wallpaper groups) are created using the \texttt{cryst} package:
+\begin{verbatim}
+LoadPackage("SptSet");
+SG := SpaceGroupBBNWZ(2, 13);   # wallpaper group No. 13 (p6)
+\end{verbatim}
+Here \texttt{SpaceGroupBBNWZ(2, it)} creates the \texttt{it}-th wallpaper group ($\texttt{it} = 2, \ldots, 17$).
+The space group must be converted to a polycyclically presented (Pcp) group, which is the format required by the HAP package for computing resolutions:
+\begin{verbatim}
+fSG := IsomorphismPcpGroup(SG);
+SG1 := Image(fSG);
+\end{verbatim}
+
+\subsubsection{Step 2: Compute a resolution}
+
+A resolution of the group is the algebraic input needed for group cohomology computations.
+For crystallographic groups, HAP provides:
+\begin{verbatim}
+R := ResolutionAlmostCrystalGroup(SG1, 6);
+\end{verbatim}
+The second argument (\texttt{6}) is the dimension bound: the resolution is computed up to degree 6, which is sufficient for classifying FSPT up to 4+1D ($p + q \leq 5$).
+
+\subsubsection{Step 3: Define the fermion parity map}
+
+The fermion parity map $\rho: \Gb \to \text{GL}(1, \Z) \cong \{\pm 1\}$ encodes whether each symmetry element is unitary or anti-unitary.
+For space groups, this is determined by the determinant of the point-group part:
+\begin{verbatim}
+gs := GeneratorsOfGroup(SG);
+f := GroupHomomorphismByImagesNC(SG1, GL(1, Integers),
+  List(gs, x -> Image(fSG, x)),
+  List(gs, x -> [[DeterminantMat(x)]]));
+\end{verbatim}
+The function $s(g) = \frac{1 - \rho(g)_{11}}{2}$ then gives $s(g) = 0$ for unitary and $s(g) = 1$ for anti-unitary elements.
+
+\subsubsection{Step 4: Construct the spectral sequence}
+
+With the resolution and the parity map in hand, we construct the spectral sequence object:
+\begin{verbatim}
+SS := FermionEZSPTSpecSeq(R, f);
+\end{verbatim}
+This single function call does a great deal of work behind the scenes:
+\begin{enumerate}[label=(\alph*)]
+    \item It sets up the spectrum of coefficient systems $\{A_q\}$: $\U(1)$, $\Zt$, $\Zt$, $\Z$.
+    \item It installs all the cochain-level coboundary formulas (the physics input) for each bidegree $(r, p, q)$.
+    \item It installs the stacking twisters (for later use in the extension problem).
+    \item It initializes the caching infrastructure for pages $E_r^{p,q}$.
+\end{enumerate}
+
+\subsubsection{Step 5: Read off the classification}
+
+The classification layers are displayed by:
+\begin{verbatim}
+FermionSPTLayersVerbose(SS, 2);
+\end{verbatim}
+The argument \texttt{2} is the spatial dimension $d$.
+The function prints the spectral sequence pages $E_r^{p,q}$ for all relevant bidegrees along $p + q = d + 1 = 3$.
+
+
+\subsection{Reading the output}
+\label{subsec:reading-output}
+
+A typical output looks like:
+\begin{verbatim}
+Majorana:       # (p,q) = (1,2)
+  E2: <ZL-Module with torsions [ 2 ]>
+  E3: <ZL-Module with torsions [ 2 ]>
+  E4: <ZL-Module with torsions [ 2 ]>
+Complex fermion:  # (p,q) = (2,1)
+  E2: <ZL-Module with torsions [ 2, 2 ]>
+  E3: <ZL-Module with torsions [ 2 ]>
+Bosonic:        # (p,q) = (3,0)
+  E2: <ZL-Module with torsions [ 2, 2, 2 ]>
+  E3: <ZL-Module with torsions [ 2, 2, 2 ]>
+\end{verbatim}
+
+Here is how to read it:
+\begin{itemize}
+    \item Each heading (``Majorana'', ``Complex fermion'', ``Bosonic'') corresponds to a value of $q$ according to the dictionary \eqref{eq:q-dictionary}.
+    \item Under each heading, the lines show the groups $E_r^{p,q}$ for $r = 2, 3, \ldots$
+    \item \texttt{<ZL-Module with torsions [2, 2]>} means the group $\Zt \times \Zt$.
+    \item When the group stops changing as $r$ increases, the spectral sequence has \emph{stabilized} at that bidegree: the displayed group is $E_\infty^{p,q}$.
+\end{itemize}
+
+In the example above:
+\begin{itemize}
+    \item The Majorana layer $E_\infty^{1,2} = \Zt$.
+    \item The complex fermion layer changed from $\Zt^2$ at $E_2$ to $\Zt$ at $E_3$ (meaning a nontrivial $d_2$ killed one generator).
+    \item The bosonic layer $E_\infty^{3,0} = \Zt^3$.
+\end{itemize}
+
+\subsection{Complete example script}
+\label{subsec:complete-script}
+
+Here is the complete script that classifies all 2D wallpaper groups:
+\begin{verbatim}
+LoadPackage("SptSet");
+
+for it in [2..17] do
+  Display(it);
+  SG := SpaceGroupBBNWZ(2, it);
+  fSG := IsomorphismPcpGroup(SG);
+  SG1 := Image(fSG);
+  R := ResolutionAlmostCrystalGroup(SG1, 6);
+  gs := GeneratorsOfGroup(SG);
+
+  f := GroupHomomorphismByImagesNC(SG1, GL(1, Integers),
+    List(gs, x -> Image(fSG, x)),
+    List(gs, x -> [[DeterminantMat(x)]]));
+
+  SS := FermionEZSPTSpecSeq(R, f);
+  FermionSPTLayersVerbose(SS, 2);
+od;
+\end{verbatim}
+This loops over all 16 non-trivial wallpaper groups, computing the AHSS for each one.
+The output gives the $E_\infty$ pages (graded pieces of the classification) for all 2+1D FSPT phases protected by each wallpaper group symmetry.
+
+\subsection{Architecture of SptSet: a map for the curious}
+\label{subsec:architecture}
+
+For readers who want to look under the hood, here is a map of how the code is organized:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{ll}
+\toprule
+\textbf{File} & \textbf{Role} \\
+\midrule
+\texttt{lib/ss\_fermion\_ez.gi} & Physics input: coboundary formulas and twisters \\
+\texttt{lib/ss\_vanilla.gi} & AHSS engine: pages, differentials, caching \\
+\texttt{lib/spectral\_sequence.gi} & Spectral sequence algebra (page recursion) \\
+\texttt{lib/bar\_resolution\_map*.gi} & Bridge between HAP resolutions and cochains \\
+\texttt{lib/group\_cohomology.gi} & Group cohomology via HAP \\
+\texttt{lib/coefficient.gi} & Coefficient systems ($\U(1)$, $\Zt$, etc.) \\
+\texttt{lib/zlmap.gi} & Linear algebra over $\Z$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The separation between physics input (\texttt{ss\_fermion\_ez.gi}) and the general AHSS engine (\texttt{ss\_vanilla.gi}) is deliberate.
+To extend the classification to new physical models, one writes a new physics-input file (analogous to \texttt{ss\_fermion\_ez.gi}) that installs the appropriate coboundary formulas, while the AHSS engine remains unchanged.
+
+The two key APIs that connect physics to the engine are:
+\begin{itemize}
+    \item \texttt{SptSetInstallCoboundary(SS, r, p, q, f)}: installs a cochain-level formula $f$ that defines the $d_r$ differential at bidegree $(p,q)$.
+    \item \texttt{SptSetInstallAddTwister(SS, p, q, A)}: installs a stacking correction (twister) at bidegree $(p,q)$, used for the extension problem.
+\end{itemize}
+Both take functions as arguments: the physics formulas are literally GAP functions that take cochains in and return cochains out.
+
+
+%% ============================================================
+%% CHAPTER 5
+%% ============================================================
+\section{Stacking: Physics of the Group Law}
+\label{sec:stacking-physics}
+
+Part I answered the question: \emph{what are the distinct FSPT phases?}
+Part II addresses the follow-up: \emph{how do these phases combine when you stack two systems together?}
+
+\subsection{What is stacking?}
+\label{subsec:what-is-stacking}
+
+Given two FSPT states $\Psi_1$ and $\Psi_2$ with the same symmetry $\Gf$, their \emph{stacking} (or \emph{tensor product}) $\Psi_1 \boxtimes \Psi_2$ is the state obtained by placing the two systems on top of each other and treating them as a single system.
+
+The set of FSPT phases forms an \emph{abelian group} under stacking:
+\begin{itemize}
+    \item The identity is the trivial (product) state.
+    \item The inverse of a phase is its ``mirror image'' (orientation reversal or complex conjugation).
+    \item Stacking is associative and commutative.
+\end{itemize}
+The goal of this section is to determine this group---the \emph{stacking group}---which is the true classification group of FSPT phases.
+
+\subsection{Naive expectation vs.\ reality}
+\label{subsec:naive-vs-reality}
+
+If each layer of the decoration were independent, the stacking rule would be simple: add each layer separately.
+Given two decorations $(n_1, n_2, \nu_3)$ and $(n_1', n_2', \nu_3')$, their stack would be
+\begin{equation}
+(n_1 + n_1',\; n_2 + n_2',\; \nu_3 \cdot \nu_3').
+\end{equation}
+This would make the stacking group a direct product: $E_\infty^{1,2} \times E_\infty^{2,1} \times E_\infty^{3,0}$.
+
+However, the layers are \emph{not} independent.
+The physical stacking rules contain \emph{cross-terms} between different layers.
+These cross-terms arise because the decoration on a domain wall depends on the configuration of the \emph{entire} system, including the decorations on other domain walls.
+
+\subsection{The 2+1D stacking rules}
+\label{subsec:2d-stacking}
+
+The stacking of two 2+1D FSPT states $(n_1, n_2, \nu_3) \boxtimes (n_1', n_2', \nu_3') = (N_1, N_2, \mathcal{V}_3)$ is given by:
+\begin{align}
+N_1 &= n_1 + n_1' \pmod{2}, \label{eq:stack-N1} \\
+N_2 &= n_2 + n_2' + \underbrace{n_1 \cup n_1' + s_1 \cup (n_1 \cup_1 n_1')}_{m_2} \pmod{2}, \label{eq:stack-N2} \\
+\mathcal{V}_3 &= \nu_3 \cdot \nu_3' \cdot \underbrace{(-1)^{\epsilon_3} \cdot e^{2\pi i \theta_3[n_1, n_1']}}_{\mathcal{E}_3}. \label{eq:stack-V3}
+\end{align}
+
+Let us examine each equation:
+
+\paragraph{Equation \eqref{eq:stack-N1}: The Majorana layer adds simply.}
+The Majorana chains combine by simple mod-2 addition.
+No cross-terms appear at this level.
+This is because the Majorana layer is the ``lowest'' layer (highest $q$), and there is nothing below it to couple to.
+
+\paragraph{Equation \eqref{eq:stack-N2}: Cross-terms in the complex fermion layer.}
+The complex fermion decoration $N_2$ is \emph{not} simply $n_2 + n_2'$.
+There is an extra term $m_2 = n_1 \cup n_1' + s_1 \cup (n_1 \cup_1 n_1')$ that depends on the \emph{Majorana layers} of both states.
+Physically, when two Majorana chain configurations overlap, additional complex fermion modes can be created at their intersections.
+These must be properly accounted for in $N_2$.
+
+\paragraph{Equation \eqref{eq:stack-V3}: Cross-terms in the bosonic layer.}
+The bosonic phase $\mathcal{V}_3$ picks up a correction factor $\mathcal{E}_3$ that depends on all lower layers.
+This factor has two parts:
+\begin{itemize}
+    \item $(-1)^{\epsilon_3}$: a sign from the anticommutation of complex fermions, with $\epsilon_3$ involving cup products and higher cup products of $n_2, n_2', N_2, m_2$ and their coboundaries.
+    \item $e^{2\pi i \theta_3}$: a phase from the recombination of Majorana fermions during stacking, the so-called ``Majorana phase''.
+    This is a $\U(1)$-valued function of $n_1$ and $n_1'$ that involves $1/2$, $1/4$, and even $5/8$ fractional coefficients in the exponent, reflecting the $\Zn{8}$-valued nature of certain Majorana invariants.
+\end{itemize}
+
+\subsection{The key observation: stacking is not a direct product}
+\label{subsec:key-observation}
+
+The cross-terms $m_2$ in \eqref{eq:stack-N2} and $\mathcal{E}_3$ in \eqref{eq:stack-V3} have a profound consequence: the stacking group is \emph{not} a direct product of the individual layer classifications.
+
+\begin{example}
+Consider the $\Gf = \Zn{4}^{f,T}$ symmetry in 3+1D.
+The spectral sequence gives:
+\begin{equation}
+E_\infty^{1,3} = \Zt \;\; (p+ip), \qquad E_\infty^{3,1} = \Zt \;\; (\text{complex fermion}).
+\end{equation}
+If stacking were a direct product, the classification group would be $\Zt \times \Zt = \Zn{2}^2$.
+But the cross-terms in the stacking rule produce a nontrivial extension:
+the $p+ip$ generator, when stacked with itself, produces a nonzero complex fermion class.
+In other words, $2 \times [p+ip] = [\text{CF}]$ in the full classification.
+This means the true classification group is $\Zn{4}$, not $\Zn{2}^2$.
+\end{example}
+
+This is the essence of the \emph{extension problem}, which we formalize mathematically in the next section.
+
+
+%% ============================================================
+%% CHAPTER 6
+%% ============================================================
+\section{The Extension Problem: Mathematics of Stacking}
+\label{sec:extension}
+
+The AHSS gives us the graded pieces $E_\infty^{p,q}$.
+But the true classification group $\mathcal{C}$ is generally \emph{not} the direct sum of these pieces.
+Reconstructing $\mathcal{C}$ from its graded pieces is the \emph{extension problem}.
+This section explains the mathematics behind this problem and how it connects to the physical stacking rules.
+
+\subsection{The extension problem: a general formulation}
+\label{subsec:extension-general}
+
+\begin{definition}[Extension of abelian groups]
+An \emph{extension} of an abelian group $B$ by an abelian group $A$ is a short exact sequence
+\begin{equation}
+\label{eq:ses}
+0 \longrightarrow A \xrightarrow{\iota} E \xrightarrow{\pi} B \longrightarrow 0.
+\end{equation}
+The group $E$ ``extends'' $B$ by $A$: it contains $A$ as a subgroup, with quotient $B$.
+\end{definition}
+
+The extension is \emph{trivial} (or \emph{splits}) if $E \cong A \oplus B$.
+In general, there can be nontrivial extensions.
+
+\begin{example}
+The groups $\Zt \times \Zt$ and $\Zn{4}$ are both extensions of $\Zt$ by $\Zt$:
+\begin{align}
+0 \to \Zt \to \Zt \times \Zt \to \Zt \to 0 &\qquad \text{(trivial extension)}, \\
+0 \to \Zt \to \Zn{4} \to \Zt \to 0 &\qquad \text{(nontrivial extension)}.
+\end{align}
+In the first case, $1 + 1 = 0$ in each factor independently.
+In the second case, the generator of $\Zn{4}$ has order 4: $1 + 1 = 2 \neq 0$, but $2 + 2 = 0$.
+The element $2 \in \Zn{4}$ is the nontrivial element of the subgroup $\Zt$.
+\end{example}
+
+\subsection{Extension cocycles: the mathematical incarnation of cross-terms}
+\label{subsec:extension-cocycles}
+
+Given a short exact sequence \eqref{eq:ses}, choose a set-theoretic section $s: B \to E$ (a map with $\pi \circ s = \mathrm{id}_B$, not necessarily a group homomorphism).
+The failure of $s$ to be a homomorphism is measured by the \emph{extension 2-cocycle}:
+\begin{equation}
+\label{eq:ext-cocycle}
+t(b_1, b_2) := s(b_1) + s(b_2) - s(b_1 + b_2) \in A.
+\end{equation}
+The map $t: B \times B \to A$ satisfies the cocycle condition $\delta t = 0$ (associativity of $E$ forces this).
+The extension class $[t] \in H^2(B, A)$ determines the isomorphism type of $E$ up to equivalence.
+
+\begin{remark}[Connection to physics]
+Equation \eqref{eq:ext-cocycle} has exactly the same structure as the stacking cross-terms.
+If we identify:
+\begin{align*}
+B &= E_\infty^{p_1, q_1} \quad (\text{one layer}), \\
+A &= E_\infty^{p_2, q_2} \quad (\text{another layer, with } p_2 > p_1), \\
+s(b) &= \text{the cochain representative of the class } b, \\
+t(b_1, b_2) &= \text{the stacking cross-term (add-twister)},
+\end{align*}
+then the extension cocycle \eqref{eq:ext-cocycle} is precisely the \texttt{addTwister} function installed in SptSet.
+\end{remark}
+
+\subsection{From graded pieces to the full classification}
+\label{subsec:graded-to-full}
+
+For a total degree $n$, the AHSS produces a filtration
+\begin{equation}
+0 = F_{-1} \subset F_0 \subset F_1 \subset \cdots \subset F_n = \mathcal{C}_n,
+\end{equation}
+with graded pieces
+\begin{equation}
+F_p / F_{p-1} \cong E_\infty^{p, n-p}.
+\end{equation}
+The full classification group $\mathcal{C}_n$ is reconstructed by solving a chain of extension problems:
+\begin{equation}
+\label{eq:extension-chain}
+\begin{tikzcd}[column sep=small]
+0 \ar[r] & E_\infty^{1, n-1} \ar[r] & F_1 \ar[r] & E_\infty^{0, n} \ar[r] & 0 \\
+0 \ar[r] & F_1 \ar[r] & F_2 \ar[r] & E_\infty^{2, n-2} \ar[r] & 0 \\
+& & \vdots & & \\
+0 \ar[r] & F_{n-1} \ar[r] & \mathcal{C}_n \ar[r] & E_\infty^{n, 0} \ar[r] & 0
+\end{tikzcd}
+\end{equation}
+
+Each row is an extension problem that asks: given $F_{p-1}$ and $E_\infty^{p, n-p}$, what is $F_p$?
+The answer is determined by the extension cocycle, which in our setting is computed from the stacking cross-terms.
+
+\begin{remark}
+In many cases (especially for odd-order groups or when the cross-terms happen to be trivial), the extensions split and $\mathcal{C}_n \cong \bigoplus_p E_\infty^{p, n-p}$.
+The interesting physics happens when extensions are nontrivial, leading to groups like $\Zn{4}$ or $\Zn{8}$ instead of products of $\Zt$'s.
+\end{remark}
+
+\subsection{Add-twisters in SptSet: the computational implementation}
+\label{subsec:addtwister-code}
+
+In the \texttt{SptSet} package, the stacking of two cochain representatives is implemented by the function \texttt{SptSetStack(c1, c2)}.
+For each layer $p$ (with $q = n - p$), the stacking rule is:
+\begin{equation}
+\label{eq:stack-code}
+\texttt{layers[p+1]} := \texttt{c1.layers[p+1]} + \texttt{c2.layers[p+1]} + \texttt{addTwister[p+1][q+1](c1.layers, c2.layers)}.
+\end{equation}
+This is equation \eqref{eq:ext-cocycle} in code form: the first two terms are the ``naive'' addition, and the third term is the cross-term $t(b_1, b_2)$.
+
+The twister function \texttt{addTwister[p+1][q+1]} takes as input the \emph{full layer lists} of both cochains, not just the individual layers.
+This is because the cross-term for a given $(p,q)$ can depend on layers at \emph{different} bidegrees.
+For example, the bosonic twister at $(p,q) = (3,0)$ in 2+1D depends on the Majorana layers $(p,q) = (1,2)$ and complex fermion layers $(p,q) = (2,1)$ of both inputs.
+
+\subsection{The worked $\Zn{4}^{f,T}$ example revisited}
+\label{subsec:z4ft-revisited}
+
+Let us trace through the extension problem for the $\Gf = \Zn{4}^{f,T}$ example in 3+1D.
+
+\paragraph{Step 1: The graded pieces.}
+The AHSS gives:
+\begin{equation}
+E_\infty^{1,3} = \Zt \quad (p+ip), \qquad E_\infty^{2,2} = 0, \qquad E_\infty^{3,1} = \Zt \quad (\text{CF}), \qquad E_\infty^{4,0} = 0.
+\end{equation}
+The Majorana and bosonic layers vanish after the differentials act.
+
+\paragraph{Step 2: Extension chain.}
+We need to solve:
+\begin{equation}
+0 \to E_\infty^{3,1} \to \mathcal{C}_4 \to E_\infty^{1,3} \to 0,
+\end{equation}
+i.e., $0 \to \Zt \to \mathcal{C}_4 \to \Zt \to 0$.
+The two possibilities are $\mathcal{C}_4 = \Zt \times \Zt$ (trivial extension) or $\mathcal{C}_4 = \Zn{4}$ (nontrivial).
+
+\paragraph{Step 3: Compute the extension cocycle.}
+Let $x$ be the generator of $E_\infty^{1,3}$ (the $p+ip$ class).
+We stack $x$ with itself: $x \boxtimes x = 2x$.
+At the cochain level, the stacking produces a nonzero term in the complex fermion layer, through the add-twister.
+After purification (removing coboundary-trivial parts), the $p = 1$ layer of $2x$ is zero (it is $2 \times [\text{generator}]$ in a $\Zt$ module), but the $p = 3$ layer is nonzero:
+\begin{equation}
+2x = y \neq 0 \in E_\infty^{3,1}.
+\end{equation}
+This means $2 \times [p+ip] = [\text{CF}]$, and $4 \times [p+ip] = 2 \times [\text{CF}] = 0$.
+The classification group is $\Zn{4}$, not $\Zt \times \Zt$.
+
+\paragraph{Physical interpretation.}
+Stacking two copies of the $p+ip$ superconductor decoration creates a Majorana chain decoration (through a cross-term), which then manifests as a nontrivial complex fermion class after purification.
+This is a purely \emph{interaction-enabled} phenomenon: in the free-fermion classification, two copies of $p+ip$ would simply give a trivial state.
+
+%% ============================================================
+%% CHAPTER 7
+%% ============================================================
+\section{Computing Stacking Groups with SptSet}
+\label{sec:sptset-stacking}
+
+\subsection{From layers to the full group}
+\label{subsec:layers-to-group}
+
+The function that computes the full classification group (including extensions) is:
+\begin{verbatim}
+M := SptSetSpecSeqResult(SS, 3, [1,2,3]);
+SptSetFpZModuleCanonicalForm(M);
+Display(M);
+\end{verbatim}
+
+Let us parse the arguments:
+\begin{itemize}
+    \item \texttt{SS}: the spectral sequence object.
+    \item \texttt{3}: the total degree $n = d + 1$ (here $d = 2$).
+    \item \texttt{[1,2,3]}: the range of $p$ values to include ($p = 1, 2, 3$, corresponding to Majorana, CF, and bosonic layers).
+\end{itemize}
+
+The function iterates over the $p$ range and repeatedly applies the extension constructor \texttt{SptSetSpecSeqModuleExtension}, building up the full classification group from the graded pieces.
+
+\subsection{The extension script for 2D wallpaper groups}
+\label{subsec:ext-script}
+
+The complete script for computing stacking groups is:
+\begin{verbatim}
+LoadPackage("SptSet");
+
+for it in [2..17] do
+  Display(it);
+  SG := SpaceGroupBBNWZ(2, it);
+  fSG := IsomorphismPcpGroup(SG);
+  SG1 := Image(fSG);
+  R := ResolutionAlmostCrystalGroup(SG1, 6);
+  gs := GeneratorsOfGroup(SG);
+
+  f := GroupHomomorphismByImagesNC(SG1, GL(1, Integers),
+    List(gs, x -> Image(fSG, x)),
+    List(gs, x -> [[DeterminantMat(x)]]));
+
+  SS := FermionEZSPTSpecSeq(R, f);
+
+  # Classification layers (E_infinity pages)
+  layers := FermionSPTLayers(SS, 2);
+  Display("Layers:");
+  Display(layers);
+
+  # Full stacking group (with extensions)
+  M := SptSetSpecSeqResult(SS, 3, [1,2,3]);
+  SptSetFpZModuleCanonicalForm(M);
+  Display(M);
+od;
+\end{verbatim}
+
+The output for each wallpaper group shows two things:
+\begin{enumerate}
+    \item \textbf{Layers}: the list of $E_\infty^{p,q}$ groups (graded pieces).
+    \item \textbf{M}: the full classification group after solving the extension problem.
+\end{enumerate}
+Comparing these two reveals whether any nontrivial extensions occur.
+
+\subsection{Reading the output: layers vs.\ full group}
+\label{subsec:layers-vs-full}
+
+Consider a wallpaper group where the output is:
+\begin{verbatim}
+Layers:
+[ <ZL-Module with torsions [ 2 ]>,         # E_inf^{1,2} = Z_2
+  <ZL-Module with torsions [ 2, 2 ]>,      # E_inf^{2,1} = Z_2^2
+  <ZL-Module with torsions [ 2, 2, 4 ]> ]  # E_inf^{3,0} = Z_2^2 x Z_4
+
+M:
+<ZL-Module with torsions [ 2, 4, 4, 4 ]>   # full group = Z_2 x Z_4^3
+\end{verbatim}
+
+If the extension were trivial, the full group would be $\Zt \times \Zt^2 \times (\Zt^2 \times \Zn{4}) = \Zt^5 \times \Zn{4}$.
+But the actual group is $\Zt \times \Zn{4}^3$, which is different.
+The discrepancy reveals that nontrivial extensions occur between the layers, promoted by cross-terms in the stacking rules.
+
+\subsection{Interpreting the results physically}
+\label{subsec:interpret-results}
+
+The full stacking group $\mathcal{C}$ answers the following physical questions:
+\begin{enumerate}[label=(\roman*)]
+    \item \textbf{How many distinct phases?} The order of $\mathcal{C}$ gives the total number.
+    \item \textbf{What are the generators?} Each generator of $\mathcal{C}$ corresponds to a ``root phase''---a phase that cannot be obtained by stacking simpler ones.
+    \item \textbf{What is the order of each generator?} This tells you how many copies must be stacked to obtain the trivial phase. For example, if a generator has order 4, stacking 4 copies gives the trivial state.
+    \item \textbf{Are there unexpected relations?} A nontrivial extension means that stacking certain phases produces phases in a \emph{different} layer. For instance, stacking two Majorana phases might produce a complex fermion phase.
+\end{enumerate}
+
+\subsection{Known limitations}
+\label{subsec:limitations}
+
+The current implementation has several known limitations:
+\begin{itemize}
+    \item \textbf{Higher-page differentials}: The AHSS engine fully implements $d_2$ and $d_3$, but $d_r$ for $r \geq 4$ is not implemented. This is sufficient for 2+1D but may miss effects in 3+1D and beyond.
+    \item \textbf{Purification beyond $r = 2$}: The class purification algorithm (which removes coboundary-trivial ambiguities) currently works only at $r = 2$. For higher pages, it raises an error.
+    \item \textbf{$p + ip$ stacking}: Some stacking twisters involving the $p + ip$ layer in 3+1D are set to zero (placeholders). The $p + ip$ differentials $d_3$ and $d_4$ are currently unknown.
+    \item \textbf{Assertion failures}: For certain wallpaper groups, the extension computation encounters assertion failures related to non-integer Bockstein images, indicating subtle bugs in the stacking law or purification.
+\end{itemize}
+
+
+%% ============================================================
+%% CHAPTER 8
+%% ============================================================
+\section{Summary and Outlook}
+\label{sec:outlook}
+
+\subsection{What we have learned}
+
+This lecture presented a systematic framework for the classification and stacking of interacting fermionic SPT phases:
+
+\begin{enumerate}
+    \item \textbf{Domain wall decoration} provides a constructive, physical picture: every FSPT phase corresponds to a specific pattern of lower-dimensional topological decorations on symmetry domain walls.
+    
+    \item \textbf{The AHSS} organizes the classification into a computable algebraic framework:
+    \begin{itemize}
+        \item The $E_2$ page gives the ``first approximation'' from independent group cohomology.
+        \item Differentials $d_r$ encode obstructions and equivalences between layers.
+        \item The $E_\infty$ page gives the graded pieces of the classification.
+    \end{itemize}
+    
+    \item \textbf{The extension problem} captures the nontrivial stacking structure: cross-terms between layers mean that the classification group is generally not a direct product.
+    The add-twisters encode the extension cocycles.
+    
+    \item \textbf{SptSet} implements the entire pipeline in GAP, making systematic classification possible for any symmetry group with a computable resolution.
+\end{enumerate}
+
+\subsection{Comparison with free-fermion classification}
+
+For crystalline symmetries, the free-fermion classification comes from $K$-theory applied to the band structure.
+The interacting classification from AHSS can differ in several ways:
+\begin{itemize}
+    \item \textbf{Collapse}: A $\Z$ free-fermion invariant may become $\Z_n$ when interactions are included (fewer distinct phases).
+    \item \textbf{New phases}: The AHSS may find phases (especially at higher $q$) that have no free-fermion counterpart.
+    \item \textbf{Modified group structure}: Even when the total number of phases is the same, the stacking group structure (extensions vs.\ direct products) can differ.
+\end{itemize}
+
+The domain wall decoration / AHSS approach naturally includes \emph{all} interacting effects from the start, rather than treating interactions as a perturbation on top of the free-fermion classification.
+
+\subsection{Open problems and future directions}
+
+\begin{enumerate}
+    \item \textbf{Full 3+1D classification}: Completing the higher-page differentials ($d_r$ for $r \geq 4$) and the missing stacking twisters for the $p + ip$ layer.
+    
+    \item \textbf{4+1D and beyond}: Extending the spectrum and the engine infrastructure to handle higher-dimensional cases, where new types of decorations appear.
+    
+    \item \textbf{Anomalous SET phases}: Extending the framework to symmetry-enriched topological phases, where the bulk carries topological order.
+    
+    \item \textbf{Fermionic crystalline equivalence principle}: Using the equivalence principle to relate internal FSPT to crystalline FSPT, extending the classification to all 230 space groups systematically.
+    
+    \item \textbf{Physical observables}: Connecting the mathematical invariants to measurable quantities (surface states, response functions, entanglement spectra).
+\end{enumerate}
+
+
+%% ============================================================
+%% APPENDICES
+%% ============================================================
+\appendix
+
+\section{Group Cohomology Conventions}
+\label{ap:group-cohomology}
+
+\subsection{Inhomogeneous cochains}
+
+An \emph{inhomogeneous $p$-cochain} on a group $G$ with values in a $G$-module $A$ is a function
+\begin{equation}
+f: \underbrace{G \times \cdots \times G}_{p} \longrightarrow A.
+\end{equation}
+The \emph{inhomogeneous coboundary} $\dd f \in C^{p+1}(G, A)$ is
+\begin{align}
+(\dd f)(g_1, \ldots, g_{p+1}) &= g_1 \cdot f(g_2, \ldots, g_{p+1}) \nonumber \\
+&\quad + \sum_{i=1}^{p} (-1)^i f(g_1, \ldots, g_i g_{i+1}, \ldots, g_{p+1}) \nonumber \\
+&\quad + (-1)^{p+1} f(g_1, \ldots, g_p). \label{eq:inhomo-coboundary}
+\end{align}
+One verifies $\dd \circ \dd = 0$.
+
+\subsection{Cup product and higher cup products}
+
+The \emph{cup product} of an inhomogeneous $p$-cochain $f$ and a $q$-cochain $g$ is the $(p+q)$-cochain
+\begin{equation}
+(f \cup g)(g_1, \ldots, g_{p+q}) := f(g_1, \ldots, g_p) \cdot g(g_{p+1}, \ldots, g_{p+q}).
+\end{equation}
+(This is Steenrod's $\cup_0$ product in the homogeneous notation.)
+
+The \emph{higher cup products} $\cup_i$ for $i \geq 1$ are defined on homogeneous cochains and satisfy the relation
+\begin{equation}
+\dd(f \cup_i g) = (\dd f) \cup_i g + (-1)^{|f|} f \cup_i (\dd g) + (-1)^{|f|+|g|+i} (f \cup_{i-1} g + (-1)^{(|f|+i)(|g|+i)} g \cup_{i-1} f).
+\end{equation}
+These higher cup products are essential for writing the FSPT coboundary equations and stacking rules.
+In SptSet, they are implemented as \texttt{Cup0@}, \texttt{Cup1@}, \texttt{Cup2@}, etc.
+
+
+\section{GAP Quick Reference}
+\label{ap:gap-quick}
+
+\subsection{Essentials}
+\begin{verbatim}
+x := 5;                         # variable assignment (use := not =)
+[1, 2, 3];                      # a list (1-indexed!)
+rec(a := 1, b := "hello");      # a record
+f := x -> x^2;                  # lambda function
+\end{verbatim}
+
+\subsection{Groups}
+\begin{verbatim}
+G := CyclicGroup(4);             # Z_4
+G := DihedralGroup(8);           # D_4
+G := SymmetricGroup(4);          # S_4
+GeneratorsOfGroup(G);            # list of generators
+Order(G);                        # group order
+\end{verbatim}
+
+\subsection{SptSet-specific}
+\begin{verbatim}
+LoadPackage("SptSet");           # load the package
+SS := FermionEZSPTSpecSeq(R,f);  # construct spectral sequence
+FermionSPTLayersVerbose(SS, d);  # print E_r pages
+M := SptSetSpecSeqResult(SS, n, pRange);  # full stacking group
+SptSetFpZModuleCanonicalForm(M); # canonical form
+\end{verbatim}
+
+
+\bibliography{lecture_note}
+
+\end{document}

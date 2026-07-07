@@ -1,0 +1,5 @@
+Syntax warning: Unbound global variable in /home/user/xyren/gap-debug/pkg/SptS\
+et/debug/exp_sg106_ez_diag.g:92
+                    function(j) return _Erpq!.relations[j][j]; end), "\n\n");;
+                                       ^^^^^
+=>> PBS: job killed: walltime 1209644 exceeded limit 1209600

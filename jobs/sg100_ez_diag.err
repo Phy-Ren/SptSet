@@ -1,0 +1,13 @@
+Syntax warning: Unbound global variable in /home/user/xyren/gap-debug/pkg/SptS\
+et/debug/exp_sg100_ez_diag.g:92
+                    function(j) return _Erpq!.relations[j][j]; end), "\n\n");;
+                                       ^^^^^
+Syntax warning: Unbound global variable in /home/user/xyren/gap-debug/pkg/SptS\
+et/debug/exp_sg100_ez_diag.g:108
+    M := SptSetSpecSeqResult(SS, 4, [1,2,3,4]);;
+    ^
+Syntax warning: Unbound global variable in /home/user/xyren/gap-debug/pkg/SptS\
+et/debug/exp_sg100_ez_diag.g:109
+    SptSetFpZModuleCanonicalForm(M);;
+                                 ^
+=>> PBS: job killed: walltime 1209620 exceeded limit 1209600

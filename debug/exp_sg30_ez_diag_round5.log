@@ -1,0 +1,149 @@
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set NEATO_PATH manually if needed.
+#I  HAP warning: Set DOT_PATH manually if needed.
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/gap-debug/pkg/SptSet/ fa\
+iled
+================================================================
+SG#30 (Pnc2) EZ diagnostic
+  SptSet loaded from: /home/user/xyren/gap-debug/pkg/SptSet/
+  OK: debug version confirmed.
+  Parallel: JOBS=10 THRESHOLD=10 PHASE2=true
+  Diagnostics (12 points):
+    Bockstein, ZLMapInverse, CanonicalForm, PurifyClass,
+    PartialPurify-stack, PurifyCobdry-stack, PartialPurifySSClass,
+    PartialConstruct, BuildDeriv-par, BuildDeriv-seq,
+    ClassToLeadVec, ModExt-vjnf
+================================================================
+
+Building resolution for SG#30...
+  Resolution built in 8760 ms
+  Dimensions: 1 5 12 20 28 36 44 
+
+Building spectral sequence (EZ, spinless)...
+  Spectral sequence created.
+
+Phase A: Classification (14 pages)
+------------------------------------------------------------
+Syntax warning: Unbound global variable in exp_sg30_ez_diag.g:95
+                j -> _Erpq!.relations[j][j]), "\n");;
+                     ^^^^^
+[1/14] E^{1,3}_2 (p+ip:)...
+  E^{1,3}_2 = <ZL-Module with torsions [ 2 ]>
+  Generators: 1, torsion: [ 2 ]
+  Time: 48 ms  (elapsed: 0s)
+
+[2/14] E^{1,3}_3 (p+ip:)...
+  E^{1,3}_3 = <ZL-Module with torsions [ 2 ]>
+  Generators: 1, torsion: [ 2 ]
+  Time: 495 ms  (elapsed: 0s)
+
+[3/14] E^{1,3}_4 (p+ip:)...
+  E^{1,3}_4 = <ZL-Module []>
+  Time: 41278 ms  (elapsed: 41s)
+
+[4/14] E^{1,3}_5 (p+ip:)...
+  E^{1,3}_5 = <ZL-Module []>
+  Time: 22485933 ms  (elapsed: 22527s)
+
+[5/14] E^{2,2}_2 (Majorana:)...
+  E^{2,2}_2 = <ZL-Module with torsions [ 2, 2, 2, 2 ]>
+  Generators: 4, torsion: [ 2, 2, 2, 2 ]
+  Time: 22 ms  (elapsed: 22527s)
+
+[6/14] E^{2,2}_3 (Majorana:)...
+  E^{2,2}_3 = <ZL-Module with torsions [ 2, 2 ]>
+  Generators: 2, torsion: [ 2, 2 ]
+  Time: 27 ms  (elapsed: 22527s)
+
+[7/14] E^{2,2}_4 (Majorana:)...
+  E^{2,2}_4 = <ZL-Module with torsions [ 2, 2 ]>
+  Generators: 2, torsion: [ 2, 2 ]
+  Time: 594 ms  (elapsed: 22528s)
+
+[8/14] E^{3,1}_2 (Complex fermion:)...
+  E^{3,1}_2 = <ZL-Module with torsions [ 2, 2, 2, 2 ]>
+  Generators: 4, torsion: [ 2, 2, 2, 2 ]
+  Time: 76 ms  (elapsed: 22528s)
+
+[9/14] E^{3,1}_3 (Complex fermion:)...
+  E^{3,1}_3 = <ZL-Module with torsions [ 2, 2 ]>
+  Generators: 2, torsion: [ 2, 2 ]
+  Time: 915 ms  (elapsed: 22529s)
+
+[10/14] E^{3,1}_4 (Complex fermion:)...
+  E^{3,1}_4 = <ZL-Module with torsions [ 2, 2 ]>
+  Generators: 2, torsion: [ 2, 2 ]
+  Time: 3 ms  (elapsed: 22529s)
+
+[11/14] E^{4,0}_2 (Bosonic:)...
+  E^{4,0}_2 = <ZL-Module with torsions [ 2, 2 ]>
+  Generators: 2, torsion: [ 2, 2 ]
+  Time: 446 ms  (elapsed: 22529s)
+
+[12/14] E^{4,0}_3 (Bosonic:)...
+  E^{4,0}_3 = <ZL-Module with torsions [ 2, 2 ]>
+  Generators: 2, torsion: [ 2, 2 ]
+  Time: 77344 ms  (elapsed: 22607s)
+
+[13/14] E^{4,0}_4 (Bosonic:)...
+  E^{4,0}_4 = <ZL-Module with torsions [ 2, 2 ]>
+  Generators: 2, torsion: [ 2, 2 ]
+  Time: 341621 ms  (elapsed: 22948s)
+
+[14/14] E^{4,0}_5 (Bosonic:)...
+  E^{4,0}_5 = <ZL-Module with torsions [ 2, 2 ]>
+  Generators: 2, torsion: [ 2, 2 ]
+  Time: 3 ms  (elapsed: 22948s)
+
+============================================================
+Phase A COMPLETE in 22948820 ms
+============================================================
+
+Phase B: Computing group structure...
+  SptSetSpecSeqResult(SS, 4, [1,2,3,4]) — includes p+ip
+------------------------------------------------------------
+Syntax warning: Unbound global variable in exp_sg30_ez_diag.g:112
+    M := SptSetSpecSeqResult(SS, 4, [1,2,3,4]);;
+    ^
+Syntax warning: Unbound global variable in exp_sg30_ez_diag.g:113
+    SptSetFpZModuleCanonicalForm(M);;
+                                 ^
+!! DIAG CanonicalForm: FRACTION in M!.relations, dims=
+[ 53, 28 ] non-int values=[ -36761/2, -105797/2, 106369/2, 21641/2, -24661/2, 
+  30565/2, 44891/2 ]
+Error, GCD_INT: <b> must be an integer (not a rational) in
+  GcdInt( g, v[i] ) at /home/user/xyren/software/gap-4.13.1/lib/matint.gi:93 called from 
+MATINTmgcdex( N, A[r, j], A{[ r + 1 .. n ]}[j] 
+ ) at /home/user/xyren/software/gap-4.13.1/lib/matint.gi:387 called from
+DoNFIM( mat, options 
+ ) at /home/user/xyren/software/gap-4.13.1/lib/matint.gi:559 called from
+NormalFormIntMat( mat, 13 
+ ) at /home/user/xyren/software/gap-4.13.1/lib/matint.gi:697 called from
+SmithNormalFormIntegerMatTransforms( M!.relations 
+ ) at /home/user/xyren/gap-debug/pkg/SptSet/lib/module.gi:93 called from
+SptSetFpZModuleCanonicalForm( M 
+ ); at /home/user/xyren/gap-debug/pkg/SptSet/lib/module.gi:168 called from
+...  at exp_sg30_ez_diag.g:114
+type 'quit;' to quit to outer loop
+[1m[34m[0m[31m

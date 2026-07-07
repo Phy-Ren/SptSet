@@ -2,7 +2,8 @@
 Host: n01.local
 Date: Sun Mar  1 01:34:09 HKT 2026
 Fresh start.
-#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
 #I  HAP warning: Set DISPLAY_PATH manually if needed.
 #I  HAP warning: Set BROWSER_PATH manually if needed.
 #I  HAP warning: Set ASY_PATH manually if needed.

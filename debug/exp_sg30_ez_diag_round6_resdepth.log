@@ -1,0 +1,80 @@
+#I  polymake command not found. Please set POLYMAKE_COMMAND by hand
+#I  HAP warning: Set NEATO_PATH manually if needed.
+#I  HAP warning: Set DOT_PATH manually if needed.
+#I  HAP warning: Set DISPLAY_PATH manually if needed.
+#I  HAP warning: Set ASY_PATH manually if needed.
+#E  component `License' must be bound to a nonempty string containing an SPDX \
+ID
+#E  component `ArchiveURL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `ArchiveFormats' must be bound to a string
+#E  component `README_URL' must be bound to a string started with http://, htt\
+ps:// or ftp://
+#E  component `PackageInfoURL' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `AbstractHTML' must be bound to a string
+#E  component `PackageWWWHome' must be bound to a string started with http://,\
+ https:// or ftp://
+#E  component `ArchiveURLSubset' must be bound to a list of strings denoting r\
+elative paths to readable files or directories
+#E  component `HTMLStart' must be bound to a string denoting a relative path t\
+o a readable file
+#E  component `PDFFile' must be bound to a string denoting a relative path to \
+a readable file
+#E  component `LongTitle' must be bound to a string
+#E Validation of package sptset from /home/user/xyren/gap-debug/pkg/SptSet/ fa\
+iled
+================================================================
+SG#30 (Pnc2) EZ diagnostic
+  SptSet loaded from: /home/user/xyren/gap-debug/pkg/SptSet/
+  OK: debug version confirmed.
+  Parallel: JOBS=10 THRESHOLD=10 PHASE2=true
+  Diagnostics (12 points):
+    Bockstein, ZLMapInverse, CanonicalForm, PurifyClass,
+    PartialPurify-stack, PurifyCobdry-stack, PartialPurifySSClass,
+    PartialConstruct, BuildDeriv-par, BuildDeriv-seq,
+    ClassToLeadVec, ModExt-vjnf
+================================================================
+
+Building resolution for SG#30...
+  Resolution built in 8724 ms
+  Dimensions: 1 5 12 20 28 36 44 
+
+Building spectral sequence (EZ, spinless)...
+  Spectral sequence created.
+
+Phase A: Classification (14 pages)
+------------------------------------------------------------
+Syntax warning: Unbound global variable in exp_sg30_ez_diag.g:95
+                j -> _Erpq!.relations[j][j]), "\n");;
+                     ^^^^^
+[1/14] E^{1,3}_2 (p+ip:)...
+  E^{1,3}_2 = <ZL-Module with torsions [ 2 ]>
+  Generators: 1, torsion: [ 2 ]
+  Time: 50 ms  (elapsed: 0s)
+
+[2/14] E^{1,3}_3 (p+ip:)...
+  E^{1,3}_3 = <ZL-Module with torsions [ 2 ]>
+  Generators: 1, torsion: [ 2 ]
+  Time: 812 ms  (elapsed: 0s)
+
+[3/14] E^{1,3}_4 (p+ip:)...
+Error, List Element: <list>[8] must have an assigned value in
+  return Length( PseudoBoundary[i] )
+ ; at /home/user/xyren/software/gap-4.13.1/pkg/hap/lib/Resolutions/resFiniteGr\
+oup.gi:180 called from 
+DimensionR( j 
+ ) at /home/user/xyren/software/gap-4.13.1/pkg/hap/lib/Perturbations/twistedTe\
+nsorProduct.gi:131 called from
+DimensionS( i - j 
+ ) at /home/user/xyren/software/gap-4.13.1/pkg/hap/lib/Perturbations/twistedTe\
+nsorProduct.gi:131 called from
+Dimension( resolution )( k 
+ ) at /home/user/xyren/gap-debug/pkg/SptSet/lib/cochain.gi:22 called from
+SptSetCochainModule( resolution, deg + 1, 0 
+ ) at /home/user/xyren/gap-debug/pkg/SptSet/lib/cochain.gi:36 called from
+SptSetCochainModule( ss!.resolution, p, ss!.spectrum[q + 1] 
+ ) at /home/user/xyren/gap-debug/pkg/SptSet/lib/ss_vanilla.gi:75 called from
+...  at exp_sg30_ez_diag.g:99
+type 'quit;' to quit to outer loop
+[1m[34m[0m[31m

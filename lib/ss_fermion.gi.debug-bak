@@ -1,11 +1,7 @@
 InstallGlobalFunction(FermionSPTSpecSeq,
 function(R, auMap, w)
-  local brMap, spectrum, ss, s, G, trivialMap, coeffZ, coeffZ2;
+  local brMap, spectrum, ss, s;
   brMap := SptSetBarResolutionMap(R);
-  G := GroupOfResolution(R);
-  trivialMap := SptSetTrivialGroupAction(G);
-  coeffZ := SptSetCoefficientZn(0, trivialMap);
-  coeffZ2 := SptSetCoefficientZn(2, trivialMap);
   spectrum := [];
   spectrum[0+1] := SptSetCoefficientU1(auMap);
   spectrum[1+1] := SptSetCoefficientZn(2, auMap);
@@ -112,25 +108,6 @@ function(R, auMap, w)
     return {g1, g2, g3, g4, g5} -> 0;
   end);
 
-  # 4+1D p+ip -> Majorana-chain obstruction:
-  #   dn2 = 0 on the E_2 page (ordinary Z^T cocycle condition), and
-  #   dn3 = n2 cup n2 + omega2 cup n2 + s1 cup (n2 cup_1 n2)  (mod 2).
-  SptSetInstallCoboundary(ss, 2, 2, 3,
-  function(n2, dn2)
-    local n2m, wmod, c4;
-    n2m := function(args...)
-      return CallFuncList(n2, args) mod 2;
-    end;
-    wmod := function(args...)
-      return CallFuncList(w, args) mod 2;
-    end;
-    c4 := AddInhomoCochain@(Cup0@(2, 2, coeffZ2, n2m, n2m),
-      Cup0@(2, 2, coeffZ2, wmod, n2m));
-    c4 := AddInhomoCochain@(c4,
-      Cup0@(1, 3, coeffZ2, s, Cup1@(2, 2, coeffZ2, n2m, n2m)));
-    return {g1, g2, g3, g4} -> (c4(g1, g2, g3, g4) mod 2);
-  end);
-
   SptSetInstallCoboundary(ss, 2, 2, 2,
   function(n2, dn2)
     return
@@ -195,102 +172,6 @@ function(R, auMap, w)
     end;
   end);
 
-  # 4+1D Majorana-chain -> complex-fermion obstruction:
-  #   dn4 = n3 cup_1 n3 + omega2 cup n3 + s1 cup (n3 cup_2 n3)  (mod 2).
-  # This is the d_2 differential out of E^{3,2}; it is the direct
-  # one-dimension-up analogue of InstallCoboundary(ss, 2, 2, 2).
-  SptSetInstallCoboundary(ss, 2, 3, 2,
-  function(n3, dn3)
-    local coeff, c5;
-    coeff := spectrum[1+1];
-    c5 := AddInhomoCochain@(Cup1@(3, 3, coeff, n3, n3),
-      Cup0@(2, 3, coeff, w, n3));
-    c5 := AddInhomoCochain@(c5,
-      Cup0@(1, 4, coeff, s, Cup2@(3, 3, coeff, n3, n3)));
-    return {g1, g2, g3, g4, g5} -> (c5(g1, g2, g3, g4, g5) mod 2);
-  end);
-
-  # 4+1D pure Majorana phase O^gamma_6 from the Cartan-Adem representative.
-  # This replaces the numerical O6 table.  The n4-dependent complex-fermion
-  # terms are installed separately in InstallCoboundary(ss, 2, 4, 1), so this
-  # d_3 contains only the n3-, omega2-, and s1-dependent part of Eq. (126).
-  #
-  # DOMAIN: n3 must be a Z2 cocycle (dn3 = 0 mod 2).  In the spectral
-  # sequence this holds on the E_3 source E_3^{3,2} because the d_2
-  # obstruction (dn4 = n3 cup1 n3 + ...) has already been killed.  Do not
-  # evaluate this formula on a total-cochain trivialization where dn3 may
-  # contain d_2(n2) contributions — the Bockstein beta n3 = d(tilde n3)/2
-  # would then be half-integer valued and the formula is no longer valid.
-  SptSetInstallCoboundary(ss, 3, 3, 2,
-  function(n3, dn3)
-    local n3m, wmod, smod, beta, betam,
-          zeta23, x6, n3c1n3, omegaN3, sBeta, zeta14,
-          omegaCup1s, s2, s3, half6,
-          quarterOmegaBeta, quarterBetaBeta, quarterS2Beta, quarterS3N3;
-
-    n3m := function(args...)
-      return CallFuncList(n3, args) mod 2;
-    end;
-    wmod := function(args...)
-      return CallFuncList(w, args) mod 2;
-    end;
-    smod := function(g)
-      return s(g) mod 2;
-    end;
-
-    # Integral Bockstein beta n3 = d(tilde n3)/2, using the canonical 0/1 lift.
-    beta := ScaleInhomoCochain@(1/2, InhomoCoboundary@(coeffZ, n3m));
-    betam := function(args...)
-      return CallFuncList(beta, args) mod 2;
-    end;
-
-    # zeta_{2,3}(omega2,n3) = <12313434>(omega2,omega2,n3,n3).
-    zeta23 := SurjectionProductZ2@([2, 2, 3, 3],
-      [wmod, wmod, n3m, n3m], [1, 2, 3, 1, 3, 4, 3, 4]);
-
-    # x(n3), the four-word Adem primitive from the notes.
-    x6 := SurjectionProductZ2@([3, 3, 3, 3],
-      [n3m, n3m, n3m, n3m], [1, 2, 1, 3, 2, 4, 3, 1, 4, 2]);
-    x6 := AddInhomoCochain@(x6, SurjectionProductZ2@([3, 3, 3, 3],
-      [n3m, n3m, n3m, n3m], [1, 2, 1, 3, 4, 3, 1, 4, 1, 2]));
-    x6 := AddInhomoCochain@(x6, SurjectionProductZ2@([3, 3, 3, 3],
-      [n3m, n3m, n3m, n3m], [1, 2, 3, 2, 4, 3, 1, 4, 2, 1]));
-    x6 := AddInhomoCochain@(x6, SurjectionProductZ2@([3, 3, 3, 3],
-      [n3m, n3m, n3m, n3m], [1, 2, 3, 4, 3, 1, 4, 2, 1, 2]));
-
-    n3c1n3 := Cup1@(3, 3, coeffZ2, n3m, n3m);
-    omegaN3 := Cup0@(2, 3, coeffZ2, wmod, n3m);
-    sBeta := Cup0@(1, 4, coeffZ2, smod, betam);
-
-    zeta14 := SurjectionProductZ2@([1, 1, 4, 4],
-      [smod, smod, betam, betam], [1, 2, 3, 2, 4, 3, 4, 3]);
-    omegaCup1s := Cup1@(2, 1, coeffZ2, wmod, smod);
-
-    half6 := AddInhomoCochain@(zeta23, x6);
-    half6 := AddInhomoCochain@(half6, Cup4@(5, 5, coeffZ2, n3c1n3, omegaN3));
-    half6 := AddInhomoCochain@(half6, Cup4@(5, 5, coeffZ2, n3c1n3, sBeta));
-    half6 := AddInhomoCochain@(half6, Cup4@(5, 5, coeffZ2, omegaN3, sBeta));
-    half6 := AddInhomoCochain@(half6, zeta14);
-    half6 := AddInhomoCochain@(half6, Cup0@(2, 4, coeffZ2, omegaCup1s, betam));
-    # The extra 1/2 s1 cup (n3 cup_1 n3) term is half-valued and reduced mod 2.
-    half6 := AddInhomoCochain@(half6, Cup0@(1, 5, coeffZ2, smod, n3c1n3));
-
-    quarterOmegaBeta := Cup0@(2, 4, coeffZ, wmod, beta);
-    quarterBetaBeta := Cup2@(4, 4, coeffZ, beta, beta);
-    s2 := Cup0@(1, 1, coeffZ2, smod, smod);
-    s3 := Cup0@(2, 1, coeffZ2, s2, smod);
-    quarterS2Beta := Cup0@(2, 4, coeffZ2, s2, betam);
-    quarterS3N3 := Cup0@(3, 3, coeffZ2, s3, n3m);
-
-    return function(g1, g2, g3, g4, g5, g6)
-      return 1/2 * (half6(g1, g2, g3, g4, g5, g6) mod 2)
-        + 1/4 * (quarterOmegaBeta(g1, g2, g3, g4, g5, g6)
-          - quarterBetaBeta(g1, g2, g3, g4, g5, g6)
-          + (quarterS2Beta(g1, g2, g3, g4, g5, g6) mod 2)
-          + (quarterS3N3(g1, g2, g3, g4, g5, g6) mod 2));
-    end;
-  end);
-
   # xingyu 2026 0314: translated from C++ classification_others()
   # in 260310 Consistency Check.cpp lines 204-216
   # replaces Cup0/Cup1/Cup2 and addTwister(5,0) Cup3 with direct Z2 expansion
@@ -335,23 +216,6 @@ function(R, auMap, w)
     #   c5 := AddInhomoCochain@(c5, Cup2@(4, 3, coeff, dn3, n3));
     # fi;
     # return ScaleInhomoCochain@(1/2, c5);
-  end);
-
-  # 4+1D complex-fermion contribution to the bosonic obstruction:
-  #   O^c_6 = 1/2[ omega2 cup n4 + n4 cup_2 n4 + dn4 cup_3 n4 ],
-  #   O^{c gamma}_6 = 1/2[ dn4 cup_4 dn4 ].
-  SptSetInstallCoboundary(ss, 2, 4, 1,
-  function(n4, dn4)
-    local coeff, c6;
-    coeff := spectrum[1+1];
-    c6 := AddInhomoCochain@(Cup0@(2, 4, coeff, w, n4),
-      Cup2@(4, 4, coeff, n4, n4));
-    if dn4 <> ZeroCocycle@ then
-      c6 := AddInhomoCochain@(c6, Cup3@(5, 4, coeff, dn4, n4));
-      c6 := AddInhomoCochain@(c6, Cup4@(5, 5, coeff, dn4, dn4));
-    fi;
-    return {g1, g2, g3, g4, g5, g6} ->
-      (1/2 * (c6(g1, g2, g3, g4, g5, g6) mod 2));
   end);
 
   SptSetInstallAddTwister(ss, 1, 1, {l1, l2} -> ZeroCocycle@);
@@ -512,7 +376,6 @@ function(R, auMap, w)
     # place holders for twisters in (4+1)D
     SptSetInstallAddTwister(ss, 1, 4, {l1, l2} -> ZeroCocycle@);
     SptSetInstallAddTwister(ss, 2, 3, {l1, l2} -> ZeroCocycle@);
-    # 4+1D Majorana stacking: N3 = n3 + n3'.  There is no m3 correction.
     SptSetInstallAddTwister(ss, 3, 2, {l1, l2} -> ZeroCocycle@);
     SptSetInstallAddTwister(ss, 4, 1, {l1, l2} -> ZeroCocycle@);
     # xingyu 2026 0314: O5cgamma now included in InstallCoboundary(ss, 2, 3, 1, ...)
@@ -527,19 +390,5 @@ function(R, auMap, w)
     SptSetInstallAddTwister(ss, 5, 0, {l1, l2} -> ZeroCocycle@);
     
 
-  return ss;
-end);
-
-
-InstallGlobalFunction(FermionSPTSpecSeqNoPip,
-function(R, auMap, w)
-  # Build the ordinary fermionic spectral sequence but remove the q=3 p+ip
-  # layer.  This gives the no-p+ip triplet (n3,n4,nu5) used for the 4+1D
-  # classification implemented here, rather than quotienting by p+ip data.
-  local ss;
-  ss := FermionSPTSpecSeq(R, auMap, w);
-  if IsBound(ss!.spectrum[4]) then
-    Unbind(ss!.spectrum[4]);
-  fi;
   return ss;
 end);
