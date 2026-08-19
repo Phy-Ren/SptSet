@@ -231,6 +231,18 @@ function(R, auMap, w)
     n3m := function(args...)
       return CallFuncList(n3, args) mod 2;
     end;
+
+    # Canonical cocycle representative.  The spectral sequence machinery may
+    # pass a cochain whose values off the bar-resolution basis do not form a
+    # mod-2 cocycle (e.g. after purification stacks a non-cocycle into this
+    # layer); the O6^gamma formula evaluates cup and surjection products on
+    # arbitrary tuples, and beta = d(tilde n3)/2 below is then half-integer
+    # valued (ModRat crash).  Round-trip through the bar resolution to
+    # replace n3m by the canonical equivariant cocycle of the same class;
+    # this does not change the E_3 class of the result.
+    n3m := SptSetMapToBarCocycle(brMap, 3, spectrum[3],
+      SptSetMapFromBarCocycle(brMap, 3, spectrum[3], n3m));
+
     wmod := function(args...)
       return CallFuncList(w, args) mod 2;
     end;
