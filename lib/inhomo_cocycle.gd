@@ -9,7 +9,6 @@ DeclareGlobalFunction("Cup1@");
 DeclareGlobalFunction("Cup2@");
 DeclareGlobalFunction("Cup3@");
 DeclareGlobalFunction("Cup4@");
-DeclareGlobalVariable("SurjectionCutsCache@");
 DeclareGlobalFunction("SurjectionCuts@");
 DeclareGlobalFunction("SurjectionCutsCached@");
 DeclareGlobalFunction("SurjectionProductZ2@");

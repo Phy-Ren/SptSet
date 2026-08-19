@@ -1,8 +1,9 @@
 # 4+1D FSPT classification test with the p+ip layer included.
-# Symmetry: G_f = Z_4^f, so G_b = Z_2, omega2 is the non-trivial
-# central extension cocycle, and s1 = 0.
+# Symmetry: G_f = Z_4^f, so G_b = Z_2.
+# This is NON-EZ: omega2 = n1^2 is the non-trivial central extension
+# cocycle, and s1 = 0 (unitary action, no anti-unitary symmetry).
 # Expected cohomological layer structure for the full quadruplet:
-#   p+ip n2:            Z_2
+#   p+ip n2:            Z_2    (root: n1^2)
 #   Majorana n3:        Z_2
 #   Complex fermion n4: Z_2
 #   Bosonic nu5:        Z_2
@@ -12,10 +13,13 @@ LoadPackage("HAP");
 LoadPackage("SptSet");
 
 G := CyclicGroup(2);;
-R := ResolutionFiniteGroup(G, 8);;
-utAct := SptSetTrivialGroupAction(G);;
+# Resolution depth >= 9 for 4+1D spectral sequence pages
+R := ResolutionFiniteGroup(G, 10);;
+# s1Trivial = trivial anti-unitary action  =>  s1 = 0
+s1Trivial := SptSetTrivialGroupAction(G);;
 f1 := GeneratorsOfGroup(G)[1];;
 
+# Non-trivial omega2 = n1^2  (characteristic of Z_4^f extension)
 omega2 := function(g1, g2)
   if g1 = f1 and g2 = f1 then
     return 1;
@@ -23,5 +27,6 @@ omega2 := function(g1, g2)
   return 0;
 end;;
 
-ss := FermionSPTSpecSeq(R, utAct, omega2);;
+# FermionSPTSpecSeq = full non-EZ constructor (omega2 passed as 3rd argument)
+ss := FermionSPTSpecSeq(R, s1Trivial, omega2);;
 FermionSPTLayersVerbose(ss, 4);;

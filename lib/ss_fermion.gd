@@ -1,1 +1,2 @@
 DeclareGlobalFunction("FermionSPTSpecSeq");
+DeclareGlobalFunction("FermionSPTSpecSeqNoPip");

@@ -238,7 +238,7 @@ function(p, q, coeff, a, b)
 end);
 
 # Cache for SurjectionCuts@ results, keyed by "degs:word".
-SurjectionCutsCache@ := rec();
+BindGlobal("SurjectionCutsCache@", rec());
 
 InstallGlobalFunction(SurjectionCuts@,
 function(degs, word)

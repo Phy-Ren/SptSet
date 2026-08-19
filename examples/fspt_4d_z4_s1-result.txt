@@ -1,0 +1,22 @@
+=== Z4 anti-unitary (omega2=0, s1=l1) ===
+p+ip:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Majorana:
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Bosonic:
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+TIME=29.33s MEM=173672KB

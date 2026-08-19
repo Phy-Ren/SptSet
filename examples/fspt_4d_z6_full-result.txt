@@ -1,0 +1,22 @@
+=== Z6 non-EZ full (omega2 nontrivial, s1=0) ===
+p+ip:
+<ZL-Module with torsions [ 6 ]>
+<ZL-Module with torsions [ 6 ]>
+<ZL-Module with torsions [ 6 ]>
+<ZL-Module with torsions [ 6 ]>
+Majorana:
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module with torsions [ 2 ]>
+Complex fermion:
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module with torsions [ 2 ]>
+Bosonic:
+<ZL-Module with torsions [ 6 ]>
+<ZL-Module with torsions [ 6 ]>
+<ZL-Module with torsions [ 6 ]>
+<ZL-Module with torsions [ 6 ]>
+<ZL-Module with torsions [ 6 ]>
+TIME=23.39s MEM=173928KB

@@ -1,0 +1,22 @@
+=== Z8 EZ (omega2=0, s1=0) ===
+p+ip:
+<ZL-Module with torsions [ 8 ]>
+<ZL-Module with torsions [ 4 ]>
+<ZL-Module with torsions [ 4 ]>
+<ZL-Module with torsions [ 4 ]>
+Majorana:
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module []>
+<ZL-Module []>
+Complex fermion:
+<ZL-Module with torsions [ 2 ]>
+<ZL-Module []>
+<ZL-Module []>
+<ZL-Module []>
+Bosonic:
+<ZL-Module with torsions [ 8 ]>
+<ZL-Module with torsions [ 4 ]>
+<ZL-Module with torsions [ 4 ]>
+<ZL-Module with torsions [ 4 ]>
+<ZL-Module with torsions [ 4 ]>
+TIME=25.76s MEM=174048KB
