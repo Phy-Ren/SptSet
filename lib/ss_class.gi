@@ -100,6 +100,17 @@ function(cl) # recursive version
     SptSetStackInplace(bdry, bdry2);
     # bdry!.layers[p-1+1] := bdry2!.layers[p-1+1];
 
+    # If the class at layer p could not be killed by any differential or as a
+    # coboundary (a genuine obstruction), stop: the leading layer is p.
+    cp_ := coc!.layers[p+1];
+    if cp_ <> ZeroCocycle@ then
+      cp := SptSetMapFromBarCocycle(brMap, p, SS!.spectrum[q+1], cp_);
+      if not SptSetFpZModuleIsZeroElm(
+          SptSetSpecSeqComponent(SS, 2, p, q), cp) then
+        break;
+      fi;
+    fi;
+
   od;
 
   cl!.cochain := coc;
@@ -122,7 +133,18 @@ function(coc, p, r, cp)
     if IsSptSetZLMapZeroRep(dr) then
       return SptSetSpecSeqCochainZero(SS, deg-1);
     fi;
-    beta := SptSetZLMapInverse(dr, cp);
+    # Only kill when cp is genuinely in the image of d_r (integral solution).
+    # If cp is not in the image, it is a genuine obstruction on this page;
+    # do NOT attempt a kill (a pseudo-inverse would return a fractional or
+    # spurious beta and contaminate the whole cochain).
+    beta := SptSetZLMapInImage(dr, cp);
+    if beta = fail then
+      if SPTSET_DEBUG_PURIFY then
+        Print(">> PartialPurify(deg=", deg, ",p=", p, ",r=", r,
+              "): cp NOT in image of d_", r, " - genuine obstruction, no kill\n");
+      fi;
+      return SptSetSpecSeqCochainZero(SS, deg-1);
+    fi;
     beta_ := SptSetMapToBarCocycle(brMap, p-r, SS!.spectrum[q+r-1 +1], beta);
 
     dbeta := SptSetSpecSeqCoboundarySL(SS, deg-1, p-r, NegativeInhomoCochain@(beta_));
@@ -159,8 +181,16 @@ function(coc, p, cp)
 
   bdry := SptSetSpecSeqCochainZero(SS, deg-1);
   cp_ := coc!.layers[p+1];
-  # cp_ must be a trivial coboundary.
-  n := SptSetZLMapInverse(SptSetSpecSeqDerivative(SS, 1, p-1, q), cp);
+  # cp_ must be a trivial coboundary.  Verify integrally; if cp is not a
+  # genuine coboundary, it is a genuine obstruction -- do NOT kill.
+  n := SptSetZLMapInImage(SptSetSpecSeqDerivative(SS, 1, p-1, q), cp);
+  if n = fail then
+    if SPTSET_DEBUG_PURIFY then
+      Print(">> PurifyCobdry(deg=", deg, ",p=", p, ",q=", q,
+            "): cp not a coboundary - genuine obstruction, no kill\n");
+    fi;
+    return SptSetSpecSeqCochainZero(SS, deg-1);
+  fi;
   n_ := SptSetSolveCocycleEq(brMap, p, SS!.spectrum[q+1], cp_, n);
   # n_ := NegativeInhomoCochain@(n_);
   # bdry!.layers[p-1 +1] := n_;

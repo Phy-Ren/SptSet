@@ -174,6 +174,10 @@ function(cl, rf, pf)
     else
       Epqrf := SptSetSpecSeqComponentInf(SS, p, q);
     fi;
+    if SPTSET_DEBUG_PURIFY then
+      Print(">> Purify(p=", p, "): IsZeroElm(E_rf=", rf, ") = ",
+            SptSetFpZModuleIsZeroElm(Epqrf, cp), " cp=", cp, "\n");
+    fi;
     if not SptSetFpZModuleIsZeroElm(Epqrf, cp) then
       break;
     fi;
@@ -183,16 +187,42 @@ function(cl, rf, pf)
     #"Assertion: p+1 should be the highest page with trivialization");
     for r in [p,(p-1)..2] do
       Erpq := SptSetSpecSeqComponent(SS, r, p, q);
+      if SPTSET_DEBUG_PURIFY then
+        Print(">> Purify(p=", p, ",r=", r, "): IsZeroElm(E_", r, ") = ",
+              SptSetFpZModuleIsZeroElm(Erpq, cp), " cp=", cp, "\n");
+      fi;
       if not SptSetFpZModuleIsZeroElm(Erpq, cp) then
         bdry2 := PartialPurify@(coc, p, r, cp);
         SptSetStackInplace(bdry, bdry2);
         cp_ := coc!.layers[p+1];
         cp := SptSetMapFromBarCocycle(brMap, p, SS!.spectrum[q+1], cp_);
+        if SPTSET_DEBUG_PURIFY then
+          Print(">> Purify(p=", p, ",r=", r, "): after kill, cp=", cp,
+                " IsZeroElm(E_2)=", SptSetFpZModuleIsZeroElm(
+                  SptSetSpecSeqComponent(SS, 2, p, q), cp), "\n");
+        fi;
       fi;
     od;
 
+    if SPTSET_DEBUG_PURIFY then
+      Print(">> PurifyCobdry(p=", p, "): final cp=", cp, "\n");
+    fi;
     bdry2 := PartialPurifyCoboundary@(coc, p, cp);
     SptSetStackInplace(bdry, bdry2);
+
+    # If the class at layer p could not be killed by any differential or as a
+    # coboundary (a genuine obstruction), stop: the leading layer is p.
+    cp_ := coc!.layers[p+1];
+    if cp_ <> ZeroCocycle@ then
+      cp := SptSetMapFromBarCocycle(brMap, p, SS!.spectrum[q+1], cp_);
+      if not SptSetFpZModuleIsZeroElm(
+          SptSetSpecSeqComponent(SS, 2, p, q), cp) then
+        if SPTSET_DEBUG_PURIFY then
+          Print(">> Purify(p=", p, "): genuine obstruction, leading layer\n");
+        fi;
+        break;
+      fi;
+    fi;
 
   od;
 

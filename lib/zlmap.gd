@@ -19,3 +19,5 @@ DeclareOperation("SptSetZLMapInverse",
 );
 
 DeclareGlobalFunction("SptSetPseudoInverseSpecialMat");
+
+DeclareGlobalFunction("SptSetZLMapInImage");
