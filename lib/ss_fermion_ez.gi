@@ -216,24 +216,46 @@ InstallMethod(FermionEZSPTSpecSeq,
             zeta23, x6, n3c1n3, omegaN3, sBeta, zeta14,
             omegaCup1s, s2, s3, half6,
             quarterOmegaBeta, quarterBetaBeta, quarterS2Beta, quarterS3N3,
-            n3v, dn3v;
+            n3v, dn3v, needCorrection, dn3full, eltsG, g1, g2, g3, g4;
 
       n3m := function(args...)
         return CallFuncList(n3, args) mod 2;
       end;
 
       # Canonical cocycle representative (only when n3 is not already a
-      # mod-2 cocycle).  When dn3v = 0 the input n3m is already a genuine
-      # cocycle with integral beta, and we MUST keep the original n3m: the
-      # full obstruction is closed mod 1 only when the SAME n3 is used here
-      # and in the dn4 formula.  Round-tripping an honest cocycle returns a
+      # mod-2 cocycle ON ALL TUPLES).  dn3v = 0 (bar-frame check) does NOT
+      # imply n3m is a cocycle on non-bar tuples; verify d(n3m) even on every
+      # 4-tuple, else beta = d(n3m)/2 is fractional (ModRat crash).
+      # When n3m is a genuine cocycle we MUST keep the ORIGINAL n3m: the full
+      # obstruction is closed mod 1 only when the SAME n3 is used here and in
+      # the dn4 formula.  Round-tripping an honest cocycle returns a
       # cohomologous but pointwise different cocycle and breaks closedness.
-      # When dn3v <> 0 (wild representative): correct + round-trip so beta
-      # is integral (otherwise ModRat crash).
+      # When n3m is not a genuine cocycle (wild representative): correct it
+      # (subtract the d_1-preimage) and round-trip so beta is integral.
       n3v := SptSetMapFromBarCocycle(brMap, 3, spectrum[3], n3m);
       dn3v := SptSetMapFromBarCocycle(brMap, 4, spectrum[3],
         function(args...) return CallFuncList(dn3, args) mod 2; end);
-      if not ForAll(dn3v, x -> IsZero(x mod 2)) then
+      needCorrection := not ForAll(dn3v, x -> IsZero(x mod 2));
+      if not needCorrection then
+        dn3full := InhomoCoboundary@(coeffZ, n3m);
+        eltsG := Elements(GroupOfResolution(brMap!.hapResolution));
+        for g1 in eltsG do
+          for g2 in eltsG do
+            for g3 in eltsG do
+              for g4 in eltsG do
+                if not IsEvenInt(dn3full(g1, g2, g3, g4)) then
+                  needCorrection := true;
+                  break;
+                fi;
+              od;
+              if needCorrection then break; fi;
+            od;
+            if needCorrection then break; fi;
+          od;
+          if needCorrection then break; fi;
+        od;
+      fi;
+      if needCorrection then
         n3v := n3v - SptSetZLMapInverse(SptSetSpecSeqDerivative(ss, 1, 3, 2), dn3v);
         n3m := SptSetMapToBarCocycle(brMap, 3, spectrum[3], n3v);
       fi;
