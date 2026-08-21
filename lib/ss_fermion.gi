@@ -233,21 +233,25 @@ function(R, auMap, w)
       return CallFuncList(n3, args) mod 2;
     end;
 
-    # Canonical cocycle representative (two steps).
-    # 1) coordinate-level cocycle correction: the machinery may pass a wild
-    #    representative whose coboundary is nonzero even on the bar basis;
-    #    its coordinate vector then lies in im(d_1) (the class survives to
-    #    E_3), so subtract the d_1-preimage to get a genuine cocycle class;
-    # 2) round-trip through the bar resolution to get an honest equivariant
-    #    cocycle function of that class, so beta = d(tilde n3)/2 below is
-    #    integral (otherwise ModRat crash).
+    # Canonical cocycle representative (only when n3 is not already a
+    # mod-2 cocycle).  When dn3v = 0 the input n3m is already a genuine
+    # cocycle with integral beta = d(n3m)/2, and we MUST keep the original
+    # n3m: the full obstruction O6^gamma[n3] + O6^c[n4] is closed mod 1 only
+    # when the SAME n3 is used here and in the dn4 formula that produced
+    # layer 5.  Round-tripping an honest cocycle through the bar resolution
+    # returns a cohomologous but pointwise different cocycle (a cocycle is
+    # not determined by its bar values), and that mismatch breaks the
+    # closedness cancellation (fractional d3 obstruction).
+    # When dn3v <> 0 the input is a wild representative: correct it to a
+    # cocycle (subtract the d_1-preimage) and round-trip, so that beta is
+    # integral (otherwise ModRat crash).
     n3v := SptSetMapFromBarCocycle(brMap, 3, spectrum[3], n3m);
     dn3v := SptSetMapFromBarCocycle(brMap, 4, spectrum[3],
       function(args...) return CallFuncList(dn3, args) mod 2; end);
     if not ForAll(dn3v, x -> IsZero(x mod 2)) then
       n3v := n3v - SptSetZLMapInverse(SptSetSpecSeqDerivative(ss, 1, 3, 2), dn3v);
+      n3m := SptSetMapToBarCocycle(brMap, 3, spectrum[3], n3v);
     fi;
-    n3m := SptSetMapToBarCocycle(brMap, 3, spectrum[3], n3v);
 
     wmod := function(args...)
       return CallFuncList(w, args) mod 2;
