@@ -109,13 +109,14 @@ InstallMethod(SptSetZLMapInverse,
   end);
 
 # SptSetZLMapInImage(psi, v): returns an integral preimage of v under psi
-# (in domain ambient coordinates) if v lies in the image of psi as a module
-# class (i.e. v is solvable over Z modulo the codomain relations), else fail.
-# Unlike SptSetZLMapInverse (pseudo-inverse), this NEVER returns a fractional
-# or spurious solution: it uses an exact integer solve.
+# (domain ambient coordinates) if v lies in the image of psi as a module
+# class, else fail.  Unlike SptSetZLMapInverse (pseudo-inverse), this NEVER
+# returns a fractional or spurious solution: the candidate from the
+# pseudo-inverse is kept only if it is integral AND its image x*B equals v
+# as a module class (verified, not assumed).
 InstallGlobalFunction(SptSetZLMapInImage,
 function(psi, v)
-  local M, N, A, R2, diagR2, idsR2, tA, sol, ng;
+  local M, N, x, B, diff;
   M := psi!.domain;
   N := psi!.codomain;
   if IsSptSetZLMapZeroRep(psi) then
@@ -127,20 +128,17 @@ function(psi, v)
   if not SptSetFpZModuleIsCanonical(N) then
     SptSetFpZModuleCanonicalForm(N);
   fi;
-  A := M!.generators * psi!.B * N!.projection;
-  R2 := StructuralCopy(psi!.codomain!.relations);
-  diagR2 := DiagonalOfMat(R2);
-  idsR2 := PositionsProperty(diagR2, x -> x<>0);
-  R2 := R2{idsR2};
-  tA := StructuralCopy(A);
-  Append(tA, R2);
-  # exact integer solve x * tA = v; fail if no integral solution exists.
-  sol := SolutionIntMat(tA, v);
-  if sol = fail then
+  x := v * SptSetZLMapInverseMat(psi);
+  if not ForAll(x, IsInt) then
     return fail;
   fi;
-  ng := Length(M!.generators);
-  return sol{[1..ng]} * M!.generators;
+  # verify x is a genuine preimage: its image under psi equals v as a class.
+  B := psi!.B;
+  diff := x * B - v;
+  if SptSetFpZModuleIsZeroElm(N, diff) then
+    return x;
+  fi;
+  return fail;
 end);
 
 InstallGlobalFunction(SptSetPseudoInverseSpecialMat,
