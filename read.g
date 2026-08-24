@@ -10,6 +10,9 @@ fi;
 if not IsBound(SPTSET_CHECKPOINT_HOOK) then
   SPTSET_CHECKPOINT_HOOK := false;
 fi;
+if not IsBound(SPTSET_DEBUG_PURIFY) then
+  SPTSET_DEBUG_PURIFY := false;
+fi;
 
 SPTSET_STATS := rec(
   p1_par_calls := 0, p1_par_time := 0,
