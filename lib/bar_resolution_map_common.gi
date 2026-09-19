@@ -3,6 +3,71 @@ BindGlobal(
   NewFamily("TheFamilyOfSptSetBarResMaps")
 );
 
+#############################################################################
+##
+#F  SptSetParListByForkSafe( <list>, <map>, <opt> )
+##
+##  Fork-parallel  List(<list>, <map>)  with robust error handling.
+##
+##  Guards against two failure modes of the IO package's `ParListByFork`:
+##
+##  (1) A worker that dies without delivering its pickled result (OOM kill,
+##      GAP error inside the worker, ...) makes `WaitUntilIdle` store `fail`
+##      in the result list.  `fail` is *bound*, so the original completeness
+##      test (IsBound only) passed and the final `Concatenation(res)`
+##      aborted the whole session with the misleading error
+##      "Concatenation: arguments must be lists".
+##      -> fixed together with a local one-line patch in
+##         pkg/io/gap/background.gi (ParListByFork), which now returns `fail`
+##         instead of crashing on such a result list.
+##  (2) Workers used to inherit a positive `SPTSET_PARALLEL_JOBS` and could
+##      fork grandchildren themselves: memory blow-up (children get
+##      OOM-killed silently) plus redundant nested recomputation.
+##
+##  Strategy:
+##  * worker side: set `SPTSET_PARALLEL_JOBS := 0` inside the worker
+##    (one process copy per worker, no nested forks).
+##  * parent side: if `ParListByFork` returns `fail` (dead worker, timeout)
+##    or a malformed result, fall back to a plain sequential
+##    `List(<list>, <map>)`, so the batch finishes and any real error
+##    surfaces cleanly in the parent process.
+##
+##  NOTE (verified 2026-09): ordinary GAP errors are NOT catchable in this
+##  GAP build -- `CALL_WITH_CATCH` only intercepts kernel `GAP_THROW`, not
+##  break-loop errors (even a plain `Error()` escapes it).  A worker
+##  therefore cannot rescue its own failing `map`; the parent-side fallback
+##  is what provides the robustness.
+##
+BindGlobal("SptSetParListByForkSafe", function(l, map, opt)
+  local worker, res;
+
+  if Length(l) = 0 then
+    return [];
+  fi;
+  if not IsBoundGlobal("ParListByFork") then
+    return List(l, map);
+  fi;
+
+  worker := function(x)
+    local saved, val;
+    saved := SPTSET_PARALLEL_JOBS;
+    SPTSET_PARALLEL_JOBS := 0;   # no nested forks inside a worker
+    val := map(x);
+    SPTSET_PARALLEL_JOBS := saved;
+    return val;
+  end;
+
+  res := ParListByFork(l, worker, opt);
+  if res = fail or not IsList(res) or Length(res) <> Length(l) then
+    Print("#W  SptSet[parallel]: ParListByFork failed ",
+          "(worker died? e.g. OOM-killed); ",
+          "falling back to sequential computation.\n");
+    return List(l, map);
+  fi;
+
+  return res;
+end);
+
 InstallMethod(SptSetMapToBarCocycle,
 "map to an inhomogeneous cocycle",
 [IsCategoryOfSptSetBarResMap, IsInt, IsGeneralMapping, IsRowVector],
@@ -59,7 +124,7 @@ function(brMap, deg, gAction, alpha_)
       SptSetMapToBarWord(brMap, deg, i);
     od;
 
-    val := ParListByFork([1..n], function(idx)
+    val := SptSetParListByForkSafe([1..n], function(idx)
       local v, bar, w;
       v := 0;
       bar := SptSetMapToBarWord(brMap, deg, idx);

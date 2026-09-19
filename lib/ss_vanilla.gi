@@ -140,7 +140,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
       SPTSET_PARALLEL_JOBS := Maximum(0, Int(saved_jobs / m));
       t_p2 := NanosecondsSinceEpoch();
 
-      fA := ParListByFork([1..m], function(idx)
+      fA := SptSetParListByForkSafe([1..m], function(idx)
         local lnp, ldnp, lcl, lopr_, lopr;
         lnp := SptSetMapToBarCocycle(ss!.brMap, p,
           ss!.spectrum[q+1], M!.generators[idx]);
@@ -248,7 +248,7 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
       SPTSET_PARALLEL_JOBS := Maximum(0, Int(saved_jobs / m));
       t_p2 := NanosecondsSinceEpoch();
 
-      fA := ParListByFork([1..m], function(idx)
+      fA := SptSetParListByForkSafe([1..m], function(idx)
         local lnp, ldnp, lcl, lopr_, lopr;
         lnp := SptSetMapToBarCocycle(ss!.brMap, p,
           ss!.spectrum[q+1], M!.generators[idx]);

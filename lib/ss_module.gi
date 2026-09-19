@@ -561,7 +561,7 @@ function(ss, deg, pRange)
             SPTSET_PARALLEL_JOBS := Maximum(0, Int(saved_jobs / nGens[pi]));
             t_p2b := NanosecondsSinceEpoch();
 
-            results := ParListByFork([1..nGens[pi]], function(jj)
+            results := SptSetParListByForkSafe([1..nGens[pi]], function(jj)
                 local ltj, lcjn, lpj, lvjnf;
                 ltj := Exs[pi]!.relations[jj][jj];
                 if ltj = 0 then return [0, []]; fi;
