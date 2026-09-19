@@ -1,0 +1,21 @@
+--- a/gap/background.gi
++++ b/gap/background.gi
+@@ -488,7 +488,17 @@
+     od;
+     args[n] := [l,[where+1..Length(l)],map];
+     res := ParDoByFork(jobs,args,opt);  # hand down timeout
+-    if not(Length(res) = n and ForAll([1..n],x->IsBound(res[x]))) then
++    # LOCAL PATCH (xyren, 2026-09-18): a worker that dies without delivering
++    # its pickled result (OOM kill, GAP error inside the worker, ...) makes
++    # WaitUntilIdle store `fail` in the result list.  `fail` is *bound*, so
++    # the original IsBound-only test below passed and the final
++    # Concatenation(res) aborted the whole session with the misleading
++    # error "Concatenation: arguments must be lists".  Requiring proper
++    # lists makes the function return `fail` instead, which callers can
++    # (and SptSet does, via SptSetParListByForkSafe) handle gracefully.
++    # Backup of the original file: background.gi.orig-20260918
++    if not(Length(res) = n and ForAll([1..n],
++           x -> IsBound(res[x]) and IsList(res[x]))) then
+         Info(InfoIO, 1, "Timeout in ParListByFork");
+         return fail;
+     fi;
