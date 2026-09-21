@@ -11,6 +11,15 @@ InstallMethod(FermionEZSPTSpecSeq,
     spectrum[4] := SptSetCoefficientZn(0, auMap);
     ss := SptSetSpecSeqVanilla(R, spectrum);
 
+    # p+ip layer E^{1,3}: no higher obstruction beyond the primary O_3[n_1]
+    # (classification analysis: "no higher obstruction of the p+ip layer
+    # from the anti-unitary structure"). The generic purification-based
+    # secondary obstruction evaluates O_4[m_2] for a single representative
+    # m_2 with dm_2 = O_3[n_1] and can incorrectly kill surviving p+ip
+    # classes — e.g., the Z_2 torsion of H^1(Z_T) in 30 space groups
+    # (2026-09-21 fix). Force d_r^{1,3} = 0 for r >= 3.
+    ss!.zeroDerivatives := [[3, 1, 3], [4, 1, 3]];
+
     s := g -> (1-(g^auMap)[1][1])/2;
 
     SptSetInstallCoboundary(ss, 2, 1, 1,

@@ -74,6 +74,18 @@ InstallMethod(SptSetSpecSeqBuildComponent,
       return SptSetCochainModule(ss!.resolution,
         p, ss!.spectrum[q+1]);
     else
+      if SptSetFpZModuleIsZero(SptSetSpecSeqComponent(ss, r-1, p, q)) then
+        return SptSetZeroModule();
+      fi;
+      # p+ip-layer bypass: if the outgoing differential at page r-1 from
+      # (p,q) is listed in ss!.zeroDerivatives and there is no incoming
+      # differential (source out of range), the component has stabilized.
+      # This avoids building the (expensive) target module of the forced
+      # zero map entirely.
+      if IsBound(ss!.zeroDerivatives) and [r-1, p, q] in ss!.zeroDerivatives
+         and (p-(r-1) < 0 or q+(r-1)-1 >= Length(ss!.spectrum)) then
+        return SptSetSpecSeqComponent(ss, r-1, p, q);
+      fi;
       phi := SptSetSpecSeqDerivative(ss, r-1, p-(r-1), q+(r-1)-1);
 #      psi := SptSetSpecSeqDerivative(ss, r-1, p, q);
       psi := SptSetSpecSeqDerivative2(ss, r-1, p, q);
@@ -122,6 +134,13 @@ InstallMethod(SptSetSpecSeqBuildDerivative,
     if r = 1 then
       return SptSetCoboundaryMap(M, N,
         ss!.resolution, p, ss!.spectrum[q+1]);
+    fi;
+    # p+ip-layer bypass (see FermionEZSPTSpecSeq): higher differentials
+    # listed in ss!.zeroDerivatives are forced to the zero map, because the
+    # purification-based secondary obstruction tests a single representative
+    # and can incorrectly kill surviving classes.
+    if IsBound(ss!.zeroDerivatives) and [r, p, q] in ss!.zeroDerivatives then
+      return SptSetZeroMap(M, N);
     fi;
     m := Length(M!.generators);
     n := Length(N!.generators);
@@ -220,6 +239,13 @@ InstallMethod(SptSetSpecSeqBuildDerivative2,
     if r = 1 then
       return SptSetCoboundaryMap(M, N,
         ss!.resolution, p, ss!.spectrum[q+1]);
+    fi;
+    # p+ip-layer bypass (see FermionEZSPTSpecSeq): higher differentials
+    # listed in ss!.zeroDerivatives are forced to the zero map, because the
+    # purification-based secondary obstruction tests a single representative
+    # and can incorrectly kill surviving classes.
+    if IsBound(ss!.zeroDerivatives) and [r, p, q] in ss!.zeroDerivatives then
+      return SptSetZeroMap(M, N);
     fi;
     m := Length(M!.generators);
     n := Length(N!.generators);
